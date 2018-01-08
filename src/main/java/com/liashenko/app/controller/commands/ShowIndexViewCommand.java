@@ -7,10 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class IndexCommand implements ICommand {
+public class ShowIndexViewCommand implements ICommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String page = null;
         return PageManagerConf.getInstance().getProperty(PageManagerConf.INDEX_PAGE_PATH);
     }
 }

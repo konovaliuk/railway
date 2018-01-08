@@ -7,10 +7,9 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Properties;
 
 /**
  * @author Admin
@@ -44,17 +43,17 @@ public class StartServerListener implements ServletContextListener {
 //        LocalHostIPaddress.assignIpAddres();
     }
 
-    private  String decodePath(String propertyFilePath) {
-            URL url = getClass().getClassLoader().getResource(propertyFilePath);
-            if (url != null) {
-                try {
-                    return URLDecoder.decode(url.getPath(), "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    classLogger.error(e.getMessage());
-                }
-            } else {
-                classLogger.error("File " + propertyFilePath + " not found!");
+    private String decodePath(String propertyFilePath) {
+        URL url = getClass().getClassLoader().getResource(propertyFilePath);
+        if (url != null) {
+            try {
+                return URLDecoder.decode(url.getPath(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                classLogger.error(e.getMessage());
             }
+        } else {
+            classLogger.error("File " + propertyFilePath + " not found!");
+        }
         return "";
     }
 }

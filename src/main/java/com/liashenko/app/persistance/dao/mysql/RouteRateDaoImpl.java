@@ -1,9 +1,9 @@
 package com.liashenko.app.persistance.dao.mysql;
 
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
-import com.liashenko.app.persistance.dao.DAOException;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.RouteRateDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.RouteRate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class RouteRateDaoImpl  extends AbstractJDBCDao implements RouteRateDao {
+public class RouteRateDaoImpl extends AbstractJDBCDao implements RouteRateDao {
     private static final Logger classLogger = LogManager.getLogger(RouteRateDaoImpl.class);
 
     public RouteRateDaoImpl(Connection connection, ResourceBundle localeQueries) {
@@ -80,7 +80,7 @@ public class RouteRateDaoImpl  extends AbstractJDBCDao implements RouteRateDao {
     }
 
     @Override
-    public Optional<RouteRate> persist(RouteRate object){
+    public Optional<RouteRate> persist(RouteRate object) {
         return super.persist(object).map(obj -> (RouteRate) obj);
     }
 
@@ -101,22 +101,22 @@ public class RouteRateDaoImpl  extends AbstractJDBCDao implements RouteRateDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-        try {
-            RouteRate routeRate = (RouteRate) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            RouteRate routeRate = (RouteRate) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-        try {
-            RouteRate routeRate = (RouteRate) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            RouteRate routeRate = (RouteRate) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
@@ -132,7 +132,8 @@ public class RouteRateDaoImpl  extends AbstractJDBCDao implements RouteRateDao {
             statement.setLong(1, routeId);
             ResultSet rs = statement.executeQuery();
             routeRateList = parseResultSet(rs);
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
         if (routeRateList == null || routeRateList.size() == 0) {
@@ -140,6 +141,7 @@ public class RouteRateDaoImpl  extends AbstractJDBCDao implements RouteRateDao {
         } else if (routeRateList.size() == 1) {
             return Optional.ofNullable(routeRateList.get(0));
         } else {
+            classLogger.error("Received more than one record.");
             throw new DAOException("Received more than one record.");
         }
     }

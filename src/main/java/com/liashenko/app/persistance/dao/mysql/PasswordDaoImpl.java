@@ -3,7 +3,7 @@ package com.liashenko.app.persistance.dao.mysql;
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.PasswordDao;
-import com.liashenko.app.persistance.dao.DAOException;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Password;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,11 +47,11 @@ public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
     }
 
     @Override
-    protected List<Password> parseResultSet(ResultSet rs){
+    protected List<Password> parseResultSet(ResultSet rs) {
         if (rs == null) return Collections.emptyList();
         List<Password> list = new ArrayList<>();
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 Password password = new Password();
                 password.setId(rs.getLong("id"));
                 password.setPassword(rs.getBytes("password"));
@@ -73,17 +73,17 @@ public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
     }
 
     @Override
-    public void create(Password password){
+    public void create(Password password) {
         super.create(password);
     }
 
     @Override
-    public Optional<Password> persist(Password object){
+    public Optional<Password> persist(Password object) {
         return super.persist(object).map(obj -> (Password) obj);
     }
 
     @Override
-    public void update(Password object){
+    public void update(Password object) {
         super.update(object);
     }
 
@@ -93,7 +93,7 @@ public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
     }
 
     @Override
-    public Optional<Password> getByPK(Long key){
+    public Optional<Password> getByPK(Long key) {
         return super.getByPK(key).map(obj -> (Password) obj);
     }
 
@@ -114,7 +114,7 @@ public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
 
     @Override
 //  UPDATE railway.password SET password=? salt=? iterations=?, algorithm=? WHERE id= ?
-    protected void prepareStatementForUpdate(PreparedStatement statement, Identified object){
+    protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
         try {
             Password password = (Password) object;
             statement.setBytes(1, password.getPassword());
@@ -129,7 +129,7 @@ public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
     }
 
     @Override
-    public Optional<List<Password>> getAll(){
+    public Optional<List<Password>> getAll() {
         return super.getAll().map(list -> (List<Password>) list);
     }
 }

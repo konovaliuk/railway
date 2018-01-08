@@ -8,21 +8,33 @@ import java.util.Optional;
 public interface TrainRateDao extends GenericJDBCDao {
     boolean isExists(Long key);
 
-    /** Создает новую запись и соответствующий ей объект */
+    /**
+     * Создает новую запись и соответствующий ей объект
+     */
     void create(TrainRate object);
 
-    /** Создает новую запись, соответствующую объекту object */
+    /**
+     * Создает новую запись, соответствующую объекту object
+     */
     Optional<TrainRate> persist(TrainRate object);
 
-    /** Возвращает объект соответствующий записи с первичным ключом key или null */
+    /**
+     * Возвращает объект соответствующий записи с первичным ключом key или null
+     */
     Optional<TrainRate> getByPK(Long key);
 
-    /** Сохраняет состояние объекта group в базе данных */
+    /**
+     * Сохраняет состояние объекта group в базе данных
+     */
     void update(TrainRate object);
 
-    /** Удаляет запись об объекте из базы данных */
+    /**
+     * Удаляет запись об объекте из базы данных
+     */
     void delete(TrainRate object);
 
-    /** Возвращает список объектов соответствующих всем записям в базе данных */
+    /**
+     * Возвращает список объектов соответствующих всем записям в базе данных
+     */
     Optional<List<TrainRate>> getAll();
 }

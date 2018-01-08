@@ -10,20 +10,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
-@WebFilter( urlPatterns = {"/*"},
+@WebFilter(urlPatterns = {"/*"},
         filterName = "EncodingFilter",
         description = "Filter for all requests")
 public class EncodingFilter implements Filter {
     private static final Logger classLogger = LogManager.getLogger(EncodingFilter.class);
     private static final String ENCODING_UTF8 = StandardCharsets.UTF_8.name();
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
-            throws IOException, ServletException {
-        encodingSetter(request, response);
-//        response.setContentType("text/html;");
-        filterChain.doFilter(request, response);
-    }
 
     private static void encodingSetter(ServletRequest request, ServletResponse response) {
         try {
@@ -37,5 +29,12 @@ public class EncodingFilter implements Filter {
         } catch (UnsupportedEncodingException ex) {
             classLogger.error(ex);
         }
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
+        encodingSetter(request, response);
+        filterChain.doFilter(request, response);
     }
 }

@@ -1,6 +1,7 @@
 package com.liashenko.app.persistance.dao;
 
 
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public abstract class AbstractJDBCDao <T extends Identified<PK>, PK extends Number> implements GenericJDBCDao<T, PK> {
+public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Number> implements GenericJDBCDao<T, PK> {
 
     private static final Logger classLogger = LogManager.getLogger(AbstractJDBCDao.class);
 
@@ -20,10 +21,9 @@ public abstract class AbstractJDBCDao <T extends Identified<PK>, PK extends Numb
     protected ResourceBundle localeQueries;
 
     public AbstractJDBCDao(Connection connection, ResourceBundle localeQueries) {
-        this.connection= connection;
+        this.connection = connection;
         this.localeQueries = localeQueries;
     }
-
 
     public abstract String getExistsQuery();
 
@@ -70,7 +70,7 @@ public abstract class AbstractJDBCDao <T extends Identified<PK>, PK extends Numb
      */
     protected abstract void prepareStatementForUpdate(PreparedStatement statement, T object);
 
-    public boolean isExists(PK key){
+    public boolean isExists(PK key) {
         int i = 0;
         String sql = getExistsQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -81,21 +81,23 @@ public abstract class AbstractJDBCDao <T extends Identified<PK>, PK extends Numb
                 i++;
             }
         } catch (SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
-        switch (i){
+        switch (i) {
             case 0:
                 return false;
             case 1:
                 return true;
             default:
+                classLogger.error("Received more than one record.");
                 throw new DAOException("Received more than one record.");
         }
     }
 
 
     @Override
-    public void create(T object){
+    public void create(T object) {
         // Добавляем запись
         String sql = getCreateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -104,23 +106,24 @@ public abstract class AbstractJDBCDao <T extends Identified<PK>, PK extends Numb
             if (count == 0) {
                 throw new DAOException("The record isn't created.");
             }
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
     }
 
     @Override
-    public Optional<T> persist(T object){
-        Optional<T> persistInstanceOpt;
+    public Optional<T> persist(T object) {
         // Добавляем запись
         String sql = getCreateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             prepareStatementForInsert(statement, object);
             int count = statement.executeUpdate();
             if (count != 1) {
+                classLogger.error("On persist modify more then 1 record: " + count);
                 throw new DAOException("On persist modify more then 1 record: " + count);
             }
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
             throw new DAOException(e);
         }
         // Получаем только что вставленную запись
@@ -129,17 +132,17 @@ public abstract class AbstractJDBCDao <T extends Identified<PK>, PK extends Numb
             ResultSet rs = statement.executeQuery();
             List<T> list = parseResultSet(rs);
             if ((list == null) || (list.size() != 1)) {
+                classLogger.error("Exception on findByPK new persist data.");
                 throw new DAOException("Exception on findByPK new persist data.");
             }
-            persistInstanceOpt = Optional.of(list.iterator().next());
-        } catch (SQLException e) {
+            return Optional.of(list.iterator().next());
+        } catch (DAOException | SQLException e) {
             throw new DAOException(e);
         }
-        return persistInstanceOpt;
     }
 
     @Override
-    public Optional<T> getByPK(PK key){
+    public Optional<T> getByPK(PK key) {
         if (key == null) return Optional.empty();
         List<T> list;
         String sql = getSelectQuery();
@@ -148,20 +151,23 @@ public abstract class AbstractJDBCDao <T extends Identified<PK>, PK extends Numb
             statement.setObject(1, key);
             ResultSet rs = statement.executeQuery();
             list = parseResultSet(rs);
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
         if (list == null || list.size() == 0) {
+            classLogger.error("Record with PK = " + key + " not found.");
             throw new DAOException("Record with PK = " + key + " not found.");
         }
         if (list.size() > 1) {
+            classLogger.error("Received more than one record.");
             throw new DAOException("Received more than one record.");
         }
         return Optional.ofNullable(list.iterator().next());
     }
 
     @Override
-    public void update(T object){
+    public void update(T object) {
         if (object.getId() == null) throw new DAOException("id is null");
         String sql = getUpdateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql);) {
@@ -170,41 +176,36 @@ public abstract class AbstractJDBCDao <T extends Identified<PK>, PK extends Numb
             if (count != 1) {
                 throw new DAOException("On update modify more then 1 record: " + count);
             }
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
     }
 
     @Override
-    public void delete(T object){
+    public void delete(T object) {
         if (object.getId() == null) throw new DAOException("id is null");
         String sql = getDeleteQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            try {
-                statement.setObject(1, object.getId());
-            } catch (Exception e) {
-                throw new DAOException(e);
-            }
+            statement.setObject(1, object.getId());
             int count = statement.executeUpdate();
             if (count != 1) {
                 throw new DAOException("On delete modify more then 1 record: " + count);
             }
-            statement.close();
-        } catch (Exception e) {
+        } catch (DAOException | SQLException e) {
             throw new DAOException(e);
         }
     }
 
     @Override
-    public Optional<List<T>> getAll(){
-        Optional <List<T>> listOpt;
+    public Optional<List<T>> getAll() {
         String sql = getSelectQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet rs = statement.executeQuery();
-            listOpt = Optional.ofNullable(parseResultSet(rs));
-        } catch (SQLException e) {
+            return Optional.ofNullable(parseResultSet(rs));
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
-        return listOpt;
     }
 }

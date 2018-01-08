@@ -3,7 +3,7 @@ package com.liashenko.app.service.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class BillDto implements Serializable{
+public class BillDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,7 +23,7 @@ public class BillDto implements Serializable{
     private Integer placeNumber;
     private Float ticketPrice;
     private String ticketNumber;
-    private LocalDateTime ticketDate;
+    private String ticketDate;
 
     public BillDto() {
     }
@@ -156,11 +156,11 @@ public class BillDto implements Serializable{
         this.ticketNumber = ticketNumber;
     }
 
-    public LocalDateTime getTicketDate() {
+    public String getTicketDate() {
         return ticketDate;
     }
 
-    public void setTicketDate(LocalDateTime ticketDate) {
+    public void setTicketDate(String ticketDate) {
         this.ticketDate = ticketDate;
     }
 

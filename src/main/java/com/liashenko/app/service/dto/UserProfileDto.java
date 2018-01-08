@@ -3,7 +3,7 @@ package com.liashenko.app.service.dto;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class UserProfileDto implements Serializable{
+public class UserProfileDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;

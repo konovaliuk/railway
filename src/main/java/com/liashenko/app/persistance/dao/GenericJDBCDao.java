@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-public interface GenericJDBCDao <T extends Identified<PK>, PK extends Serializable>  {
+public interface GenericJDBCDao<T extends Identified<PK>, PK extends Serializable> {
 
     String getExistsQuery();
 
@@ -39,21 +39,33 @@ public interface GenericJDBCDao <T extends Identified<PK>, PK extends Serializab
 
     boolean isExists(PK key);
 
-    /** Создает новую запись и соответствующий ей объект */
+    /**
+     * Создает новую запись и соответствующий ей объект
+     */
     void create(T object);
 
-    /** Создает новую запись, соответствующую объекту object */
+    /**
+     * Создает новую запись, соответствующую объекту object
+     */
     Optional<T> persist(T object);
 
-    /** Возвращает объект соответствующий записи с первичным ключом key или null */
+    /**
+     * Возвращает объект соответствующий записи с первичным ключом key или null
+     */
     Optional<T> getByPK(PK key);
 
-    /** Сохраняет состояние объекта group в базе данных */
+    /**
+     * Сохраняет состояние объекта group в базе данных
+     */
     void update(T object);
 
-    /** Удаляет запись об объекте из базы данных */
+    /**
+     * Удаляет запись об объекте из базы данных
+     */
     void delete(T object);
 
-    /** Возвращает список объектов соответствующих всем записям в базе данных */
+    /**
+     * Возвращает список объектов соответствующих всем записям в базе данных
+     */
     Optional<List<T>> getAll();
 }

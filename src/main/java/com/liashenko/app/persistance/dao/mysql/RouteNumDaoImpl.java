@@ -1,9 +1,9 @@
 package com.liashenko.app.persistance.dao.mysql;
 
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
-import com.liashenko.app.persistance.dao.DAOException;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.RouteNumDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.RouteNum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class RouteNumDaoImpl  extends AbstractJDBCDao implements RouteNumDao {
+public class RouteNumDaoImpl extends AbstractJDBCDao implements RouteNumDao {
     private static final Logger classLogger = LogManager.getLogger(RouteNumDaoImpl.class);
 
     public RouteNumDaoImpl(Connection connection, ResourceBundle localeQueries) {
@@ -75,7 +75,7 @@ public class RouteNumDaoImpl  extends AbstractJDBCDao implements RouteNumDao {
     }
 
     @Override
-    public Optional<RouteNum> persist(RouteNum object){
+    public Optional<RouteNum> persist(RouteNum object) {
         return super.persist(object).map(obj -> (RouteNum) obj);
     }
 
@@ -96,22 +96,22 @@ public class RouteNumDaoImpl  extends AbstractJDBCDao implements RouteNumDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-        try {
-            RouteNum routeNum = (RouteNum) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            RouteNum routeNum = (RouteNum) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-        try {
-            RouteNum routeNum = (RouteNum) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            RouteNum routeNum = (RouteNum) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override

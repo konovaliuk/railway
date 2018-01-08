@@ -8,7 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import static com.liashenko.app.controller.utils.Asserts.assertStringIsNullOrEmpty;
 
-public abstract class SessionParamsInitializer {
+public abstract class SessionAttrInitializer {
 
     public static final String USER_ID = "USER_ID";
 
@@ -22,20 +22,20 @@ public abstract class SessionParamsInitializer {
 
     public static final String FROM_STATION_ID_ATTR = "FROM_STATION_ID_ATTR";
     public static final String TO_STATION_ID_ATTR = "TO_STATION_ID_ATTR";
-    public static final String FROM_STATION_NAME_ATTR= "FROM_STATION_NAME_ATTR";
+    public static final String FROM_STATION_NAME_ATTR = "FROM_STATION_NAME_ATTR";
     public static final String TO_STATION_NAME_ATTR = "TO_STATION_NAME_ATTR";
     public static final String DATE_ATTR = "DATE_ATTR";
 
-    public static final String TRAIN_NAME_ATTR="TRAIN_NAME_ATTR";
-    public static final String ROUTE_ID_ATTR="ROUTE_ID_ATTR";
-    public static final String TRAIN_ID_ATTR="TRAIN_ID_ATTR";
+    public static final String TRAIN_NAME_ATTR = "TRAIN_NAME_ATTR";
+    public static final String ROUTE_ID_ATTR = "ROUTE_ID_ATTR";
+    public static final String TRAIN_ID_ATTR = "TRAIN_ID_ATTR";
 
     public static final String VAGON_TYPE_ID_ATTR = "vagonTypeId";
     public static final String FIRST_NAME_ATTR = "firstName";
     public static final String LAST_NAME_ATTR = "lastName";
 
-    public static void newSessionInit(HttpSession session, String userLocale){
-        if (assertStringIsNullOrEmpty(userLocale)){
+    public static void newSessionInit(HttpSession session, String userLocale) {
+        if (assertStringIsNullOrEmpty(userLocale)) {
             newSessionInit(session);
         } else {
             session.setAttribute(USER_LOCALE, userLocale);
@@ -43,12 +43,12 @@ public abstract class SessionParamsInitializer {
         }
     }
 
-    public static void newSessionInit(HttpSession session){
+    public static void newSessionInit(HttpSession session) {
         session.setAttribute(USER_LOCALE, AppProperties.getDefaultLocaleStr());
         defaultAttributesSetter(session);
     }
 
-    private static void defaultAttributesSetter(HttpSession session){
+    private static void defaultAttributesSetter(HttpSession session) {
         session.setAttribute(USER_LAST_PAGE, RequestHelper.INDEX_PAGE_URL_ATTR);
 
         session.setAttribute(USER_CURRENT_ROLE, Role.GUEST_ROLE_ID);

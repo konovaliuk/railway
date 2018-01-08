@@ -3,7 +3,7 @@ package com.liashenko.app.service.dto;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class AdminViewDto implements Serializable{
+public class AdminViewDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long userId;
@@ -30,6 +30,9 @@ public class AdminViewDto implements Serializable{
         this.isBanned = isBanned;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public Long getUserId() {
         return userId;
@@ -61,68 +64,6 @@ public class AdminViewDto implements Serializable{
 
     public Boolean getBanned() {
         return isBanned;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder{
-        private Long userId;
-        private String firstName;
-        private String lastName;
-        private String email;
-        private Long roleId;
-        private String language;
-        private char [] password;
-        private Boolean isBanned;
-
-        private Builder() {
-        }
-
-        public Builder userId(Long userId) {
-            this.userId = userId;
-            return this;
-        }
-
-        public Builder firstName(String firstName) {
-            this.firstName = firstName;
-            return this;
-        }
-
-        public Builder lastName(String lastName) {
-            this.lastName = lastName;
-            return this;
-        }
-
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public Builder roleId(Long roleId) {
-            this.roleId = roleId;
-            return this;
-        }
-
-        public Builder language(String language) {
-            this.language = language;
-            return this;
-        }
-
-        public Builder password(char [] password) {
-            this.password = password;
-            return this;
-        }
-
-        public Builder isBanned(Boolean isBanned) {
-            this.isBanned = isBanned;
-            return this;
-        }
-
-        public AdminViewDto build(){
-            return new AdminViewDto(userId, firstName, lastName, email, roleId, password, isBanned, language);
-        }
     }
 
     @Override
@@ -168,5 +109,63 @@ public class AdminViewDto implements Serializable{
         sb.append(", isBanned=").append(isBanned);
         sb.append('}');
         return sb.toString();
+    }
+
+    public static class Builder {
+        private Long userId;
+        private String firstName;
+        private String lastName;
+        private String email;
+        private Long roleId;
+        private String language;
+        private char[] password;
+        private Boolean isBanned;
+
+        private Builder() {
+        }
+
+        public Builder userId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder roleId(Long roleId) {
+            this.roleId = roleId;
+            return this;
+        }
+
+        public Builder language(String language) {
+            this.language = language;
+            return this;
+        }
+
+        public Builder password(char[] password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder isBanned(Boolean isBanned) {
+            this.isBanned = isBanned;
+            return this;
+        }
+
+        public AdminViewDto build() {
+            return new AdminViewDto(userId, firstName, lastName, email, roleId, password, isBanned, language);
+        }
     }
 }

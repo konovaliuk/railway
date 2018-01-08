@@ -1,4 +1,4 @@
-package com.liashenko.app.persistance.dao;
+package com.liashenko.app.persistance.dao.exceptions;
 
 public class DAOException extends RuntimeException {
 

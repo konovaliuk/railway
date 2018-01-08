@@ -7,28 +7,32 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-
-//is it thread safe?????
 public class LocaleQueryConf {
 
     private static String SQL_QUERIES_PATH = AppProperties.getSqlQueryFileDir()
             + File.separator + AppProperties.getSqlQueryFileName();
 
-    private static LocaleQueryConf instance = null;
-    private final HashMap<String, ResourceBundle > resourceBundles;
+    private static volatile LocaleQueryConf instance;
+    private final HashMap<String, ResourceBundle> resourceBundles;
 
-    private LocaleQueryConf(){
+    private LocaleQueryConf() {
         resourceBundles = new HashMap<>();
     }
 
-    public static LocaleQueryConf getInstance(){
-        if (instance == null) {
-            instance = new LocaleQueryConf();
+    public static LocaleQueryConf getInstance() {
+        LocaleQueryConf localeInstance = instance;
+        if (localeInstance == null){
+            synchronized (LocaleQueryConf.class){
+                localeInstance = instance;
+                if (localeInstance == null) {
+                    instance = localeInstance = new LocaleQueryConf();
+                }
+            }
         }
         return instance;
     }
 
-    public ResourceBundle getLocalQueries(String locale){
+    public synchronized ResourceBundle getLocalQueries(String locale) {
         if (resourceBundles.containsKey(locale)) {
             return resourceBundles.get(locale);
         } else {

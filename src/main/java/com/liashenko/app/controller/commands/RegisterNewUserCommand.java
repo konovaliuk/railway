@@ -5,15 +5,14 @@ import com.liashenko.app.controller.manager.LocaleQueryConf;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
 import com.liashenko.app.controller.utils.MsgSender;
-import com.liashenko.app.controller.utils.SessionParamsInitializer;
+import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.controller.utils.Validator;
-import com.liashenko.app.controller.utils.exceptions.SendMsgException;
-import com.liashenko.app.controller.utils.exceptions.ValidationException;
+import com.liashenko.app.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.persistance.domain.Role;
-import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.UserProfileService;
 import com.liashenko.app.service.dto.AdminViewDto;
 import com.liashenko.app.service.dto.UserProfileDto;
+import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.UserProfileServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,38 +23,35 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
-public class NewUserCommand implements ICommand {
+public class RegisterNewUserCommand implements ICommand {
 
-    private static final Logger classLogger = LogManager.getLogger(NewUserCommand.class);
+    private static final Logger classLogger = LogManager.getLogger(RegisterNewUserCommand.class);
     private static final Gson GSON = new Gson();
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String currentLocaleStr =  HttpParser.getStringSessionAttr(SessionParamsInitializer.USER_LOCALE, request.getSession());
-        ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(currentLocaleStr);
-
-        String jsonData = HttpParser.getJsonDataFromRequest(request);
-        UserProfileService userProfileService = new UserProfileServiceImpl(localeQueries);
-
         try {
+            String currentLocaleStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, request.getSession());
+            ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(currentLocaleStr);
+            UserProfileService userProfileService = new UserProfileServiceImpl(localeQueries);
+            String jsonData = HttpParser.getJsonDataFromRequest(request);
             AdminViewDto adminViewDto = getValidUserDtoFromRequest(jsonData, request, currentLocaleStr);
-                //better to do as a special command
+            //better to do as a special command
             if (!userProfileService.isEmailExists(adminViewDto.getEmail())) {
                 userProfileService.createProfile(adminViewDto);
-                MsgSender.sendJsonMsg(response,"User profile is created", true);
+                MsgSender.sendJsonMsg(response, "User profile is created", true);
             } else {
-                MsgSender.sendJsonMsg(response,"Email already exists", false);
+                MsgSender.sendJsonMsg(response, "Email already exists", false);
             }
-        } catch (ValidationException | SendMsgException | ServiceException e) {
-            classLogger.error(e.getMessage());
-            MsgSender.sendJsonMsg(response,"User profile is not created", false);
+        } catch (ControllerException | ServiceException e) {
+            classLogger.error(e);
+            MsgSender.sendJsonMsg(response, "User profile is not created", false);
         }
-
         return PageManagerConf.getInstance().getProperty(PageManagerConf.EMPTY_RESULT);
     }
 
-    private AdminViewDto getValidUserDtoFromRequest(String jsonData, HttpServletRequest request, String currentLocaleStr){
+    private AdminViewDto getValidUserDtoFromRequest(String jsonData, HttpServletRequest request, String currentLocaleStr) {
         UserProfileDto userProfileDto = GSON.fromJson(jsonData, UserProfileDto.class);
         return AdminViewDto.builder()
                 .firstName(Validator.validateFirstName(userProfileDto.getFirstName()))
@@ -66,7 +62,7 @@ public class NewUserCommand implements ICommand {
                 .language(currentLocaleStr)
                 .isBanned(false)
                 .roleId(Role.USER_ROLE_ID)
-                .language(HttpParser.getStringSessionAttr(SessionParamsInitializer.USER_LOCALE,
+                .language(HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE,
                         request.getSession()))
                 .build();
     }

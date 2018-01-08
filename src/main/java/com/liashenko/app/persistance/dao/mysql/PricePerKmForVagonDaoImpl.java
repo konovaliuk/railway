@@ -1,9 +1,9 @@
 package com.liashenko.app.persistance.dao.mysql;
 
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
-import com.liashenko.app.persistance.dao.DAOException;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.PricePerKmForVagonDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.PricePerKmForVagon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class PricePerKmForVagonDaoImpl  extends AbstractJDBCDao implements PricePerKmForVagonDao {
+public class PricePerKmForVagonDaoImpl extends AbstractJDBCDao implements PricePerKmForVagonDao {
     private static final Logger classLogger = LogManager.getLogger(PricePerKmForVagonDaoImpl.class);
 
     public PricePerKmForVagonDaoImpl(Connection connection, ResourceBundle localeQueries) {
@@ -67,7 +67,7 @@ public class PricePerKmForVagonDaoImpl  extends AbstractJDBCDao implements Price
                 pricePerKmForVagon.setVagonTypeId(rs.getInt("vagon_type_id"));
                 list.add(pricePerKmForVagon);
             }
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);
             throw new DAOException(e);
         }
@@ -80,7 +80,7 @@ public class PricePerKmForVagonDaoImpl  extends AbstractJDBCDao implements Price
     }
 
     @Override
-    public Optional<PricePerKmForVagon> persist(PricePerKmForVagon object){
+    public Optional<PricePerKmForVagon> persist(PricePerKmForVagon object) {
         return super.persist(object).map(obj -> (PricePerKmForVagon) obj);
     }
 
@@ -132,7 +132,8 @@ public class PricePerKmForVagonDaoImpl  extends AbstractJDBCDao implements Price
             statement.setInt(1, vagonTypeId);
             ResultSet rs = statement.executeQuery();
             priceList = parseResultSet(rs);
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
         if (priceList == null || priceList.size() == 0) {
@@ -140,6 +141,7 @@ public class PricePerKmForVagonDaoImpl  extends AbstractJDBCDao implements Price
         } else if (priceList.size() == 1) {
             return Optional.ofNullable(priceList.get(0));
         } else {
+            classLogger.error("Received more than one record.");
             throw new DAOException("Received more than one record.");
         }
     }

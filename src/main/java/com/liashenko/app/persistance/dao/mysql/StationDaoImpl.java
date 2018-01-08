@@ -1,6 +1,9 @@
 package com.liashenko.app.persistance.dao.mysql;
 
-import com.liashenko.app.persistance.dao.*;
+import com.liashenko.app.persistance.dao.AbstractJDBCDao;
+import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.dao.StationDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Station;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,7 +81,7 @@ public class StationDaoImpl extends AbstractJDBCDao implements StationDao {
     }
 
     @Override
-    public Optional<Station> persist(Station object){
+    public Optional<Station> persist(Station object) {
         return super.persist(object).map(obj -> (Station) obj);
     }
 
@@ -99,22 +102,22 @@ public class StationDaoImpl extends AbstractJDBCDao implements StationDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-        try {
-            Station station = (Station) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            Station station = (Station) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-        try {
-            Station user = (Station) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            Station user = (Station) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
@@ -122,14 +125,15 @@ public class StationDaoImpl extends AbstractJDBCDao implements StationDao {
         return super.getAll().map(list -> (List<Station>) list);
     }
 
-    public Optional<List<Station>> getStationsLike(String likePattern){
+    public Optional<List<Station>> getStationsLike(String likePattern) {
         Optional<List<Station>> listOpt;
         String sql = getStationsLikeQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, likePattern);
             ResultSet rs = statement.executeQuery();
             listOpt = Optional.ofNullable(parseResultSet(rs));
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
         return listOpt;

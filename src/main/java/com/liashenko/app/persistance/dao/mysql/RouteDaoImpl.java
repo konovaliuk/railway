@@ -1,9 +1,9 @@
 package com.liashenko.app.persistance.dao.mysql;
 
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
-import com.liashenko.app.persistance.dao.DAOException;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.RouteDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Route;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,6 +49,7 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
     public String getFirstTerminalStationOnRouteQuery() {
         return localeQueries.getString("select_first_terminal_station_on_route");
     }
+
     public String getLastTerminalStationOnRouteQuery() {
         return localeQueries.getString("select_last_terminal_station_on_route");
     }
@@ -75,7 +76,6 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
             while (rs.next()) {
                 Route route = new Route();
                 route.setId(rs.getLong("id"));
-                route.setStationsOrder(rs.getLong("stations_order"));
                 route.setStationId(rs.getLong("station_id"));
                 route.setRouteNumberId(rs.getLong("rout_number_id"));
                 route.setDistance(rs.getFloat("distance"));
@@ -94,7 +94,7 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
     }
 
     @Override
-    public Optional<Route> persist(Route object){
+    public Optional<Route> persist(Route object) {
         return super.persist(object).map(obj -> (Route) obj);
     }
 
@@ -115,22 +115,10 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-        try {
-            Route route = (Route) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-            throw new DAOException(e);
-        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-        try {
-            Route route = (Route) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-            throw new DAOException(e);
-        }
     }
 
     @Override
@@ -140,21 +128,18 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
 
     @Override
     public Optional<List<Route>> getRoutesByDepartureAndArrivalStationsId(Long departureStationId, Long arrivalStationId) {
-        Optional <List<Route>> listOpt = Optional.empty();
         String sql = getRoutesByDepartureAndArrivalQuery();
-
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, departureStationId);
             statement.setLong(2, arrivalStationId);
             ResultSet rs = statement.executeQuery();
-            listOpt = Optional.ofNullable(parseResultSet(rs));
+            return Optional.ofNullable(parseResultSet(rs));
         } catch (SQLException e) {
             throw new DAOException(e);
         }
-        return listOpt;
     }
 
-    public Optional<Route> getStationOnRoute(Long stationId, Long routeId){
+    public Optional<Route> getStationOnRoute(Long stationId, Long routeId) {
         List<Route> routeList;
         String sql = getStationOnRouteQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -162,19 +147,23 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
             statement.setLong(2, routeId);
             ResultSet rs = statement.executeQuery();
             routeList = parseResultSet(rs);
-        } catch (SQLException e) {
+
+            if (routeList == null || routeList.size() == 0) {
+                return Optional.empty();
+            } else if (routeList.size() == 1) {
+                return Optional.ofNullable(routeList.get(0));
+            } else {
+                throw new DAOException("Received more than one record.");
+            }
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
-        if (routeList == null || routeList.size() == 0) {
-            return Optional.empty();
-        } else if (routeList.size() == 1) {
-            return Optional.ofNullable(routeList.get(0));
-        } else {
-            throw new DAOException("Received more than one record.");
-        }
+
+
     }
 
-    private Optional<Route> getStationFromRoute(Connection conn, String sql, Long routeId){
+    private Optional<Route> getStationFromRoute(Connection conn, String sql, Long routeId) {
         List<Route> routeList;
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, routeId);

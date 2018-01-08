@@ -8,6 +8,14 @@ public class AutocompleteDto implements Serializable {
     private Long id;
     private String autocompleteWord;
 
+    public AutocompleteDto() {
+    }
+
+    public AutocompleteDto(Long id, String autocompleteWord) {
+        this.id = id;
+        this.autocompleteWord = autocompleteWord;
+    }
+
     public Long getId() {
         return id;
     }
@@ -21,14 +29,6 @@ public class AutocompleteDto implements Serializable {
     }
 
     public void setAutocompleteWord(String autocompleteWord) {
-        this.autocompleteWord = autocompleteWord;
-    }
-
-    public AutocompleteDto() {
-    }
-
-    public AutocompleteDto(Long id, String autocompleteWord) {
-        this.id = id;
         this.autocompleteWord = autocompleteWord;
     }
 

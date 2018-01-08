@@ -2,7 +2,7 @@ package com.liashenko.app.controller.commands;
 
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
-import com.liashenko.app.controller.utils.SessionParamsInitializer;
+import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,14 +18,13 @@ public class SignOutCommand implements ICommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(true);
-        if (!session.isNew()){
-            String userLocale =  HttpParser.getStringSessionAttr(SessionParamsInitializer.USER_LOCALE, session);
+        if (!session.isNew()) {
+            String userLocale = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, session);
             session.invalidate();
-            SessionParamsInitializer.newSessionInit(request.getSession(true), userLocale);
+            SessionAttrInitializer.newSessionInit(session, userLocale);
         } else {
-            SessionParamsInitializer.newSessionInit(session);
+            SessionAttrInitializer.newSessionInit(session);
         }
-
         return PageManagerConf.getInstance().getProperty(PageManagerConf.INDEX_PAGE_PATH);
     }
 }

@@ -2,7 +2,7 @@
 
 
 <%--<nav class="navbar navbar-inverse fixed-bottom">--%>
-    <%--<a class="navbar-brand" href="#"></a>--%>
+<%--<a class="navbar-brand" href="#"></a>--%>
 <%--</nav>--%>
 
 <%--<div class="clearfix"></div>--%>

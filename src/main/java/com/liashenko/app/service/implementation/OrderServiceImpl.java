@@ -1,19 +1,17 @@
 package com.liashenko.app.service.implementation;
 
 import com.liashenko.app.persistance.dao.*;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.dao.mysql.MySQLDaoFactory;
 import com.liashenko.app.persistance.domain.*;
 import com.liashenko.app.service.OrderService;
+import com.liashenko.app.service.data_source.DbConnectService;
 import com.liashenko.app.service.dto.FullRouteDto;
 import com.liashenko.app.service.dto.PriceForVagonDto;
 import com.liashenko.app.service.exceptions.ServiceException;
-import com.liashenko.app.service.storage_connection.DBConnectService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,158 +23,150 @@ public class OrderServiceImpl implements OrderService {
     private static final Logger classLogger = LogManager.getLogger(OrderServiceImpl.class);
 
     //make it in AppSettings
-    private static final int SIGNS_AFTER_ZERO = 2;
     private static final float DEFAULT_ROUTE_RATE = 1.0F;
     private static final float DEFAULT_PRICE_FOR_VAGON_PER_KM = 1.0F;
 
-    private DaoFactory daoFactory;
-    private DBConnectService DBConnectService;
+    private static final DbConnectService dbConnectService = DbConnectService.getInstance();
+    private static final DaoFactory daoFactory = MySQLDaoFactory.getInstance();
+
     private ResourceBundle localeQueries;
 
     public OrderServiceImpl(ResourceBundle localeQueries) {
         this.localeQueries = localeQueries;
-        this.DBConnectService = new DBConnectService();
-        this.daoFactory = new MySQLDaoFactory();
     }
 
     @Override
     public Optional<FullRouteDto> getFullTrainRoute(Long routeId) {
         FullRouteDto fullRouteDto = new FullRouteDto();
-        Optional<Connection> connectionOpt = DBConnectService.getConnection();
-        Connection connection = connectionOpt.orElseThrow(() -> new ServiceException("Operation wasn't successful"));
+        Connection conn = dbConnectService.getConnection();
         try {
-//            connection.setReadOnly(true);
-            Optional<GenericJDBCDao> routeDaoOpt = daoFactory.getDao(connection, Route.class, localeQueries);
-            RouteDao routeDao = (RouteDao) routeDaoOpt.orElseThrow(ServiceException::new);
+//            conn.setReadOnly(true);
+            Optional<GenericJDBCDao> routeDaoOpt = daoFactory.getDao(conn, Route.class, localeQueries);
+            RouteDao routeDao = (RouteDao) routeDaoOpt
+                    .orElseThrow(() -> new ServiceException("RoutDao is null"));
 
-            Optional<Route> routeFirstStationOpt = routeDao.getFirstTerminalStationOnRoute(routeId);
-            Optional<Route> routeLastStationOpt = routeDao.getLastTerminalStationOnRoute(routeId);
-            Long routeFirstStationId = routeFirstStationOpt.orElseThrow(ServiceException::new).getStationId();
-            Long routeLastStationId = routeLastStationOpt.orElseThrow(ServiceException::new).getStationId();
+            Long routeFirstStationId = routeDao.getFirstTerminalStationOnRoute(routeId)
+                    .orElseThrow(() -> new ServiceException("Couldn't find first station id for the route " + routeId))
+                    .getStationId();
 
-            Optional<GenericJDBCDao> stationDaoOpt = daoFactory.getDao(connection, Station.class, localeQueries);
-            StationDao stationDao = (StationDao) stationDaoOpt.orElseThrow(ServiceException::new);
+            Long routeLastStationId = routeDao.getLastTerminalStationOnRoute(routeId)
+                    .orElseThrow(() -> new ServiceException("Couldn't find last station id for the route " + routeId))
+                    .getStationId();
 
-            stationDao.getByPK(routeFirstStationId).ifPresent(station
-                    -> fullRouteDto.setFirstTerminalStation(station.getCity()));
-
-            stationDao.getByPK(routeLastStationId).ifPresent(station
-                    -> fullRouteDto.setLastTerminalStation(station.getCity()));
+            setTerminalStations(conn, routeFirstStationId, routeLastStationId, fullRouteDto);
         } catch (ServiceException | DAOException e) {
-            classLogger.error("Operation wasn't successful", e);
-            throw new ServiceException("Operation wasn't successful");
+            classLogger.error(e);
+            throw new ServiceException(e);
         } finally {
-            DBConnectService.close(connection);
+            DbConnectService.close(conn);
         }
         return Optional.of(fullRouteDto);
     }
 
+    private void setTerminalStations(Connection connection, Long routeFirstStationId, Long routeLastStationId, FullRouteDto fullRouteDto) {
+
+        Optional<GenericJDBCDao> stationDaoOpt = daoFactory.getDao(connection, Station.class, localeQueries);
+        StationDao stationDao = (StationDao) stationDaoOpt
+                .orElseThrow(() -> new ServiceException("StationDao is null"));
+
+        stationDao.getByPK(routeFirstStationId).ifPresent(station
+                -> fullRouteDto.setFirstTerminalStation(station.getCity()));
+
+        stationDao.getByPK(routeLastStationId).ifPresent(station
+                -> fullRouteDto.setLastTerminalStation(station.getCity()));
+    }
+
     @Override
-    public Optional<List<PriceForVagonDto>> getPrices(Long fromStationId, Long toStationId, Long routeId) {
+    public Optional<List<PriceForVagonDto>> getPricesForVagons(Long fromStationId, Long toStationId, Long routeId) {
         List<PriceForVagonDto> pricesForVagonList = new ArrayList<>();
-
-        Optional<Connection> connectionOpt = DBConnectService.getConnection();
-        Connection connection = connectionOpt.orElseThrow(() -> new ServiceException("Operation wasn't successful"));
+        Connection conn = dbConnectService.getConnection();
         try {
-            Optional<GenericJDBCDao> routeDaoOpt = daoFactory.getDao(connection, Route.class, localeQueries);
-            RouteDao routeDao = (RouteDao) routeDaoOpt.orElseThrow(ServiceException::new);
+            Optional<GenericJDBCDao> routeDaoOpt = daoFactory.getDao(conn, Route.class, localeQueries);
+            RouteDao routeDao = (RouteDao) routeDaoOpt.orElseThrow(() -> new ServiceException("RouteDao is null"));
 
-            Optional<Route> fromStation = routeDao.getStationOnRoute(fromStationId, routeId);
-            Optional<Route> toStation = routeDao.getStationOnRoute(toStationId, routeId);
+            Float distance = CalculatorUtil.calculateDistanceFromStationToStationOnTheRoute(routeDao, routeId,
+                    fromStationId, toStationId);
 
-            Float distance;
-            if (fromStation.isPresent() && toStation.isPresent()){
-                distance = toStation.get().getDistance() - fromStation.get().getDistance();
-                if (distance <= 0){
-                    throw new ServiceException();
-                }
-            } else {
-                throw new ServiceException();
-            }
+            Optional<GenericJDBCDao> routeRateDaoOpt = daoFactory.getDao(conn, RouteRate.class, localeQueries);
+            RouteRateDao routeRateDao = (RouteRateDao) routeRateDaoOpt.orElseThrow(() -> new ServiceException("RouteRateDao is null"));
 
-            Optional<GenericJDBCDao> routeRateDaoOpt = daoFactory.getDao(connection, RouteRate.class, localeQueries);
-            RouteRateDao routeRateDao = (RouteRateDao) routeRateDaoOpt.orElseThrow(ServiceException::new);
-
-            Optional<RouteRate> routeRateOpt =  routeRateDao.getByRouteId(routeId);
+            Optional<RouteRate> routeRateOpt = routeRateDao.getByRouteId(routeId);
             Float routeRateFloat = routeRateOpt.isPresent() ? routeRateOpt.get().getRate() : DEFAULT_ROUTE_RATE;
 
-            Optional<GenericJDBCDao> vagonTypeDaoOpt = daoFactory.getDao(connection, VagonType.class, localeQueries);
-            VagonTypeDao vagonTypeDao = (VagonTypeDao) vagonTypeDaoOpt.orElseThrow(ServiceException::new);
+            Optional<GenericJDBCDao> vagonTypeDaoOpt = daoFactory.getDao(conn, VagonType.class, localeQueries);
+            VagonTypeDao vagonTypeDao = (VagonTypeDao) vagonTypeDaoOpt.orElseThrow(() -> new ServiceException("VagonTypeDao is null"));
 
-            Optional<List<VagonType>> vagonTypeList = vagonTypeDao.getAll();
-//            MathContext mathCtxt = new MathContext(2, RoundingMode.HALF_UP);
-            vagonTypeList.ifPresent(vagonTypes -> vagonTypes.forEach(vagonType -> {
-                PriceForVagonDto priceForVagonDto = new PriceForVagonDto();
-
-                Optional<GenericJDBCDao> pricePerKmForVagonDaoOpt = daoFactory.getDao(connection, PricePerKmForVagon.class, localeQueries);
-                PricePerKmForVagonDao pricePerKmForVagonDao = (PricePerKmForVagonDao) pricePerKmForVagonDaoOpt.orElseThrow(ServiceException::new);
-
-                Optional<PricePerKmForVagon> pricePerKmForVagonOpt = pricePerKmForVagonDao.getPricePerKmForVagon(vagonType.getId());
-
-                Double pricePerKmForVagonDouble = pricePerKmForVagonOpt.isPresent() ? pricePerKmForVagonOpt.get().getPrice() : DEFAULT_PRICE_FOR_VAGON_PER_KM;
-
-                Float price = BigDecimal.valueOf(routeRateFloat)
-                        .multiply(BigDecimal.valueOf(distance))
-                        .multiply(BigDecimal.valueOf(pricePerKmForVagonDouble))
-                        .divide(BigDecimal.valueOf(vagonType.getPlacesCount()), SIGNS_AFTER_ZERO, BigDecimal.ROUND_HALF_UP)
-//                        .round(mathCtxt)
-                        .floatValue();
-
-                priceForVagonDto.setVagonTypeId(vagonType.getId());
-                priceForVagonDto.setVagonTypeName(vagonType.getTypeName());
-                priceForVagonDto.setDistance(distance);
-                priceForVagonDto.setTicketPrice(price);
-                pricesForVagonList.add(priceForVagonDto);
-            }));
+            Optional<List<VagonType>> vagonTypeListOpt = vagonTypeDao.getAll();
+            vagonTypeListOpt.ifPresent(vagonTypes
+                    -> vagonTypes.forEach(vagonType
+                    -> calculateAndFillListOfPricesForVagons(conn, pricesForVagonList, vagonType,
+                    distance, routeRateFloat)));
 
         } catch (ServiceException | DAOException e) {
-            classLogger.error("Operation wasn't successful", e);
-            throw new ServiceException("Operation wasn't successful");
+            classLogger.error(e);
+            throw new ServiceException(e);
         } finally {
-            DBConnectService.close(connection);
+            DbConnectService.close(conn);
         }
         return Optional.of(pricesForVagonList);
     }
 
+    private void calculateAndFillListOfPricesForVagons(Connection connection, List<PriceForVagonDto> pricesForVagonList,
+                                                       VagonType vagonType, Float distance, Float routeRateFloat) {
+        PriceForVagonDto priceForVagonDto = new PriceForVagonDto();
+
+        Optional<GenericJDBCDao> pricePerKmForVagonDaoOpt = daoFactory.getDao(connection, PricePerKmForVagon.class, localeQueries);
+        PricePerKmForVagonDao pricePerKmForVagonDao = (PricePerKmForVagonDao) pricePerKmForVagonDaoOpt
+                .orElseThrow(() -> new ServiceException("PricePerKmForVagonDao is null"));
+
+        Optional<PricePerKmForVagon> pricePerKmForVagonOpt = pricePerKmForVagonDao.getPricePerKmForVagon(vagonType.getId());
+
+        Double pricePerKmForVagonDouble = pricePerKmForVagonOpt.isPresent()
+                ? pricePerKmForVagonOpt.get().getPrice()
+                : DEFAULT_PRICE_FOR_VAGON_PER_KM;
+
+        Float price = CalculatorUtil.calculateTicketPrice(routeRateFloat, distance, pricePerKmForVagonDouble, vagonType.getPlacesCount());
+
+        priceForVagonDto.setVagonTypeId(vagonType.getId());
+        priceForVagonDto.setVagonTypeName(vagonType.getTypeName());
+        priceForVagonDto.setDistance(distance);
+        priceForVagonDto.setTicketPrice(price);
+        pricesForVagonList.add(priceForVagonDto);
+    }
+
     @Override
     public Optional<String> getTrainNameById(Long trainId) {
-        Optional<Connection> connectionOpt = DBConnectService.getConnection();
-        Connection connection = connectionOpt.orElseThrow(() -> new ServiceException("Operation wasn't successful"));
+        Connection conn = dbConnectService.getConnection();
         try {
-//            connection.setReadOnly(true);
-            Optional<GenericJDBCDao> trainDaoOpt = daoFactory.getDao(connection, Train.class, localeQueries);
-            TrainDao trainDao = (TrainDao) trainDaoOpt.orElseThrow(ServiceException::new);
+
+//            conn.setReadOnly(true);
+            Optional<GenericJDBCDao> trainDaoOpt = daoFactory.getDao(conn, Train.class, localeQueries);
+            TrainDao trainDao = (TrainDao) trainDaoOpt.orElseThrow(() -> new ServiceException("TrainDao is null"));
             Optional<Train> trainOpt = trainDao.getByPK(trainId);
-            if (trainOpt.isPresent()){
-                return Optional.ofNullable(trainOpt.get().getNumber());
-            }
+            return trainOpt.isPresent() ? Optional.ofNullable(trainOpt.get().getNumber()) : Optional.empty();
         } catch (ServiceException | DAOException e) {
-            classLogger.error("Operation wasn't successful", e);
-            throw new ServiceException("Operation wasn't successful");
+            classLogger.error(e);
+            throw new ServiceException(e);
         } finally {
-            DBConnectService.close(connection);
+            DbConnectService.close(conn);
         }
-        return Optional.empty();
     }
 
     @Override
     public Optional<String> getStationNameById(Long stationId) {
-        Optional<Connection> connectionOpt = DBConnectService.getConnection();
-        Connection connection = connectionOpt.orElseThrow(() -> new ServiceException("Operation wasn't successful"));
+        Connection conn = dbConnectService.getConnection();
         try {
-//            connection.setReadOnly(true);
-            Optional<GenericJDBCDao> stationDaoOpt = daoFactory.getDao(connection, Station.class, localeQueries);
-            StationDao stationDao = (StationDao) stationDaoOpt.orElseThrow(ServiceException::new);
+//            conn.setReadOnly(true);
+            Optional<GenericJDBCDao> stationDaoOpt = daoFactory.getDao(conn, Station.class, localeQueries);
+            StationDao stationDao = (StationDao) stationDaoOpt
+                    .orElseThrow(() -> new ServiceException("StationDao is null"));
             Optional<Station> stationOpt = stationDao.getByPK(stationId);
-            if (stationOpt.isPresent()){
-                return Optional.ofNullable(stationOpt.get().getName());
-            }
+            return stationOpt.isPresent() ? Optional.ofNullable(stationOpt.get().getName()) : Optional.empty();
         } catch (ServiceException | DAOException e) {
-            classLogger.error("Operation wasn't successful", e);
-            throw new ServiceException("Operation wasn't successful");
+            classLogger.error(e);
+            throw new ServiceException(e);
         } finally {
-            DBConnectService.close(connection);
+            DbConnectService.close(conn);
         }
-        return Optional.empty();
     }
 }

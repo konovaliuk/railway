@@ -10,18 +10,18 @@ import javax.servlet.http.HttpSessionListener;
 
 @WebListener
 public class SessionListener implements HttpSessionListener {
-        private static final Logger classLogger = LogManager.getLogger(SessionListener.class);
+    private static final Logger classLogger = LogManager.getLogger(SessionListener.class);
 
-        public SessionListener(){
-        }
+    public SessionListener() {
+    }
 
-        public void sessionCreated(HttpSessionEvent e) {
+    public void sessionCreated(HttpSessionEvent e) {
 
-            int sessionInterval = 0;
-            try {
-                sessionInterval =  Integer.valueOf(AppProperties.getSessionInterval());
-                e.getSession().setMaxInactiveInterval(sessionInterval * 60); //in seconds
-            } catch (NumberFormatException ignore) {
-            }
+        int sessionInterval = 0;
+        try {
+            sessionInterval = Integer.valueOf(AppProperties.getSessionInterval());
+            e.getSession().setMaxInactiveInterval(sessionInterval * 60); //in seconds
+        } catch (NumberFormatException ignore) {
         }
     }
+}

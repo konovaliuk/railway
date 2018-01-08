@@ -2,13 +2,12 @@ package com.liashenko.app.persistance.dao.mysql;
 
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
 import com.liashenko.app.persistance.dao.Identified;
-import com.liashenko.app.persistance.dao.DAOException;
 import com.liashenko.app.persistance.dao.RoleDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,7 +56,7 @@ public class RoleDaoImpl extends AbstractJDBCDao implements RoleDao {
         if (rs == null) return Collections.emptyList();
         List<Role> list = new ArrayList<>();
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 Role role = new Role();
                 role.setId(rs.getLong("id"));
                 role.setName(rs.getString("name" + localeQueries.getString("locale_suffix")));
@@ -81,43 +80,43 @@ public class RoleDaoImpl extends AbstractJDBCDao implements RoleDao {
     }
 
     @Override
-    public void update(Role object){
+    public void update(Role object) {
         super.update(object);
     }
 
     @Override
-    public void delete(Role object){
+    public void delete(Role object) {
         super.delete(object);
     }
 
     @Override
-    public Optional<Role> getByPK(Long key){
+    public Optional<Role> getByPK(Long key) {
         return super.getByPK(key).map(obj -> (Role) obj);
     }
 
     @Override
 //  INSERT INTO railway.role (name) VALUES (?)
-    protected void prepareStatementForInsert(PreparedStatement statement, Identified object){
-        try {
-            Role role = (Role) object;
-            statement.setString(1, role.getName());
-        } catch (ClassCastException | SQLException e) {
-            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-            throw new DAOException(e);
-        }
+    protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
+//        try {
+//            Role role = (Role) object;
+//            statement.setString(1, role.getName());
+//        } catch (ClassCastException | SQLException e) {
+//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
 //    UPDATE railway.password SET name=? WHERE id= ?
-    protected void prepareStatementForUpdate(PreparedStatement statement, Identified object){
-        try {
-            Role role = (Role) object;
-            statement.setString(1, role.getName());
-            statement.setLong(2, role.getId());
-        } catch (ClassCastException | SQLException e) {
-            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-            throw new DAOException(e);
-        }
+    protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
+//        try {
+//            Role role = (Role) object;
+//            statement.setString(1, role.getName());
+//            statement.setLong(2, role.getId());
+//        } catch (ClassCastException | SQLException e) {
+//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override

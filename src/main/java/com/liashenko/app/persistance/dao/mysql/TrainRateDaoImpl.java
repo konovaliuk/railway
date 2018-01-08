@@ -1,9 +1,9 @@
 package com.liashenko.app.persistance.dao.mysql;
 
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
-import com.liashenko.app.persistance.dao.DAOException;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.TrainRateDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.TrainRate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class TrainRateDaoImpl  extends AbstractJDBCDao implements TrainRateDao {
+public class TrainRateDaoImpl extends AbstractJDBCDao implements TrainRateDao {
     private static final Logger classLogger = LogManager.getLogger(TrainRateDaoImpl.class);
 
     public TrainRateDaoImpl(Connection connection, ResourceBundle localeQueries) {
@@ -77,7 +77,7 @@ public class TrainRateDaoImpl  extends AbstractJDBCDao implements TrainRateDao {
     }
 
     @Override
-    public Optional<TrainRate> persist(TrainRate object){
+    public Optional<TrainRate> persist(TrainRate object) {
         return super.persist(object).map(obj -> (TrainRate) obj);
     }
 
@@ -98,22 +98,22 @@ public class TrainRateDaoImpl  extends AbstractJDBCDao implements TrainRateDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-        try {
-            TrainRate trainRate = (TrainRate) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            TrainRate trainRate = (TrainRate) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-        try {
-            TrainRate trainRate = (TrainRate) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            TrainRate trainRate = (TrainRate) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override

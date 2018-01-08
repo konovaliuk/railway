@@ -1,9 +1,9 @@
 package com.liashenko.app.persistance.dao.mysql;
 
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
-import com.liashenko.app.persistance.dao.DAOException;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.VagonTypeDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.VagonType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class VagonTypeDaoImpl  extends AbstractJDBCDao implements VagonTypeDao {
+public class VagonTypeDaoImpl extends AbstractJDBCDao implements VagonTypeDao {
     private static final Logger classLogger = LogManager.getLogger(VagonTypeDaoImpl.class);
 
     public VagonTypeDaoImpl(Connection connection, ResourceBundle localeQueries) {
@@ -76,7 +76,7 @@ public class VagonTypeDaoImpl  extends AbstractJDBCDao implements VagonTypeDao {
     }
 
     @Override
-    public Optional<VagonType> persist(VagonType object){
+    public Optional<VagonType> persist(VagonType object) {
         return super.persist(object).map(obj -> (VagonType) obj);
     }
 
@@ -97,22 +97,22 @@ public class VagonTypeDaoImpl  extends AbstractJDBCDao implements VagonTypeDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-        try {
-            VagonType vagonType = (VagonType) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            VagonType vagonType = (VagonType) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-        try {
-            VagonType vagonType = (VagonType) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            VagonType vagonType = (VagonType) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override

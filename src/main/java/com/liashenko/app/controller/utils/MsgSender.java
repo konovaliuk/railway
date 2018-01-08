@@ -19,26 +19,26 @@ public abstract class MsgSender {
     private static final Gson GSON = new Gson();
 
 
-    public static void sendJsonMsg(HttpServletResponse resp, List<AutocompleteDto> advices){
+    public static void sendJsonMsg(HttpServletResponse resp, List<AutocompleteDto> advices) {
         resp.setHeader("Content-Type", "application/octet-stream;charset=UTF-8");
         try {
             PrintWriter out = resp.getWriter();
             out.println(jsonResponse(advices));
             out.close();
-        } catch (IOException ex){
+        } catch (IOException ex) {
             classLogger.error(ex);
             throw new SendMsgException(ex.getMessage());
         }
     }
 
 
-    public static void sendJsonMsg(HttpServletResponse resp, String message, boolean resultFlag){
+    public static void sendJsonMsg(HttpServletResponse resp, String message, boolean resultFlag) {
         resp.setHeader("Content-Type", "application/octet-stream;");
         try {
             PrintWriter out = resp.getWriter();
             out.println(jsonResponse(message, resultFlag));
             out.close();
-        } catch (IOException ex){
+        } catch (IOException ex) {
             classLogger.error(ex);
             throw new SendMsgException(ex.getMessage());
         }
@@ -50,7 +50,7 @@ public abstract class MsgSender {
             PrintWriter out = resp.getWriter();
             out.println(jsonResponse(message, message2, resultFlag));
             out.close();
-        } catch (IOException ex){
+        } catch (IOException ex) {
             classLogger.error(ex);
             throw new SendMsgException(ex.getMessage());
         }

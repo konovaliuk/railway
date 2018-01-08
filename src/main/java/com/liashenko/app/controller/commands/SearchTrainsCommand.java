@@ -1,13 +1,11 @@
 package com.liashenko.app.controller.commands;
 
 import com.liashenko.app.controller.manager.LocaleQueryConf;
-import com.liashenko.app.controller.manager.MessageManagerConf;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
-import com.liashenko.app.controller.utils.SessionParamsInitializer;
+import com.liashenko.app.controller.utils.SessionAttrInitializer;
+import com.liashenko.app.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.controller.utils.exceptions.HttpParserException;
-import com.liashenko.app.controller.utils.exceptions.SendMsgException;
-import com.liashenko.app.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.service.TrainSearchingService;
 import com.liashenko.app.service.dto.TrainDto;
 import com.liashenko.app.service.exceptions.ServiceException;
@@ -25,11 +23,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static com.liashenko.app.controller.commands.UsersCommand.ERROR_MSG_ATTR;
-
 public class SearchTrainsCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(SearchTrainsCommand.class);
-//    private static final Gson GSON = new Gson();
 
     private static final String FROM_ID_ATTR = "fromId";
     private static final String TO_ID_ATTR = "toId";
@@ -41,37 +36,34 @@ public class SearchTrainsCommand implements ICommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String page;
+        HttpSession session = request.getSession(true);
 
-        String currentLocaleStr =  HttpParser.getStringSessionAttr(SessionParamsInitializer.USER_LOCALE, request.getSession());
-        ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(currentLocaleStr);
-        TrainSearchingService trainSearchingService = new TrainSearchingServiceImpl(localeQueries);
-        HttpSession session = request.getSession();
         try {
-            Long fromStationId = HttpParser.getLongRequestParam(FROM_ID_ATTR, request).orElseThrow(HttpParserException::new);
-            Long toStationId = HttpParser.getLongRequestParam(TO_ID_ATTR, request).orElseThrow(HttpParserException::new);
-//            Long fromStationId = 1L;
-//            Long toStationId = 14L;
+            String currentLocaleStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, session);
+            Long fromStationId = HttpParser.getLongRequestParam(FROM_ID_ATTR, request).orElse(0L);
+            Long toStationId = HttpParser.getLongRequestParam(TO_ID_ATTR, request).orElse(0L);
+            String fromStationName = HttpParser.getStringRequestParam(FROM_ATTR, request);
+            String toStationName = HttpParser.getStringRequestParam(TO_ATTR, request);
 
-            String fromStationName = HttpParser.getStringRequestParam(FROM_ATTR, request);//
-            String toStationName = HttpParser.getStringRequestParam(TO_ATTR, request);//
-            LocalDate dateTime = HttpParser.getDateTimeRequestParam(DATE_ATTR, request).orElseThrow(HttpParserException::new);
+            LocalDate dateTime = HttpParser.getDateTimeRequestParam(DATE_ATTR, request).orElseThrow(HttpParserException::new);//???
 
+            ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(currentLocaleStr);
+            TrainSearchingService trainSearchingService = new TrainSearchingServiceImpl(localeQueries);
             Optional<List<TrainDto>> trainsOpt = trainSearchingService.getTrainsForTheRouteOnDate(fromStationId,
-                    fromStationName,  toStationId, toStationName, dateTime);
+                    fromStationName, toStationId, toStationName, dateTime);
 
             trainsOpt.ifPresent(trainDtos -> request.setAttribute(TRAINS_ATTR, trainDtos));
 
-            session.setAttribute(SessionParamsInitializer.FROM_STATION_ID_ATTR, fromStationId);
-            session.setAttribute(SessionParamsInitializer.FROM_STATION_NAME_ATTR, fromStationName);
-            session.setAttribute(SessionParamsInitializer.TO_STATION_ID_ATTR, toStationId);
-            session.setAttribute(SessionParamsInitializer.TO_STATION_NAME_ATTR, toStationName);
-            session.setAttribute(SessionParamsInitializer.DATE_ATTR, HttpParser.convertDateToString(dateTime));
+            session.setAttribute(SessionAttrInitializer.FROM_STATION_ID_ATTR, fromStationId);
+            session.setAttribute(SessionAttrInitializer.FROM_STATION_NAME_ATTR, fromStationName);
+            session.setAttribute(SessionAttrInitializer.TO_STATION_ID_ATTR, toStationId);
+            session.setAttribute(SessionAttrInitializer.TO_STATION_NAME_ATTR, toStationName);
+
+            session.setAttribute(SessionAttrInitializer.DATE_ATTR, HttpParser.convertDateToHumanReadableString(dateTime));//??
 
             page = PageManagerConf.getInstance().getProperty(PageManagerConf.INDEX_PAGE_PATH);
-        } catch (ValidationException | SendMsgException | ServiceException e) {
-            classLogger.error(e.getMessage());
-            request.setAttribute(ERROR_MSG_ATTR,
-                    MessageManagerConf.getInstance().getProperty(MessageManagerConf.LOGIN_ERROR_MESSAGE));
+        } catch (ControllerException | ServiceException e) {
+            classLogger.error(e);
             page = PageManagerConf.getInstance().getProperty(PageManagerConf.ERROR_PAGE_PATH);
         }
         return page;

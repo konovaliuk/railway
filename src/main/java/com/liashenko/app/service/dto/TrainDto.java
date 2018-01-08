@@ -2,7 +2,7 @@ package com.liashenko.app.service.dto;
 
 import java.io.Serializable;
 
-public class TrainDto implements Serializable{
+public class TrainDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -17,19 +17,6 @@ public class TrainDto implements Serializable{
     private String arrivalDate;
 
     public TrainDto() {
-    }
-
-    public TrainDto(Long stationFromId, Long stationToId, Long trainId, Long routeId, String fromStation,
-                    String toStation, String trainNumber, String leavingDate, String arrivalDate) {
-        this.stationFromId = stationFromId;
-        this.stationToId = stationToId;
-        this.trainId = trainId;
-        this.routeId = routeId;
-        this.fromStation = fromStation;
-        this.toStation = toStation;
-        this.trainNumber = trainNumber;
-        this.leavingDate = leavingDate;
-        this.arrivalDate = arrivalDate;
     }
 
     public Long getRouteId() {

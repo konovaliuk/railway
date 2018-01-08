@@ -12,7 +12,7 @@ public interface OrderService {
 
     Optional<FullRouteDto> getFullTrainRoute(Long routeId);
 
-    Optional<List<PriceForVagonDto>> getPrices(Long fromStationId, Long toStationId, Long routeId);
+    Optional<List<PriceForVagonDto>> getPricesForVagons(Long fromStationId, Long toStationId, Long routeId);
 
     Optional<String> getStationNameById(Long stationId);
 }

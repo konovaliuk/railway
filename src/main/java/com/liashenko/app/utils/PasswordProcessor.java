@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -24,7 +23,7 @@ public abstract class PasswordProcessor {
             byte[] salt = new byte[passwordLength * 2];
             sr.nextBytes(salt);
             return salt;
-        } catch(NoSuchAlgorithmException ex){
+        } catch (NoSuchAlgorithmException ex) {
             throw new PasswordProcessorException(ex.getMessage());
         }
     }
@@ -43,7 +42,7 @@ public abstract class PasswordProcessor {
     }
 
     public static boolean checkPassword(char[] originalPassword, byte[] storedPassword, int iterations, byte[] salt,
-                                         String saltGenerationAlg) {
+                                        String saltGenerationAlg) {
         if (assertIsNull(originalPassword) || assertIsNull(storedPassword)
                 || assertIsNull(salt) || assertStringIsNullOrEmpty(saltGenerationAlg)) {
             throw new PasswordProcessorException("Wrong parameters");
@@ -53,7 +52,7 @@ public abstract class PasswordProcessor {
             SecretKeyFactory skf = SecretKeyFactory.getInstance(saltGenerationAlg);
             byte[] testHash = skf.generateSecret(spec).getEncoded();
             return Arrays.equals(storedPassword, testHash);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex){
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
             classLogger.error(ex);
             throw new PasswordProcessorException(ex.getMessage());
         }

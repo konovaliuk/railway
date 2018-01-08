@@ -2,8 +2,8 @@ package com.liashenko.app.persistance.dao.mysql;
 
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
 import com.liashenko.app.persistance.dao.Identified;
-import com.liashenko.app.persistance.dao.DAOException;
 import com.liashenko.app.persistance.dao.UserDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,19 +49,19 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
     }
 
 
-    public String getUserIdByEmailQuery(){
+    public String getUserIdByEmailQuery() {
         return localeQueries.getString("get_user_id_by_email_field");
     }
 
-    public String getUserByEmailQuery(){
+    public String getUserByEmailQuery() {
         return localeQueries.getString("get_user_by_email_field");
     }
 
-    public String getUsersCountQuery(){
+    public String getUsersCountQuery() {
         return localeQueries.getString("get_users_count");
     }
 
-    public String getUsersPagesQuery(){
+    public String getUsersPagesQuery() {
         return localeQueries.getString("select_pages_from_users_tbl");
     }
 
@@ -102,7 +102,7 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
     }
 
     @Override
-    public Optional<User> persist(User object){
+    public Optional<User> persist(User object) {
         return super.persist(object).map(obj -> (User) obj);
     }
 
@@ -165,7 +165,7 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
 
     @Override
 //  SELECT id FROM railway.user WHERE e-mail=?
-    public boolean isEmailExists(String email){
+    public boolean isEmailExists(String email) {
         int i = 0;
         String sql = getUserIdByEmailQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -175,7 +175,7 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
             while (rs.next() && i < 1) {
                 i++;
             }
-            return  (i > 0);
+            return (i > 0);
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -189,7 +189,8 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
             statement.setString(1, email);
             ResultSet rs = statement.executeQuery();
             userList = parseResultSet(rs);
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
         if (userList == null || userList.size() == 0) {
@@ -197,6 +198,7 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
         } else if (userList.size() == 1) {
             return Optional.ofNullable(userList.get(0));
         } else {
+            classLogger.error("Received more than one record.");
             throw new DAOException("Received more than one record.");
         }
     }
@@ -208,11 +210,12 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet rs = statement.executeQuery();
 
-            if (rs != null){
+            if (rs != null) {
                 rs.next();
                 count = rs.getInt(1);
             }
         } catch (SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
         return count;
@@ -221,7 +224,7 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
     @Override
 //    SELECT * FROM railway.user LIMIT ? OFFSET ?
     public Optional<List<User>> getPages(int rowsPerPage, int offset) {
-        Optional <List<User>> listOpt;
+        Optional<List<User>> listOpt;
         String sql = getUsersPagesQuery();
         if (rowsPerPage == 0) return getAll();
 
@@ -230,7 +233,8 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
             statement.setInt(2, offset);
             ResultSet rs = statement.executeQuery();
             listOpt = Optional.ofNullable(parseResultSet(rs));
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
         return listOpt;

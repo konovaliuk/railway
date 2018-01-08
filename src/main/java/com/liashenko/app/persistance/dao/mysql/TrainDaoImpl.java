@@ -1,9 +1,9 @@
 package com.liashenko.app.persistance.dao.mysql;
 
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
-import com.liashenko.app.persistance.dao.DAOException;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.TrainDao;
+import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Train;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +46,7 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
         return localeQueries.getString("");
     }
 
-    public String getByRouteQuery(){
+    public String getByRouteQuery() {
         return localeQueries.getString("select_train_by_route");
     }
 
@@ -81,7 +81,7 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
     }
 
     @Override
-    public Optional<Train> persist(Train object){
+    public Optional<Train> persist(Train object) {
         return super.persist(object).map(obj -> (Train) obj);
     }
 
@@ -102,22 +102,22 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-        try {
-            Train train = (Train) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            Train train = (Train) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-        try {
-            Train train = (Train) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-            throw new DAOException(e);
-        }
+//        try {
+//            Train train = (Train) object;
+//        } catch (ClassCastException e) {
+//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
+//            throw new DAOException(e);
+//        }
     }
 
     @Override
@@ -126,14 +126,15 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
     }
 
     @Override
-    public Optional<Train> getByRoute(Long routeId){
+    public Optional<Train> getByRoute(Long routeId) {
         String sql = getByRouteQuery();
         List<Train> userList;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, routeId);
             ResultSet rs = statement.executeQuery();
             userList = parseResultSet(rs);
-        } catch (SQLException e) {
+        } catch (DAOException | SQLException e) {
+            classLogger.error(e);
             throw new DAOException(e);
         }
         if (userList == null || userList.size() == 0) {
@@ -141,6 +142,7 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
         } else if (userList.size() == 1) {
             return Optional.ofNullable(userList.get(0));
         } else {
+            classLogger.error("Received more than one record.");
             throw new DAOException("Received more than one record.");
         }
 

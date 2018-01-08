@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class NoCommand implements ICommand {
     public String execute(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException{
+            throws ServletException, IOException {
         /*в случае прямого обращения к контроллеру переадресация на страницу ввода логина*/
         return PageManagerConf.getInstance().getProperty(PageManagerConf.INDEX_PAGE_PATH);
     }

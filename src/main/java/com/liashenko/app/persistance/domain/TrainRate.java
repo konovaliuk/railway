@@ -9,7 +9,7 @@ public class TrainRate implements Serializable, Identified {
     private static final long serialVersionUID = 1L;
     private Long id;
     private Float rate;
-    private Long  trainId;
+    private Long trainId;
 
     public TrainRate() {
     }

@@ -1,5 +1,6 @@
 package com.liashenko.app.listeners;
 
+import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.utils.AppProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,5 +24,6 @@ public class SessionListener implements HttpSessionListener {
             e.getSession().setMaxInactiveInterval(sessionInterval * 60); //in seconds
         } catch (NumberFormatException ignore) {
         }
+        SessionAttrInitializer.newSessionInit(e.getSession());
     }
 }

@@ -20,19 +20,19 @@
                     </li>
                 </c:if>
 
-                <%--<c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.USER_ROLE_ATTR}">--%>
-                <%--<li class="nav-item">--%>
-                <%--<a class="nav-link" href="<c:url value='/'/>orders"><fmt:message key="users.page.ref" bundle="${navbar_lang}"/></a>--%>
-                <%--</li>--%>
-                <%--</c:if>--%>
+                <c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.USER_ROLE_ATTR}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value='/'/>orders"><fmt:message key="orders.page.ref"
+                                                                                         bundle="${navbar_lang}"/></a>
+                    </li>
+                </c:if>
 
-                <c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.USER_ROLE_ATTR || sessionScope.USER_CURRENT_ROLE eq sessionScope.ADMIN_ROLE_ATTR}">
+                <c:if test="${sessionScope.USER_CURRENT_ROLE ne sessionScope.GUEST_ROLE_ATTR}">
                     <li class="nav-item">
                         <a class="nav-link" href="<c:url value='/'/>profile"><fmt:message key="profile.page.ref"
                                                                                           bundle="${navbar_lang}"/></a>
                     </li>
                 </c:if>
-
 
                 <li class="nav-item dropdown">
                     <a class="dropdown-toggle toggle" href="#" data-toggle="dropdown"><fmt:message key="language.menu"

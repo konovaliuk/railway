@@ -97,22 +97,10 @@ public class VagonTypeDaoImpl extends AbstractJDBCDao implements VagonTypeDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-//        try {
-//            VagonType vagonType = (VagonType) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-//        try {
-//            VagonType vagonType = (VagonType) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override

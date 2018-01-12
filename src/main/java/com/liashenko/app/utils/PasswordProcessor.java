@@ -1,5 +1,6 @@
 package com.liashenko.app.utils;
 
+import com.liashenko.app.persistance.domain.Password;
 import com.liashenko.app.utils.exceptions.PasswordProcessorException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,17 +42,16 @@ public abstract class PasswordProcessor {
         }
     }
 
-    public static boolean checkPassword(char[] originalPassword, byte[] storedPassword, int iterations, byte[] salt,
-                                        String saltGenerationAlg) {
-        if (assertIsNull(originalPassword) || assertIsNull(storedPassword)
-                || assertIsNull(salt) || assertStringIsNullOrEmpty(saltGenerationAlg)) {
+    public static boolean checkPassword(char[] originalPass, Password storedPass){
+        if (assertIsNull(originalPass) || assertIsNull(storedPass)) {
             throw new PasswordProcessorException("Wrong parameters");
         }
         try {
-            PBEKeySpec spec = new PBEKeySpec(originalPassword, salt, iterations, storedPassword.length * 8);
-            SecretKeyFactory skf = SecretKeyFactory.getInstance(saltGenerationAlg);
+            PBEKeySpec spec = new PBEKeySpec(originalPass, storedPass.getSalt(), storedPass.getIterations(),
+                    storedPass.getPassword().length * 8);
+            SecretKeyFactory skf = SecretKeyFactory.getInstance(storedPass.getAlgorithm());
             byte[] testHash = skf.generateSecret(spec).getEncoded();
-            return Arrays.equals(storedPassword, testHash);
+            return Arrays.equals(storedPass.getPassword(), testHash);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
             classLogger.error(ex);
             throw new PasswordProcessorException(ex.getMessage());

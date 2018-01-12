@@ -1,16 +1,23 @@
 package com.liashenko.app.service;
 
-import com.liashenko.app.service.dto.AdminViewDto;
+import com.liashenko.app.service.dto.NewUserProfileViewDto;
+import com.liashenko.app.service.dto.UserDto;
+
+import java.util.Optional;
 
 public interface UserProfileService {
 
-    void createProfile(AdminViewDto adminViewDto);
+    void createProfile(UserDto userDto);
 
     void changeLanguage(Long userId, String newLanguage);
 
     boolean isEmailExists(String email);
 
-//    delete profileProfile(Long id);
-//    showProfile();
-//    updateProfile();
+    Optional<UserDto> getUserById(Long userId);
+
+    void banUserProfile(Long userId);
+
+    void updateProfile(UserDto userDto);
+
+    boolean isOtherUsersWithEmailExist(Long userId, String email);
 }

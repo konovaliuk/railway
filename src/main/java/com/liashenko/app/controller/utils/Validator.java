@@ -31,11 +31,6 @@ public abstract class Validator {
         return email;
     }
 
-    public static char[] checkRawPasswordsOnEquivalence(char[] pass, char[] repeated_pass) {
-        if (!Arrays.equals(pass, repeated_pass)) throw new ValidationException("Different passwords");
-        return pass;
-    }
-
     private static String checkStringLengthParams(String str, int minLength, int maxLength, String paramName) {
         StringBuilder sb = new StringBuilder();
         if (assertStringIsNullOrEmpty(str)) sb.append(String.format("%s is empty. ", paramName));
@@ -48,5 +43,10 @@ public abstract class Validator {
             sb.append(String.format("%s size is less than %d symbol(s). ", paramName, minLength));
         }
         return sb.toString();
+    }
+
+    public static char[] validatePassword(char[] pass) {
+        if (assertArrayIsNullOrEmpty(pass)) throw new ValidationException("Password is empty");
+        return pass;
     }
 }

@@ -7,7 +7,6 @@
 <!doctype html>
 <html lang="ua">
 <head>
-
     <c:import url="../colon/css_dependencies.jsp" charEncoding="utf-8"/>
     <title><fmt:message key="page.title" bundle="${lang}"/></title>
 
@@ -16,33 +15,37 @@
 <c:import url="../colon/navbar.jsp" charEncoding="utf-8"/>
 
 <div class="container">
-
     <div class="row" style="margin-top:20px">
         <div class="col-xs-12 col-sm-8 col-md-6 col-centered">
             <%--method="POST" action="<c:url value='/'/>sign_in"--%>
-
-            <p id="msg_container" class="b-container"> <!--Text in Popup--></p>
-
-            <form role="form">
+            <form role="form" action="#" name="login_form" id="login_form">
                 <fieldset>
                     <h2><fmt:message key="page.header" bundle="${lang}"/></h2>
                     <hr class="colorgraph">
-                    <div class="form-group input-group">
-                        <input type="email" name="email" id="email" class="form-control input-lg"
-                               placeholder="<fmt:message key="email.input.placeholder" bundle="${lang}"/>">
-                        <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+                    <p id="msg_container" style="display : none;" class="a-container" ><fmt:message
+                            key="invalid.login.or.password.msg" bundle="${lang}"/></p>
+
+                    <div class="form-group">
+                        <div class="input-group ">
+                            <input type="email" name="email" id="email" class="form-control input-lg"
+                                   placeholder="<fmt:message key="email.input.placeholder" bundle="${lang}"/>"/>
+                            <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+                        </div>
                     </div>
-                    <div class="form-group input-group">
-                        <input type="password" name="password" id="password" class="form-control input-lg"
-                               placeholder="<fmt:message key="password.input.placeholder" bundle="${lang}"/>">
-                        <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+
+                    <div class="form-group">
+                        <div class="input-group ">
+                            <input type="password" name="password" id="password" class="form-control input-lg"
+                                   placeholder="<fmt:message key="password.input.placeholder" bundle="${lang}"/>"/>
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                        </div>
                     </div>
 
                     <hr class="colorgraph">
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-6">
-                            <input type="button" class="btn btn-lg btn-success btn-block" onclick="checkPrinciples();"
-                                   value="<fmt:message key="submit.button.name" bundle="${lang}"/>">
+                            <input type="submit" class="btn btn-lg btn-success btn-block"
+                                   value="<fmt:message key="submit.button.name" bundle="${lang}"/>"/>
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6">
                             <a href="<c:url value='/'/>registration"
@@ -61,6 +64,69 @@
 <c:import url="../colon/js_dependencies.jsp" charEncoding="utf-8"/>
 </html>
 <script>
+
+
+    $(document).ready(function() {
+        $('#login_form')
+            .bootstrapValidator({
+//                message: 'This value is not valid',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    email: {
+//                        message: 'The username is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: '<fmt:message key="empty.email.field.validation.msg" bundle="${lang}"/>'
+                            },
+                            stringLength: {
+                                min: 0,
+                                max: 255,
+                                message: '<fmt:message key="not.more.than.email.validation.msg" bundle="${lang}"/>'
+                            },
+                            emailAddress: {
+                                message: '<fmt:message key="not.valid.email.msg" bundle="${lang}"/>'
+                            },
+                            <%--remote: {--%>
+                                <%--url: '/ajax/check_email',--%>
+                                <%--message: '<fmt:message key="email.exists.msg" bundle="${lang}"/>'--%>
+                            <%--}--%>
+//                            regexp: {
+//                                regexp: /^[a-zA-Z0-9_\.]+$/,
+//                                message: 'The username can only consist of alphabetical, number, dot and underscore'
+//                            }
+                        }
+                    },
+                    password: {
+                        validators: {
+                            notEmpty: {
+                                message: '<fmt:message key="empty.pass.field.validation.msg" bundle="${lang}"/>'
+                            }
+                        }
+                    },
+                    stringLength: {
+                        min: 0,
+                        max: 255,
+                        message: '<fmt:message key="not.more.than.pass.validation.msg" bundle="${lang}"/>'
+                    }
+                }
+            })
+            .on('success.form.bv', function(e) {
+                // Prevent form submission
+                e.preventDefault();
+
+//                // Get the form instance
+//                var $form = $(e.target);
+//
+//                // Get the BootstrapValidator instance
+//                var bv = $form.data('bootstrapValidator');
+                checkPrinciples();
+            });
+    });
+
     function checkPrinciples() {
 
         var jsonArg = {
@@ -76,24 +142,13 @@
             data: JSON.stringify(jsonArg),
             success: function (data, textStatus) {
                 var msg = document.getElementById("msg_container");
-                if (textStatus === 'success') {
-                    msg.innerHTML = data.message;
-                    msg.className = (data.success) ? msg.className = 'b-container' : msg.className = 'a-container';
+                if (textStatus !== 'success' || !data.success) {
+                    msg.style.display = 'block';
                 } else {
-                    msg.className = 'a-container';
-                    msg.innerHTML = 'Operation wasn\'t successful';
-                }
-
-                msg.style.display = 'block';
-                setTimeout(function () {
-                        msg.style.display = 'none';
-                    },
-                    1000);
-
-                if (data.success) {
                     location.href = "<c:url value='/'/>";
                 }
             }
         });
     }
+
 </script>

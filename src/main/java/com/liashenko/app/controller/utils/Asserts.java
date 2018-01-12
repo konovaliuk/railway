@@ -25,4 +25,8 @@ public abstract class Asserts {
     public static boolean assertArrayIsNullOrEmpty(Object[] arr) {
         return assertIsNull(arr) || (arr.length == 0);
     }
+
+    public static boolean assertArrayIsNullOrEmpty(char[] arr) {
+        return assertIsNull(arr) || (arr.length == 0);
+    }
 }

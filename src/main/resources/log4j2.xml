@@ -27,11 +27,9 @@
     </Appenders>
     <Loggers>
         <Root level="all">
-            <!--<AppenderRef ref="File2"/>-->
-            <!--<AppenderRef ref="AsyncFile"/>-->
-            <AppenderRef ref="AsyncConsole"/>
+            <!--<AppenderRef ref="AsyncConsole"/>-->
+            <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Root>
     </Loggers>
 </Configuration>
-        <!--<Property name="log_dir">/media/vitalik/Новый том/courses/railway/log/${date:yyyy_MM_dd_HH_mm_ss}</Property>-->

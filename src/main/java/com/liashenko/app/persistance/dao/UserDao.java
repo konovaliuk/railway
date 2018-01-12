@@ -41,6 +41,8 @@ public interface UserDao extends GenericJDBCDao {
 
     boolean isEmailExists(String email);
 
+    boolean isOtherUsersWithEmailExist(Long userId, String email);
+
     Optional<User> getUserByEmail(String email);
 
     Integer getCount();

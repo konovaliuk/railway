@@ -7,10 +7,10 @@ import com.liashenko.app.controller.utils.HttpParser;
 import com.liashenko.app.controller.utils.MsgSender;
 import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.controller.utils.exceptions.ControllerException;
-import com.liashenko.app.controller.utils.exceptions.SendMsgException;
 import com.liashenko.app.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.persistance.domain.User;
 import com.liashenko.app.service.AdminService;
+import com.liashenko.app.service.dto.UserDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.AdminServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -26,8 +26,8 @@ import java.util.ResourceBundle;
 import static com.liashenko.app.controller.utils.Asserts.assertIsNull;
 
 
-public class UpdateUserCommand implements ICommand {
-    private static final Logger classLogger = LogManager.getLogger(UpdateUserCommand.class);
+public class UpdateUserByAdminCommand implements ICommand {
+    private static final Logger classLogger = LogManager.getLogger(UpdateUserByAdminCommand.class);
     private static final Gson GSON = new Gson();
 
     @Override
@@ -47,16 +47,16 @@ public class UpdateUserCommand implements ICommand {
         return PageManagerConf.getInstance().getProperty(PageManagerConf.EMPTY_RESULT);
     }
 
-    private User getValidUserFromJsonString(String jsonString) {
-        User user;
+    private UserDto getValidUserFromJsonString(String jsonString) {
+        UserDto userDto;
         try {
-            user = GSON.fromJson(jsonString, User.class);
+            userDto = GSON.fromJson(jsonString, UserDto.class);
         } catch (ClassCastException ex) {
             throw new ValidationException(ex.getMessage());
         }
-        if (assertIsNull(user.getRoleId()) || assertIsNull(user.getBanned())) {
+        if (assertIsNull(userDto.getRoleId()) || assertIsNull(userDto.getBanned())) {
             throw new ValidationException("Object is not valid");
         }
-        return user;
+        return userDto;
     }
 }

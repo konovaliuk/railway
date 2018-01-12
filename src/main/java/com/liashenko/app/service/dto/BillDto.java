@@ -1,7 +1,6 @@
 package com.liashenko.app.service.dto;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 public class BillDto implements Serializable {
 

@@ -29,7 +29,8 @@ public abstract class CalculatorUtil {
         return distance;
     }
 
-    public static Float calculateTicketPrice(Float routeRateFloat, Float distance, Double pricePerKmForVagonDouble, Integer placesCount) {
+    public static Float calculateTicketPrice(Float routeRateFloat, Float distance, Double pricePerKmForVagonDouble,
+                                             Integer placesCount) {
         return BigDecimal.valueOf(routeRateFloat)
                 .multiply(BigDecimal.valueOf(distance))
                 .multiply(BigDecimal.valueOf(pricePerKmForVagonDouble))

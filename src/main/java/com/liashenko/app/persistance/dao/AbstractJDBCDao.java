@@ -115,29 +115,32 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
     @Override
     public Optional<T> persist(T object) {
         // Добавляем запись
-        String sql = getCreateQuery();
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            prepareStatementForInsert(statement, object);
-            int count = statement.executeUpdate();
-            if (count != 1) {
-                classLogger.error("On persist modify more then 1 record: " + count);
-                throw new DAOException("On persist modify more then 1 record: " + count);
+        try {
+            String sql = getCreateQuery();
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                prepareStatementForInsert(statement, object);
+                int count = statement.executeUpdate();
+                if (count != 1) {
+                    throw new DAOException("On persist modify more then 1 record: " + count);
+                }
+            } catch (DAOException | SQLException e) {
+                throw new DAOException(e);
             }
-        } catch (DAOException | SQLException e) {
-            throw new DAOException(e);
-        }
-        // Получаем только что вставленную запись
-        sql = getSelectQuery() + " WHERE id = last_insert_id();";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet rs = statement.executeQuery();
-            List<T> list = parseResultSet(rs);
-            if ((list == null) || (list.size() != 1)) {
-                classLogger.error("Exception on findByPK new persist data.");
-                throw new DAOException("Exception on findByPK new persist data.");
+            // Получаем только что вставленную запись
+            sql = getSelectQuery() + " WHERE id = last_insert_id();";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                ResultSet rs = statement.executeQuery();
+                List<T> list = parseResultSet(rs);
+                if ((list == null) || (list.size() != 1)) {
+                    throw new DAOException("Exception on findByPK new persist data.");
+                }
+                return Optional.of(list.get(0));
+            } catch (DAOException | SQLException e) {
+                throw new DAOException(e.getMessage());
             }
-            return Optional.of(list.iterator().next());
-        } catch (DAOException | SQLException e) {
-            throw new DAOException(e);
+        } catch (DAOException ex){
+            classLogger.error(ex.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -157,13 +160,12 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
         }
         if (list == null || list.size() == 0) {
             classLogger.error("Record with PK = " + key + " not found.");
-            throw new DAOException("Record with PK = " + key + " not found.");
-        }
-        if (list.size() > 1) {
+        } else if (list.size() > 1) {
             classLogger.error("Received more than one record.");
-            throw new DAOException("Received more than one record.");
+        } else {
+            return Optional.ofNullable(list.get(0));
         }
-        return Optional.ofNullable(list.iterator().next());
+        return Optional.empty();
     }
 
     @Override
@@ -193,6 +195,7 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
                 throw new DAOException("On delete modify more then 1 record: " + count);
             }
         } catch (DAOException | SQLException e) {
+            classLogger.error(e.getMessage());
             throw new DAOException(e);
         }
     }

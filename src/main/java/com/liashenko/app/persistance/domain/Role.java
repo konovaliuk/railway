@@ -5,10 +5,7 @@ import com.liashenko.app.persistance.dao.Identified;
 import java.io.Serializable;
 
 public class Role implements Identified, Serializable {
-    public static final long ADMIN_ROLE_ID = 1;
-    public static final long USER_ROLE_ID = 2;
-    public static final long GUEST_ROLE_ID = 0;
-    private static final long serialVersionUID = 1L;
+
     private Long id;
     private String name;
 

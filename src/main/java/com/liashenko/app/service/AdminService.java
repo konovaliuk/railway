@@ -1,18 +1,18 @@
 package com.liashenko.app.service;
 
-import com.liashenko.app.persistance.domain.Role;
-import com.liashenko.app.persistance.domain.User;
+import com.liashenko.app.service.dto.RoleDto;
+import com.liashenko.app.service.dto.UserDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface AdminService {
 
-    Optional<List<User>> showUsers(int rowsPerPage, int offset);
+    Optional<List<UserDto>> showUsers(int rowsPerPage, int offset);
 
-    Optional<List<Role>> showRoles();
+    Optional<List<RoleDto>> showRoles();
 
-    void updateUserInfo(User user);
+    void updateUserInfo(UserDto userDto);
 
     Integer getUsersCount();
 }

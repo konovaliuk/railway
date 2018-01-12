@@ -21,6 +21,8 @@ import java.sql.Connection;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static com.liashenko.app.controller.utils.Asserts.assertIsNull;
+
 public class AuthorizationServiceImpl implements AuthorizationService {
     private static final Logger classLogger = LogManager.getLogger(AuthorizationServiceImpl.class);
 
@@ -35,6 +37,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public Optional<UserSessionProfileDto> logIn(PrinciplesDto principlesDto) {
+        if (assertIsNull(principlesDto)) throw new ServiceException("principlesDto is null");
         Connection conn = dbConnectService.getConnection();
         try {
 //            conn.setReadOnly(true);
@@ -51,9 +54,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             Password password = passwordDao.getByPK(user.getPasswordId())
                     .orElseThrow(() -> new ServiceException("Password is null"));
 
-            if (PasswordProcessor.checkPassword(principlesDto.getPassword(), password.getPassword(),
-                    password.getIterations(), password.getSalt(), password.getAlgorithm())) {
-                return Optional.of(new UserSessionProfileDto(user.getId(), user.getRoleId(), user.getLanguage()));
+            char[] passwordToCheck = principlesDto.getPassword();
+            if (PasswordProcessor.checkPassword(passwordToCheck, password)) {
+                UserSessionProfileDto userSessionProfileDto = new UserSessionProfileDto();
+                userSessionProfileDto.setUserId(user.getId());
+                userSessionProfileDto.setUserRoleId(user.getRoleId());
+                userSessionProfileDto.setLanguage(user.getLanguage());
+                return Optional.of(userSessionProfileDto);
             }
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
@@ -61,7 +68,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         } finally {
             DbConnectService.close(conn);
         }
-
         return Optional.empty();
     }
 }

@@ -47,17 +47,17 @@ public class SignInCommand implements ICommand {
             Optional<UserSessionProfileDto> userProfileOpt = authorizationService.logIn(getValidPrinciples(jsonData));
 
             if (userProfileOpt.isPresent()) {
-                request.getSession().setAttribute(SessionAttrInitializer.USER_ID, userProfileOpt.get().getUserId());
-                request.getSession().setAttribute(SessionAttrInitializer.USER_CURRENT_ROLE, userProfileOpt.get().getUserRoleId());
-                request.getSession().setAttribute(SessionAttrInitializer.USER_LOCALE, userProfileOpt.get().getLanguage());
-                MsgSender.sendJsonMsg(response, "You logged in successful", true);
+                session.setAttribute(SessionAttrInitializer.USER_ID, userProfileOpt.get().getUserId());
+                session.setAttribute(SessionAttrInitializer.USER_CURRENT_ROLE, userProfileOpt.get().getUserRoleId());
+                session.setAttribute(SessionAttrInitializer.USER_LOCALE, userProfileOpt.get().getLanguage());
+                MsgSender.sendJsonMsg(response, "", true);
             } else {
-                MsgSender.sendJsonMsg(response, "There is no user with such password or e-mail", false);
+                MsgSender.sendJsonMsg(response, "", false);
             }
 
         } catch (ControllerException | ServiceException e) {
             classLogger.error(e);
-            MsgSender.sendJsonMsg(response, "Sorry, we got an error", false);
+            MsgSender.sendJsonMsg(response, "", false);
         }
         return PageManagerConf.getInstance().getProperty(PageManagerConf.EMPTY_RESULT);
     }

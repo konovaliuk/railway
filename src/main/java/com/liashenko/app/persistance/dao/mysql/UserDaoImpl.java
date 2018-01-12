@@ -57,6 +57,10 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
         return localeQueries.getString("get_user_by_email_field");
     }
 
+    public String getUserByIdAndEmailQuery(){
+        return localeQueries.getString("get_user_by_email_and_excluded_id");
+    }
+
     public String getUsersCountQuery() {
         return localeQueries.getString("get_users_count");
     }
@@ -170,6 +174,24 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
         String sql = getUserIdByEmailQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, email);
+            ResultSet rs = statement.executeQuery();
+            if (rs == null) return false;
+            while (rs.next() && i < 1) {
+                i++;
+            }
+            return (i > 0);
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    @Override
+    public boolean isOtherUsersWithEmailExist(Long userId, String email) {
+        int i = 0;
+        String sql = getUserByIdAndEmailQuery();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, userId);
+            statement.setString(2, email);
             ResultSet rs = statement.executeQuery();
             if (rs == null) return false;
             while (rs.next() && i < 1) {

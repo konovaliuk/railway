@@ -39,9 +39,7 @@ public class ShowUsersViewCommand implements ICommand {
         HttpSession session = request.getSession(true);
         try {
             String localStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, session);
-
-            Integer offset = HttpParser.getIntFromRequestOrFromSessionOrDefault(request, USERS_ON_PAGE_ATTR,
-                    SessionAttrInitializer.USERS_ON_PAGE_ATTR, 0);
+            Integer offset = HttpParser.getIntRequestParam (OFFSET_ATTR, request).orElse(0);
             request.setAttribute(OFFSET_ATTR, offset);
 
             Integer usersOnPage = HttpParser.getIntAttrFromRequestOrSessionOrDefaultAndSetToSession(request, USERS_ON_PAGE_ATTR,
@@ -53,7 +51,6 @@ public class ShowUsersViewCommand implements ICommand {
             adminService.showUsers(usersOnPage, offset).ifPresent(users -> request.setAttribute(USERS_LIST_ATTR, users));
             adminService.showRoles().ifPresent(roles -> request.setAttribute(ROLES_LIST_ATTR, roles));
             request.setAttribute(COUNT_ATTR, adminService.getUsersCount());
-
             page = PageManagerConf.getInstance().getProperty(PageManagerConf.USERS_PAGE_PATH);
         } catch (ControllerException | ServiceException e) {
             classLogger.error(e);

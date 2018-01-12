@@ -1,6 +1,7 @@
 package com.liashenko.app.controller.utils;
 
 import com.liashenko.app.controller.utils.exceptions.HttpParserException;
+import com.liashenko.app.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.utils.AppProperties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +51,15 @@ public abstract class HttpParser {
             return Optional.ofNullable(LocalDate.parse(timeStr, formatter));
         } catch (DateTimeParseException ignore) {
             return Optional.empty();
+        }
+    }
+
+    public static LocalDate convertStringToDate(String stringDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        try {
+            return LocalDate.parse(stringDate, formatter);
+        } catch (DateTimeParseException ex) {
+            throw new HttpParserException (ex.getMessage());
         }
     }
 

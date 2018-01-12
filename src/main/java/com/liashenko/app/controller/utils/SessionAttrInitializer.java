@@ -2,6 +2,7 @@ package com.liashenko.app.controller.utils;
 
 import com.liashenko.app.controller.RequestHelper;
 import com.liashenko.app.persistance.domain.Role;
+import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.utils.AppProperties;
 
 import javax.servlet.http.HttpSession;
@@ -14,6 +15,7 @@ public abstract class SessionAttrInitializer {
 
     public static final String USER_CURRENT_ROLE = "USER_CURRENT_ROLE";
     public static final String USER_LOCALE = "USER_LOCALE";
+
     public static final String USER_LAST_PAGE = "USER_LAST_PAGE";
     public static final String ADMIN_ROLE_ATTR = "ADMIN_ROLE_ATTR";
     public static final String USER_ROLE_ATTR = "USER_ROLE_ATTR";
@@ -51,9 +53,9 @@ public abstract class SessionAttrInitializer {
     private static void defaultAttributesSetter(HttpSession session) {
         session.setAttribute(USER_LAST_PAGE, RequestHelper.INDEX_PAGE_URL_ATTR);
 
-        session.setAttribute(USER_CURRENT_ROLE, Role.GUEST_ROLE_ID);
-        session.setAttribute(ADMIN_ROLE_ATTR, Role.ADMIN_ROLE_ID);
-        session.setAttribute(USER_ROLE_ATTR, Role.USER_ROLE_ID);
-        session.setAttribute(GUEST_ROLE_ATTR, Role.GUEST_ROLE_ID);
+        session.setAttribute(USER_CURRENT_ROLE, RoleDto.GUEST_ROLE_ID);
+        session.setAttribute(ADMIN_ROLE_ATTR, RoleDto.ADMIN_ROLE_ID);
+        session.setAttribute(USER_ROLE_ATTR, RoleDto.USER_ROLE_ID);
+        session.setAttribute(GUEST_ROLE_ATTR, RoleDto.GUEST_ROLE_ID);
     }
 }

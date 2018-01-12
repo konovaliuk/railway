@@ -37,7 +37,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Optional<FullRouteDto> getFullTrainRoute(Long routeId) {
-        FullRouteDto fullRouteDto = new FullRouteDto();
         Connection conn = dbConnectService.getConnection();
         try {
 //            conn.setReadOnly(true);
@@ -45,35 +44,39 @@ public class OrderServiceImpl implements OrderService {
             RouteDao routeDao = (RouteDao) routeDaoOpt
                     .orElseThrow(() -> new ServiceException("RoutDao is null"));
 
-            Long routeFirstStationId = routeDao.getFirstTerminalStationOnRoute(routeId)
-                    .orElseThrow(() -> new ServiceException("Couldn't find first station id for the route " + routeId))
-                    .getStationId();
+            Optional<Route> routeFirstStationOpt = routeDao.getFirstTerminalStationOnRoute(routeId);
+            Optional<Route> routeLastStationOpt = routeDao.getLastTerminalStationOnRoute(routeId);
 
-            Long routeLastStationId = routeDao.getLastTerminalStationOnRoute(routeId)
-                    .orElseThrow(() -> new ServiceException("Couldn't find last station id for the route " + routeId))
-                    .getStationId();
-
-            setTerminalStations(conn, routeFirstStationId, routeLastStationId, fullRouteDto);
+            if (routeFirstStationOpt.isPresent() && routeLastStationOpt.isPresent()) {
+                Long routeFirstStationId = routeFirstStationOpt.get().getStationId();
+                Long routeLastStationId = routeLastStationOpt.get().getStationId();
+                return Optional.ofNullable(getRouteWithTerminalStations(conn, routeFirstStationId, routeLastStationId));
+            } else {
+                throw new ServiceException("Couldn't find terminal station id for the route ");
+            }
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
             throw new ServiceException(e);
         } finally {
             DbConnectService.close(conn);
         }
-        return Optional.of(fullRouteDto);
     }
 
-    private void setTerminalStations(Connection connection, Long routeFirstStationId, Long routeLastStationId, FullRouteDto fullRouteDto) {
-
+    private FullRouteDto getRouteWithTerminalStations(Connection connection, Long firstStationId, Long lastStationId) {
+        FullRouteDto fullRouteDto = null;
         Optional<GenericJDBCDao> stationDaoOpt = daoFactory.getDao(connection, Station.class, localeQueries);
         StationDao stationDao = (StationDao) stationDaoOpt
                 .orElseThrow(() -> new ServiceException("StationDao is null"));
-
-        stationDao.getByPK(routeFirstStationId).ifPresent(station
-                -> fullRouteDto.setFirstTerminalStation(station.getCity()));
-
-        stationDao.getByPK(routeLastStationId).ifPresent(station
-                -> fullRouteDto.setLastTerminalStation(station.getCity()));
+        Optional<Station> firstStationOpt = stationDao.getByPK(firstStationId);
+        Optional<Station> lastStationOpt = stationDao.getByPK(lastStationId);
+        if (firstStationOpt.isPresent() && lastStationOpt.isPresent()){
+            fullRouteDto = new FullRouteDto();
+            fullRouteDto.setFirstTerminalStation(firstStationOpt.get().getCity());
+            fullRouteDto.setLastTerminalStation(lastStationOpt.get().getCity());
+            return fullRouteDto;
+        } else {
+            throw new ServiceException("Couldn't find terminal station's city for the route ");
+        }
     }
 
     @Override
@@ -99,8 +102,8 @@ public class OrderServiceImpl implements OrderService {
             Optional<List<VagonType>> vagonTypeListOpt = vagonTypeDao.getAll();
             vagonTypeListOpt.ifPresent(vagonTypes
                     -> vagonTypes.forEach(vagonType
-                    -> calculateAndFillListOfPricesForVagons(conn, pricesForVagonList, vagonType,
-                    distance, routeRateFloat)));
+                            -> calculateAndFillListOfPricesForVagons(conn, pricesForVagonList, vagonType,
+                                        distance, routeRateFloat)));
 
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
@@ -138,7 +141,6 @@ public class OrderServiceImpl implements OrderService {
     public Optional<String> getTrainNameById(Long trainId) {
         Connection conn = dbConnectService.getConnection();
         try {
-
 //            conn.setReadOnly(true);
             Optional<GenericJDBCDao> trainDaoOpt = daoFactory.getDao(conn, Train.class, localeQueries);
             TrainDao trainDao = (TrainDao) trainDaoOpt.orElseThrow(() -> new ServiceException("TrainDao is null"));

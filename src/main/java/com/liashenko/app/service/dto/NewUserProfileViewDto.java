@@ -3,100 +3,66 @@ package com.liashenko.app.service.dto;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class UserProfileDto implements Serializable {
+public class NewUserProfileViewDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
     private String firstName;
     private String lastName;
     private String email;
-    private char[] pass;
-    private char[] oldPass;
-    private char[] repeatedPass;
+    private Character[] pass;
     private String language;
 
-    public UserProfileDto() {
+    public NewUserProfileViewDto() {
+    }
+
+    public NewUserProfileViewDto(Long id, String firstName, String lastName,
+                                 String email, Character[] pass, String language) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.pass = pass;
+        this.language = language;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getFirstName() {
         return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public char[] getPass() {
+    public Character[] getPass() {
         return pass;
-    }
-
-    public void setPass(char[] pass) {
-        this.pass = pass;
-    }
-
-    public char[] getOldPass() {
-        return oldPass;
-    }
-
-    public void setOldPass(char[] oldPass) {
-        this.oldPass = oldPass;
-    }
-
-    public char[] getRepeatedPass() {
-        return repeatedPass;
-    }
-
-    public void setRepeatedPass(char[] repeatedPass) {
-        this.repeatedPass = repeatedPass;
     }
 
     public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserProfileDto)) return false;
+        if (!(o instanceof NewUserProfileViewDto)) return false;
 
-        UserProfileDto that = (UserProfileDto) o;
+        NewUserProfileViewDto that = (NewUserProfileViewDto) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (firstName != null ? !firstName.equals(that.firstName) : that.firstName != null) return false;
         if (lastName != null ? !lastName.equals(that.lastName) : that.lastName != null) return false;
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
         if (!Arrays.equals(pass, that.pass)) return false;
-        if (!Arrays.equals(oldPass, that.oldPass)) return false;
-        if (!Arrays.equals(repeatedPass, that.repeatedPass)) return false;
         return language != null ? language.equals(that.language) : that.language == null;
     }
 
@@ -107,24 +73,70 @@ public class UserProfileDto implements Serializable {
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(pass);
-        result = 31 * result + Arrays.hashCode(oldPass);
-        result = 31 * result + Arrays.hashCode(repeatedPass);
         result = 31 * result + (language != null ? language.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("UserProfileDto{");
+        final StringBuilder sb = new StringBuilder("NewUserProfileViewDto{");
         sb.append("id=").append(id);
         sb.append(", firstName='").append(firstName).append('\'');
         sb.append(", lastName='").append(lastName).append('\'');
         sb.append(", email='").append(email).append('\'');
         sb.append(", pass=").append(Arrays.toString(pass));
-        sb.append(", oldPass=").append(Arrays.toString(oldPass));
-        sb.append(", repeatedPass=").append(Arrays.toString(repeatedPass));
         sb.append(", language='").append(language).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private Long id;
+        private String firstName;
+        private String lastName;
+        private String email;
+        private Character[] pass;
+        private String language;
+
+        private Builder() {
+        }
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder pass(Character[] pass) {
+            this.pass = pass;
+            return this;
+        }
+
+        public Builder language(String language) {
+            this.language = language;
+            return this;
+        }
+
+        public NewUserProfileViewDto build() {
+            return new NewUserProfileViewDto(id, firstName, lastName, email, pass, language);
+        }
     }
 }

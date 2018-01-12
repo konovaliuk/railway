@@ -99,21 +99,21 @@
 
 <script>
 
-    function userInfoChange(userId) {
-        $('#choose_btn_id_' + userId).removeClass("btn-default");
-        $('#choose_btn_id_' + userId).addClass("btn-danger");
+    function userInfoChange(id) {
+        $('#choose_btn_id_' + id).removeClass("btn-default");
+        $('#choose_btn_id_' + id).addClass("btn-danger");
     }
 
     function usersOnPageChange() {
         location.href = '<c:url value='/'/>users?usersOnPage=' + $('#usersOnPage').val();
     }
 
-    function updateUser(userId) {
+    function updateUser(id) {
 
         var jsonArg = {
-            id: userId,
-            roleId: $('#user_role_id_' + userId).val(),
-            isBanned: $('#is_user_banned_id_' + userId).is(':checked')
+            id: id,
+            roleId: $('#user_role_id_' + id).val(),
+            isBanned: $('#is_user_banned_id_' + id).is(':checked')
         };
 
         $.ajax({
@@ -128,8 +128,8 @@
                     msg.innerHTML = data.message;
                     if (data.success) {
                         msg.className = 'b-container';
-                        $('#choose_btn_id_' + userId).removeClass("btn-danger");
-                        $('#choose_btn_id_' + userId).addClass("btn-default");
+                        $('#choose_btn_id_' + id).removeClass("btn-danger");
+                        $('#choose_btn_id_' + id).addClass("btn-default");
                     } else {
                         msg.className = 'a-container'
                     }

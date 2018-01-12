@@ -47,7 +47,7 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
 
             stationDao.getStationsLike(stationLike).ifPresent(stations
                     -> stations.forEach(station
-                    -> autocompleteWordList.add(new AutocompleteDto(station.getId(), station.getName()))));
+                            -> autocompleteWordList.add(new AutocompleteDto(station.getId(), station.getName()))));
 
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
@@ -85,7 +85,6 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
         } finally {
             DbConnectService.close(conn);
         }
-
         return Optional.ofNullable(trainDtoList);
     }
 

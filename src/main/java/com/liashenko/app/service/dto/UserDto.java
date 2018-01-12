@@ -3,10 +3,10 @@ package com.liashenko.app.service.dto;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class AdminViewDto implements Serializable {
+public class UserDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long userId;
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
@@ -15,12 +15,12 @@ public class AdminViewDto implements Serializable {
     private String language;
     private Boolean isBanned;
 
-    public AdminViewDto() {
+    public UserDto() {
     }
 
-    public AdminViewDto(Long userId, String firstName, String lastName, String email, Long roleId,
-                        char[] password, Boolean isBanned, String language) {
-        this.userId = userId;
+    public UserDto(Long id, String firstName, String lastName, String email, Long roleId,
+                   char[] password, Boolean isBanned, String language) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -34,8 +34,8 @@ public class AdminViewDto implements Serializable {
         return new Builder();
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
     public String getFirstName() {
@@ -69,11 +69,11 @@ public class AdminViewDto implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AdminViewDto)) return false;
+        if (!(o instanceof UserDto)) return false;
 
-        AdminViewDto that = (AdminViewDto) o;
+        UserDto that = (UserDto) o;
 
-        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (firstName != null ? !firstName.equals(that.firstName) : that.firstName != null) return false;
         if (lastName != null ? !lastName.equals(that.lastName) : that.lastName != null) return false;
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
@@ -85,7 +85,7 @@ public class AdminViewDto implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = userId != null ? userId.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
@@ -98,8 +98,8 @@ public class AdminViewDto implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("AdminViewDto{");
-        sb.append("userId=").append(userId);
+        final StringBuilder sb = new StringBuilder("UserDto{");
+        sb.append("id=").append(id);
         sb.append(", firstName='").append(firstName).append('\'');
         sb.append(", lastName='").append(lastName).append('\'');
         sb.append(", email='").append(email).append('\'');
@@ -164,8 +164,8 @@ public class AdminViewDto implements Serializable {
             return this;
         }
 
-        public AdminViewDto build() {
-            return new AdminViewDto(userId, firstName, lastName, email, roleId, password, isBanned, language);
+        public UserDto build() {
+            return new UserDto(userId, firstName, lastName, email, roleId, password, isBanned, language);
         }
     }
 }

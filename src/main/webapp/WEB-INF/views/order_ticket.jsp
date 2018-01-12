@@ -7,6 +7,7 @@
 <!doctype html>
 <html lang="ua">
 <head>
+
     <c:import url="../colon/css_dependencies.jsp" charEncoding="utf-8"/>
     <title><fmt:message key="page.title" bundle="${lang}"/></title>
 
@@ -73,8 +74,8 @@
                 </div>
             </div>
             <div class="text-right form-group btn-group-lg">
-                <a href="#" role="button" onclick="goToBill();" class="btn btn-success pull-right"><fmt:message
-                        key="order.button" bundle="${lang}"/></a>
+                <input type="submit" class="btn btn-success pull-right" value="<fmt:message
+                        key="order.button" bundle="${lang}"/>">
             </div>
 
         </form>
@@ -85,18 +86,9 @@
 <c:import url="../colon/footer.jsp" charEncoding="utf-8"/>
 </body>
 <c:import url="../colon/js_dependencies.jsp" charEncoding="utf-8"/>
+
 </html>
 <script>
-
-    //  function chooseVagonType(id) {
-    //       $('#choosenVagon').val(id);
-    //       alert(id);
-    //
-    //      $("#submit").click(function() {
-    //          var val = $('input[name=radio_btn]:checked').val();
-    //          alert(val);
-    //      });
-    //  }
 
     function goToBill() {
         var vagonTypeId = $('input[name=radio_btn]:checked').val();
@@ -105,6 +97,49 @@
 
         location.href = "<c:url value='/'/>bill?vagonTypeId=" + vagonTypeId + "&firstName=" + firstName + "&lastName=" + lastname;
     }
+
+    $(document).ready(function() {
+        $('#order_form').bootstrapValidator({
+            live: 'disabled',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                first_name: {
+                    validators: {
+                        notEmpty: {
+                            message: '<fmt:message key="empty.first.name.field.msg" bundle="${lang}"/>'
+                        },
+                        stringLength: {
+                            min: 0,
+                            max: 255,
+                            message: '<fmt:message key="not.more.than.first.name.field.validation.msg" bundle="${lang}"/>'
+                        }
+                    }
+                },
+
+                last_name: {
+                    validators: {
+                        notEmpty: {
+                            message: '<fmt:message key="empty.last.name.field.msg" bundle="${lang}"/>'
+                        },
+                        stringLength: {
+                            min: 0,
+                            max: 255,
+                            message: '<fmt:message key="not.more.than.last.name.field.validation.msg" bundle="${lang}"/>'
+                        }
+                    }
+                }
+            }
+        })
+        .on('success.form.bv', function(e) {
+                // Prevent form submission
+                e.preventDefault();
+                goToBill();
+        });
+    });
 
 </script>
 

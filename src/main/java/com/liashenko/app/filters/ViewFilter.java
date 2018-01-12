@@ -6,6 +6,7 @@ import com.liashenko.app.controller.utils.HttpParser;
 import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.persistance.domain.Role;
 import com.liashenko.app.service.UserProfileService;
+import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.UserProfileServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +28,8 @@ import java.util.ResourceBundle;
         RequestHelper.PROFILE_PAGE_URL_ATTR,
         RequestHelper.ORDER_TICKET_PAGE_URL_ATTR,
         RequestHelper.INDEX_PAGE_URL_ATTR,
-        RequestHelper.SEARCH_TRAINS_URL_ATTR
+        RequestHelper.SEARCH_TRAINS_URL_ATTR,
+        RequestHelper.ORDERS_PAGE_URL_ATTR
 },
         filterName = "ViewFilter",
         description = "Filter for all views")
@@ -50,7 +52,6 @@ public class ViewFilter implements Filter {
 //        System.out.println("servletPath : "+ req.getServletPath());
 
         if (session.isNew()) {//check it!!!
-            SessionAttrInitializer.newSessionInit(session);
             chain.doFilter(req, response);
         } else {
             localeProcessing(req, resp, chain, session);
@@ -64,8 +65,8 @@ public class ViewFilter implements Filter {
 
         if (!lang.isEmpty()) {
             session.setAttribute(SessionAttrInitializer.USER_LOCALE, lang);
-            Long userRoleId = HttpParser.getLongSessionAttr(SessionAttrInitializer.USER_CURRENT_ROLE, session).orElse(Role.GUEST_ROLE_ID);
-            if (userRoleId != Role.GUEST_ROLE_ID) {
+            Long userRoleId = HttpParser.getLongSessionAttr(SessionAttrInitializer.USER_CURRENT_ROLE, session).orElse(RoleDto.GUEST_ROLE_ID);
+            if (userRoleId != RoleDto.GUEST_ROLE_ID) {
                 Long userId = HttpParser.getLongSessionAttr(SessionAttrInitializer.USER_ID, session).orElse(0L);
                 try {
                     ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(lang);

@@ -234,8 +234,8 @@
             // Specify a DOM element to render the calendar in
             container: undefined,
 
-            /*
-             * // internationalization
+
+             // internationalization
              i18n: {
                  previousMonth : 'Previous Month',
                  nextMonth     : 'Next Month',
@@ -243,7 +243,7 @@
                  weekdays      : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
                  weekdaysShort : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
              },
-              */
+             /*
             i18n: {
                 previousMonth: 'Попередній місяць',
                 nextMonth: 'Наступний місяць',
@@ -251,7 +251,7 @@
                 weekdays: ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'],
                 weekdaysShort: ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
             },
-
+            */
 
             // Theme Classname
             theme: null,

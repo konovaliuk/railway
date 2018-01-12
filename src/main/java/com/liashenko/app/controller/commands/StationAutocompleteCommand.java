@@ -42,7 +42,7 @@ public class StationAutocompleteCommand implements ICommand {
             MsgSender.sendJsonMsg(response, stations);
         } catch (ControllerException | ServiceException e) {
             classLogger.error(e);
-            MsgSender.sendJsonMsg(response, null);
+            MsgSender.sendJsonMsg(response, "");
         }
         return PageManagerConf.getInstance().getProperty(PageManagerConf.EMPTY_RESULT);
     }

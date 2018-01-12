@@ -8,6 +8,4 @@ import java.util.Optional;
 public interface AuthorizationService {
 
     Optional<UserSessionProfileDto> logIn(PrinciplesDto principlesDto);
-
-//    logOut();
 }

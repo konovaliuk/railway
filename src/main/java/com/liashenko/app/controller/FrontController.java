@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
 @WebServlet(name = "FrontController", urlPatterns = {
         RequestHelper.USERS_PAGE_URL_ATTR,
         RequestHelper.LOGIN_PAGE_URL_ATTR,
@@ -27,7 +26,11 @@ import java.io.IOException;
         RequestHelper.UPDATE_USER_BUTTON_AJAX_ATTR,
         RequestHelper.SIGN_IN_BUTTON_AJAX_ATTR,
         RequestHelper.STATION_AUTOCOMPLETE_AJAX_ATTR,
-        RequestHelper.SEARCH_TRAINS_URL_ATTR
+        RequestHelper.SEARCH_TRAINS_URL_ATTR,
+        RequestHelper.CHECK_IF_EMAIL_IS_EXISTS_AJAX_ATTR,
+        RequestHelper.ORDERS_PAGE_URL_ATTR,
+        RequestHelper.UPDATE_PROFILE_AJAX_ATTR,
+        RequestHelper.CHECK_IF_USER_WITH_EMAIL_EXISTS_AJAX_ATTR
 })
 //@ServletSecurity(value = @HttpConstraint(transportGuarantee = ServletSecurity.TransportGuarantee.CONFIDENTIAL))
 public class FrontController extends HttpServlet {

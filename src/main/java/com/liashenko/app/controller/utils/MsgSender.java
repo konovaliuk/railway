@@ -31,6 +31,30 @@ public abstract class MsgSender {
         }
     }
 
+    public static void sendJsonMsg(HttpServletResponse resp, String jsonText) {
+        resp.setHeader("Content-Type", "application/octet-stream;charset=UTF-8");
+        try {
+            PrintWriter out = resp.getWriter();
+            out.println(jsonText);
+            out.close();
+        } catch (IOException ex) {
+            classLogger.error(ex);
+            throw new SendMsgException(ex.getMessage());
+        }
+    }
+
+
+//    public static void sendJsonMsg(HttpServletResponse resp, List<AutocompleteDto> advices) {
+//        resp.setHeader("Content-Type", "application/json;charset=UTF-8");
+//        try {
+//            PrintWriter out = resp.getWriter();
+//            out.println(jsonResponse(advices));
+//            out.close();
+//        } catch (IOException ex) {
+//            classLogger.error(ex);
+//            throw new SendMsgException(ex.getMessage());
+//        }
+//    }
 
     public static void sendJsonMsg(HttpServletResponse resp, String message, boolean resultFlag) {
         resp.setHeader("Content-Type", "application/octet-stream;");

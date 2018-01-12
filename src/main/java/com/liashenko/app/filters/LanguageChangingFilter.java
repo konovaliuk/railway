@@ -4,7 +4,6 @@ import com.liashenko.app.controller.RequestHelper;
 import com.liashenko.app.controller.manager.LocaleQueryConf;
 import com.liashenko.app.controller.utils.HttpParser;
 import com.liashenko.app.controller.utils.SessionAttrInitializer;
-import com.liashenko.app.persistance.domain.Role;
 import com.liashenko.app.service.UserProfileService;
 import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.exceptions.ServiceException;
@@ -31,11 +30,11 @@ import java.util.ResourceBundle;
         RequestHelper.SEARCH_TRAINS_URL_ATTR,
         RequestHelper.ORDERS_PAGE_URL_ATTR
 },
-        filterName = "ViewFilter",
-        description = "Filter for all views")
-public class ViewFilter implements Filter {
+        filterName = "LanguageChangingFilter",
+        description = "Filter for all views to memorize last users page before changing it")
+public class LanguageChangingFilter implements Filter {
 
-    private static final Logger classLogger = LogManager.getLogger(ViewFilter.class);
+    private static final Logger classLogger = LogManager.getLogger(LanguageChangingFilter.class);
     private static final String LANGUAGE_ATTR = "lang";
 
     @Override
@@ -46,7 +45,7 @@ public class ViewFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession(true);
 
-        if (session.isNew()) {//check it!!!
+        if (session.isNew()) {
             chain.doFilter(req, response);
         } else {
             localeProcessing(req, resp, chain, session);
@@ -60,7 +59,8 @@ public class ViewFilter implements Filter {
 
         if (!lang.isEmpty()) {
             session.setAttribute(SessionAttrInitializer.USER_LOCALE, lang);
-            Long userRoleId = HttpParser.getLongSessionAttr(SessionAttrInitializer.USER_CURRENT_ROLE, session).orElse(RoleDto.GUEST_ROLE_ID);
+            Long userRoleId = HttpParser.getLongSessionAttr(SessionAttrInitializer.USER_CURRENT_ROLE, session)
+                    .orElse(RoleDto.GUEST_ROLE_ID);
             if (userRoleId != RoleDto.GUEST_ROLE_ID) {
                 Long userId = HttpParser.getLongSessionAttr(SessionAttrInitializer.USER_ID, session).orElse(0L);
                 try {
@@ -77,7 +77,7 @@ public class ViewFilter implements Filter {
                     .getRequestDispatcher(HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LAST_PAGE, session))
                     .forward(req, resp);
         } else {
-//            System.out.println("ViewFilter.localeProcessing: " + page);
+//            System.out.println("LanguageChangingFilter.localeProcessing: " + page);
             session.setAttribute(SessionAttrInitializer.USER_LAST_PAGE, page);
             chain.doFilter(req, resp);
         }

@@ -9,6 +9,7 @@ import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.service.BillService;
 import com.liashenko.app.service.dto.RoleDto;
+import com.liashenko.app.service.dto.RouteDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.BillServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -38,13 +39,18 @@ public class ShowBillViewCommand implements ICommand {
 
         try {
             String localStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, session);
+            RouteDto routeDto = (RouteDto) session.getAttribute(SessionAttrInitializer.USER_ROUTE);
+            Long fromStationId = routeDto.getFromStationId();
+            Long toStationId = routeDto.getToStationId();
+            String date = routeDto.getDateString();
 
             Long routeId = HttpParser.getLongSessionAttr(SessionAttrInitializer.ROUTE_ID_ATTR, session).orElse(0L);
             Long trainId = HttpParser.getLongSessionAttr(SessionAttrInitializer.TRAIN_ID_ATTR, session).orElse(0L);
-            Long fromStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.FROM_STATION_ID_ATTR, session).orElse(0L);
-            Long toStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.TO_STATION_ID_ATTR, session).orElse(0L);
+//            Long fromStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.FROM_STATION_ID_ATTR, session).orElse(0L);
+//            Long toStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.TO_STATION_ID_ATTR, session).orElse(0L);
+//            String date = HttpParser.getStringSessionAttr(SessionAttrInitializer.DATE_ATTR, session);
             String trainName = HttpParser.getStringSessionAttr(SessionAttrInitializer.TRAIN_NAME_ATTR, session);
-            String date = HttpParser.getStringSessionAttr(SessionAttrInitializer.DATE_ATTR, session);
+
 
             String firstName = HttpParser.getStrAttrFromRequestAndSetToSession(request, FIRST_NAME_ATTR,
                     SessionAttrInitializer.FIRST_NAME_ATTR);

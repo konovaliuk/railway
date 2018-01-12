@@ -14,14 +14,6 @@ public class PriceForVagonDto implements Serializable {
     public PriceForVagonDto() {
     }
 
-    public PriceForVagonDto(Integer vagonTypeId, String vagonTypeName, Float ticketPrice, Float distance, Float routeRate) {
-        this.vagonTypeId = vagonTypeId;
-        this.vagonTypeName = vagonTypeName;
-        this.ticketPrice = ticketPrice;
-        this.distance = distance;
-        this.routeRate = routeRate;
-    }
-
     public Integer getVagonTypeId() {
         return vagonTypeId;
     }

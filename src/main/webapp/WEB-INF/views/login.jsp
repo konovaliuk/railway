@@ -145,7 +145,8 @@
                 if (textStatus !== 'success' || !data.success) {
                     msg.style.display = 'block';
                 } else {
-                    location.href = "<c:url value='/'/>";
+                    <%--location.href = "<c:url value='/'/>";--%>
+                    location.href = "<c:url value='/'/>" + data.message;
                 }
             }
         });

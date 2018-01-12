@@ -13,6 +13,8 @@ public abstract class SessionAttrInitializer {
 
     public static final String USER_ID = "USER_ID";
 
+    public static final String USER_PAGE_BEFORE_LOGIN = "USER_PAGE_BEFORE_LOGIN";
+
     public static final String USER_CURRENT_ROLE = "USER_CURRENT_ROLE";
     public static final String USER_LOCALE = "USER_LOCALE";
 
@@ -22,11 +24,12 @@ public abstract class SessionAttrInitializer {
     public static final String GUEST_ROLE_ATTR = "GUEST_ROLE_ATTR";
     public static final String USERS_ON_PAGE_ATTR = "USERS_ON_PAGE_ATTR";
 
-    public static final String FROM_STATION_ID_ATTR = "FROM_STATION_ID_ATTR";
-    public static final String TO_STATION_ID_ATTR = "TO_STATION_ID_ATTR";
-    public static final String FROM_STATION_NAME_ATTR = "FROM_STATION_NAME_ATTR";
-    public static final String TO_STATION_NAME_ATTR = "TO_STATION_NAME_ATTR";
-    public static final String DATE_ATTR = "DATE_ATTR";
+    public static final String USER_ROUTE = "USER_ROUTE";
+//    public static final String FROM_STATION_ID_ATTR = "FROM_STATION_ID_ATTR";
+//    public static final String TO_STATION_ID_ATTR = "TO_STATION_ID_ATTR";
+//    public static final String FROM_STATION_NAME_ATTR = "FROM_STATION_NAME_ATTR";
+//    public static final String TO_STATION_NAME_ATTR = "TO_STATION_NAME_ATTR";
+//    public static final String DATE_ATTR = "DATE_ATTR";
 
     public static final String TRAIN_NAME_ATTR = "TRAIN_NAME_ATTR";
     public static final String ROUTE_ID_ATTR = "ROUTE_ID_ATTR";
@@ -52,6 +55,7 @@ public abstract class SessionAttrInitializer {
 
     private static void defaultAttributesSetter(HttpSession session) {
         session.setAttribute(USER_LAST_PAGE, RequestHelper.INDEX_PAGE_URL_ATTR);
+        session.setAttribute(USER_PAGE_BEFORE_LOGIN, RequestHelper.INDEX_PAGE_URL_ATTR);
 
         session.setAttribute(USER_CURRENT_ROLE, RoleDto.GUEST_ROLE_ID);
         session.setAttribute(ADMIN_ROLE_ATTR, RoleDto.ADMIN_ROLE_ID);

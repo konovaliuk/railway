@@ -3,54 +3,44 @@ package com.liashenko.app.service.dto;
 import java.io.Serializable;
 
 public class RouteDto implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    private String from;
-    private Long fromId;
-    private Long toId;
-    private String to;
-    private String date;
+
+    private Long fromStationId;
+    private Long toStationId;
+    private String fromStationName;
+    private String toStationName;
+    private String dateString;
 
     public RouteDto() {
     }
 
-    public String getFrom() {
-        return from;
+    public RouteDto(Long fromStationId, Long toStationId, String fromStationName, String toStationName, String dateString) {
+        this.fromStationId = fromStationId;
+        this.toStationId = toStationId;
+        this.fromStationName = fromStationName;
+        this.toStationName = toStationName;
+        this.dateString = dateString;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public Long getFromStationId() {
+        return fromStationId;
     }
 
-    public String getTo() {
-        return to;
+    public Long getToStationId() {
+        return toStationId;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public String getFromStationName() {
+        return fromStationName;
     }
 
-    public String getDate() {
-        return date;
+    public String getToStationName() {
+        return toStationName;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public Long getFromId() {
-        return fromId;
-    }
-
-    public void setFromId(Long fromId) {
-        this.fromId = fromId;
-    }
-
-    public Long getToId() {
-        return toId;
-    }
-
-    public void setToId(Long toId) {
-        this.toId = toId;
+    public String getDateString() {
+        return dateString;
     }
 
     @Override
@@ -60,32 +50,80 @@ public class RouteDto implements Serializable {
 
         RouteDto routeDto = (RouteDto) o;
 
-        if (from != null ? !from.equals(routeDto.from) : routeDto.from != null) return false;
-        if (fromId != null ? !fromId.equals(routeDto.fromId) : routeDto.fromId != null) return false;
-        if (toId != null ? !toId.equals(routeDto.toId) : routeDto.toId != null) return false;
-        if (to != null ? !to.equals(routeDto.to) : routeDto.to != null) return false;
-        return date != null ? date.equals(routeDto.date) : routeDto.date == null;
+        if (fromStationId != null ? !fromStationId.equals(routeDto.fromStationId) : routeDto.fromStationId != null)
+            return false;
+        if (toStationId != null ? !toStationId.equals(routeDto.toStationId) : routeDto.toStationId != null)
+            return false;
+        if (fromStationName != null ? !fromStationName.equals(routeDto.fromStationName) : routeDto.fromStationName != null)
+            return false;
+        if (toStationName != null ? !toStationName.equals(routeDto.toStationName) : routeDto.toStationName != null)
+            return false;
+        return dateString != null ? dateString.equals(routeDto.dateString) : routeDto.dateString == null;
     }
 
     @Override
     public int hashCode() {
-        int result = from != null ? from.hashCode() : 0;
-        result = 31 * result + (fromId != null ? fromId.hashCode() : 0);
-        result = 31 * result + (toId != null ? toId.hashCode() : 0);
-        result = 31 * result + (to != null ? to.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
+        int result = fromStationId != null ? fromStationId.hashCode() : 0;
+        result = 31 * result + (toStationId != null ? toStationId.hashCode() : 0);
+        result = 31 * result + (fromStationName != null ? fromStationName.hashCode() : 0);
+        result = 31 * result + (toStationName != null ? toStationName.hashCode() : 0);
+        result = 31 * result + (dateString != null ? dateString.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("RouteDto{");
-        sb.append("from='").append(from).append('\'');
-        sb.append(", fromId=").append(fromId);
-        sb.append(", toId=").append(toId);
-        sb.append(", to='").append(to).append('\'');
-        sb.append(", date='").append(date).append('\'');
+        sb.append("fromStationId=").append(fromStationId);
+        sb.append(", toStationId=").append(toStationId);
+        sb.append(", fromStationName='").append(fromStationName).append('\'');
+        sb.append(", toStationName='").append(toStationName).append('\'');
+        sb.append(", dateString='").append(dateString).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private Long fromStationId;
+        private Long toStationId;
+        private String fromStationName;
+        private String toStationName;
+        private String dateString;
+
+        private Builder() {
+        }
+
+        public Builder fromStationId(Long fromStationId) {
+            this.fromStationId = fromStationId;
+            return this;
+        }
+
+        public Builder toStationId(Long toStationId) {
+            this.toStationId = toStationId;
+            return this;
+        }
+
+        public Builder fromStationName(String fromStationName) {
+            this.fromStationName = fromStationName;
+            return this;
+        }
+
+        public Builder toStationName(String toStationName) {
+            this.toStationName = toStationName;
+            return this;
+        }
+
+        public Builder dateString(String dateString) {
+            this.dateString = dateString;
+            return this;
+        }
+
+        public RouteDto build() {
+            return new RouteDto(fromStationId, toStationId, fromStationName, toStationName, dateString);
+        }
     }
 }

@@ -20,13 +20,13 @@
         <br>
         <h2><fmt:message key="header.part1" bundle="${lang}"/> <c:out value="${sessionScope.TRAIN_NAME_ATTR}"/> <c:out
                 value="${route.firstTerminalStation}"/>-<c:out value="${route.lastTerminalStation}"/> <fmt:message
-                key="header.part2" bundle="${lang}"/> <c:out value="${sessionScope.DATE_ATTR}"/></h2>
+                key="header.part2" bundle="${lang}"/> <c:out value="${date}"/></h2>
     </div>
 </div>
 
 <div class="container">
     <div class="row">
-        <form class="form-horizontal col-md-12" action="#" method="POST" id="order_form" name="order_form">
+        <form class="col-md-12" action="#" method="POST" id="order_form" name="order_form">
             <fieldset>
                 <div class="row">
                     <div class="table-responsive col-md-12">
@@ -60,17 +60,16 @@
                     </div>
                 </div>
             </fieldset>
-            <div class="container">
-                <div class="row">
-                    <div class="form-group col-lg-2 col-md-2 col-sm-2">
-                        <input type="userName" class="form-control input-lg" name="first_name" id="first_name" value=""
-                               placeholder="<fmt:message key="firstname.input.placeholder" bundle = "${lang}"/>">
-                    </div>
 
-                    <div class="form-group col-lg-2 col-md-2 col-sm-2">
+            <div class="row">
+                <div class="form-group col-lg-2 col-md-2 col-sm-2">
+                     <input type="userName" class="form-control input-lg" name="first_name" id="first_name" value=""
+                               placeholder="<fmt:message key="firstname.input.placeholder" bundle = "${lang}"/>"/>
+                </div>
+
+                <div class="form-group col-lg-2 col-md-2 col-sm-2">
                         <input type="userName" class="form-control input-lg" name="last_name" id="last_name" value=""
-                               placeholder="<fmt:message key="lastname.input.placeholder" bundle = "${lang}"/>">
-                    </div>
+                               placeholder="<fmt:message key="lastname.input.placeholder" bundle = "${lang}"/>"/>
                 </div>
             </div>
             <div class="text-right form-group btn-group-lg">
@@ -95,7 +94,12 @@
         var firstName = $('#first_name').val();
         var lastname = $('#last_name').val();
 
-        location.href = "<c:url value='/'/>bill?vagonTypeId=" + vagonTypeId + "&firstName=" + firstName + "&lastName=" + lastname;
+        <c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.USER_ROLE_ATTR}">
+            location.href = "<c:url value='/'/>bill?vagonTypeId=" + vagonTypeId + "&firstName=" + firstName + "&lastName=" + lastname;
+        </c:if>
+        <c:if test="${sessionScope.USER_CURRENT_ROLE ne sessionScope.USER_ROLE_ATTR}">
+            location.href = "<c:url value='/'/>login";
+        </c:if>
     }
 
     $(document).ready(function() {

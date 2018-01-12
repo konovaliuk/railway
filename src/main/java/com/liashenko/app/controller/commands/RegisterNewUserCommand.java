@@ -11,7 +11,6 @@ import com.liashenko.app.controller.utils.Validator;
 import com.liashenko.app.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.service.UserProfileService;
-import com.liashenko.app.service.dto.NewUserProfileViewDto;
 import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.dto.UserDto;
 import com.liashenko.app.service.exceptions.ServiceException;

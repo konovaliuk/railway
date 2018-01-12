@@ -54,7 +54,8 @@ public class SignInCommand implements ICommand {
                 session.setAttribute(SessionAttrInitializer.USER_ID, userProfileOpt.get().getUserId());
                 session.setAttribute(SessionAttrInitializer.USER_CURRENT_ROLE, userProfileOpt.get().getUserRoleId());
                 session.setAttribute(SessionAttrInitializer.USER_LOCALE, userProfileOpt.get().getLanguage());
-                MsgSender.sendJsonMsg(response, "", true);
+                String pageForRedirecting = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_PAGE_BEFORE_LOGIN, session);
+                MsgSender.sendJsonMsg(response, Validator.removeFirstSymbolFromString(pageForRedirecting), true);
             } else {
                 MsgSender.sendJsonMsg(response, "", false);
             }

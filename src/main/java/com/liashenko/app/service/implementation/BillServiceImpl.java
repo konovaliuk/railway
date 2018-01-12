@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -38,6 +39,7 @@ public class BillServiceImpl implements BillService {
     @Override
     public Optional<BillDto> showBill(Long routeId, Long trainId, Long fromStationId, Long toStationId, String trainName,
                                       String firstName, String lastName, Integer vagonTypeId, String date) {
+        LocalDate localDate = HttpParser.convertStringToDate(date);
         BillDto billDto = new BillDto();
         Connection conn = dbConnectService.getConnection();
         try {
@@ -47,7 +49,7 @@ public class BillServiceImpl implements BillService {
             setTrainNameAndVagonNumber(billDto, trainId, trainName, conn);
             setVagonTypeAndPlace(billDto, vagonTypeId, conn);
             setTicketNumberAndDate(billDto);
-            setLeavingAndArrivalDate(billDto, fromStationId, toStationId, date, routeId, conn);
+            setLeavingAndArrivalDate(billDto, fromStationId, toStationId, localDate, routeId, conn);
             setPrice(billDto, routeId, conn, fromStationId, toStationId);
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
@@ -102,19 +104,20 @@ public class BillServiceImpl implements BillService {
         billDto.setTicketDate(HttpParser.convertDateToHumanReadableString(LocalDateTime.now().toLocalDate()));
     }
 
-    private void setLeavingAndArrivalDate(BillDto billDto, Long fromStationId, Long toStationId, String date, Long routeId,
+    private void setLeavingAndArrivalDate(BillDto billDto, Long fromStationId, Long toStationId, LocalDate localDate, Long routeId,
                                           Connection conn) {
 
         Optional<GenericJDBCDao> timeTableDaoOpt = daoFactory.getDao(conn, TimeTable.class, localeQueries);
         TimeTableDao timeTableDao = (TimeTableDao) timeTableDaoOpt.orElseThrow(()
                 -> new ServiceException("TimeTableDao is null"));
 
-        timeTableDao.getTimeTableForStationByDataAndRoute(fromStationId, routeId, date)
+
+        timeTableDao.getTimeTableForStationByDataAndRoute(fromStationId, routeId, HttpParser.convertDateToDbString(localDate))
                 .ifPresent(stationFromTimeTable
                         -> billDto.setFromStationLeavingDate(
                         HttpParser.convertDateTimeToHumanReadableString (stationFromTimeTable.getDeparture())));
 
-        timeTableDao.getTimeTableForStationByDataAndRoute(toStationId, routeId, date)
+        timeTableDao.getTimeTableForStationByDataAndRoute(toStationId, routeId, HttpParser.convertDateToDbString(localDate))
                 .ifPresent(stationToTimeTable
                         -> billDto.setToStationArrivalDate(
                         HttpParser.convertDateTimeToHumanReadableString(stationToTimeTable.getArrival())));

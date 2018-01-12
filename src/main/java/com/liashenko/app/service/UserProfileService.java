@@ -1,6 +1,5 @@
 package com.liashenko.app.service;
 
-import com.liashenko.app.service.dto.NewUserProfileViewDto;
 import com.liashenko.app.service.dto.UserDto;
 
 import java.util.Optional;

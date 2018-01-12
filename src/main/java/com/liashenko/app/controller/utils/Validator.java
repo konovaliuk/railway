@@ -49,4 +49,9 @@ public abstract class Validator {
         if (assertArrayIsNullOrEmpty(pass)) throw new ValidationException("Password is empty");
         return pass;
     }
+
+    public static String removeFirstSymbolFromString(String str){
+        if (assertStringIsNullOrEmpty(str) || str.length() < 1) return str;
+        return str.substring(1);
+    }
 }

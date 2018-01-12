@@ -11,6 +11,7 @@ import com.liashenko.app.persistance.domain.Train;
 import com.liashenko.app.service.TrainSearchingService;
 import com.liashenko.app.service.data_source.DbConnectService;
 import com.liashenko.app.service.dto.AutocompleteDto;
+import com.liashenko.app.service.dto.RouteDto;
 import com.liashenko.app.service.dto.TrainDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
@@ -58,24 +59,30 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
         return Optional.of(autocompleteWordList);
     }
 
-    @Override
-    public Optional<List<TrainDto>> getTrainsForTheRouteOnDate(Long stationFromId, String stationFromName, Long stationToId,
-                                                               String stationToName, LocalDate date) {
+//    @Override
+//    public Optional<List<TrainDto>> getTrainsForTheRouteOnDate(Long stationFromId, String stationFromName, Long stationToId,
+//                                                               String stationToName, LocalDate date) {
+     @Override
+     public Optional<List<TrainDto>> getTrainsForTheRouteOnDate(RouteDto routeDto) {
+
         Connection conn = dbConnectService.getConnection();
         List<TrainDto> trainDtoList = null;
         try {
 //            conn.setReadOnly(true);
             Optional<GenericJDBCDao> routeDaoOpt = daoFactory.getDao(conn, Route.class, localeQueries);
             RouteDao routeDao = (RouteDao) routeDaoOpt.orElseThrow(() -> new ServiceException("RouteDao is null"));
-            Optional<List<Route>> routesOpt = routeDao.getRoutesByDepartureAndArrivalStationsId(stationFromId, stationToId);
+            Optional<List<Route>> routesOpt = routeDao.getRoutesByDepartureAndArrivalStationsId(routeDto.getFromStationId(),
+                    routeDto.getToStationId());
             if (routesOpt.isPresent()) {
                 trainDtoList = new ArrayList<>();
                 List<Route> routs = routesOpt.get();
                 for (Route route : routs) {
                     TrainDto trainDto = new TrainDto();
-                    setRoutWithFromAndToStationsForTrain(stationFromId, stationFromName, stationToId, stationToName, route, trainDto);
+                    setRoutWithFromAndToStationsForTrain(routeDto.getFromStationId(), routeDto.getFromStationName(),
+                            routeDto.getToStationId(), routeDto.getToStationName(), route, trainDto);
                     setTrainIdAndNumber(conn, route, trainDto);
-                    setLeavingAndArrivalDatesForTrain(stationFromId, stationToId, date, conn,
+                    setLeavingAndArrivalDatesForTrain(routeDto.getFromStationId(), routeDto.getToStationId(),
+                            HttpParser.convertStringToDate(routeDto.getDateString()), conn,
                             trainDtoList, route, trainDto);
                 }
             }
@@ -98,7 +105,8 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
                 });
     }
 
-    private void setRoutWithFromAndToStationsForTrain(Long stationFromId, String stationFromName, Long stationToId, String stationToName, Route route, TrainDto trainDto) {
+    private void setRoutWithFromAndToStationsForTrain(Long stationFromId, String stationFromName, Long stationToId,
+                                                      String stationToName, Route route, TrainDto trainDto) {
         trainDto.setStationFromId(stationFromId);
         trainDto.setStationToId(stationToId);
         trainDto.setFromStation(stationFromName);

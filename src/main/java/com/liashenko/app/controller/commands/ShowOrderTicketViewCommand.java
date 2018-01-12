@@ -9,6 +9,7 @@ import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.service.OrderService;
 import com.liashenko.app.service.dto.RoleDto;
+import com.liashenko.app.service.dto.RouteDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.OrderServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -25,15 +26,17 @@ import java.util.ResourceBundle;
 @Authorization.Restricted(roles = RoleDto.ADMIN_ROLE_ID, action = RequestHelper.ERROR_ACTION)
 
 public class ShowOrderTicketViewCommand implements ICommand {
+    private static final Logger classLogger = LogManager.getLogger(ShowOrderTicketViewCommand.class);
+
     private static final String ROUTE_ID_ATTR = "routeId";
     private static final String TRAIN_ID_ATTR = "trainId";
     private static final String TRAIN_ATTR = "train";
     private static final String PRICES_LIST_SIZE_ATTR = "list_size";
     private static final String FROM_STATION_NAME_ATTR = "from_station_name";
     private static final String TO_STATION_NAME_ATTR = "to_station_name";
-    private static final Logger classLogger = LogManager.getLogger(ShowOrderTicketViewCommand.class);
     private static final String ROUTE_ATTR = "route";
     private static final String PRICES_ATTR = "prices";
+    private static final String DATE_ATTR = "date";
 
     public String execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -51,9 +54,13 @@ public class ShowOrderTicketViewCommand implements ICommand {
                     SessionAttrInitializer.TRAIN_ID_ATTR, 0L);
             HttpParser.getStrAttrFromRequestAndSetToSession(request, TRAIN_ATTR, SessionAttrInitializer.TRAIN_NAME_ATTR);
 
-            Long fromStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.FROM_STATION_ID_ATTR, session).orElse(0L);
-            Long toStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.TO_STATION_ID_ATTR, session).orElse(0L);
+            RouteDto routeDto = (RouteDto) session.getAttribute(SessionAttrInitializer.USER_ROUTE);
 
+//            Long fromStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.FROM_STATION_ID_ATTR, session).orElse(0L);
+//            Long toStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.TO_STATION_ID_ATTR, session).orElse(0L);
+            Long fromStationId = routeDto.getFromStationId();
+            Long toStationId = routeDto.getToStationId();
+            request.setAttribute(DATE_ATTR, routeDto.getDateString());
             request.setAttribute(FROM_STATION_NAME_ATTR, orderService.getStationNameById(fromStationId).orElse(""));
             request.setAttribute(TO_STATION_NAME_ATTR, orderService.getStationNameById(toStationId).orElse(""));
 

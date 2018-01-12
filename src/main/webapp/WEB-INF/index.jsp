@@ -32,31 +32,31 @@
                         <div class="form-group col-lg-4 col-md-4 col-sm-4">
                             <div class="input-group">
                                 <input aria-describedby="sizing-addon1" type="text" class="form-control input-lg typeahead"
-                                       name="from" id="from" value="${from}"
+                                       name="from" id="from" value="${userRoute.fromStationName}"
                                        autocomplete="off" rel="autocomp1"
                                        placeholder="<fmt:message key="from.input.placeholder" bundle = "${lang}"/>" onchange="clearId('fromId');"/>
                                 <span class="input-group-addon right-radius" id="sizing-addon1"><i class="fa fa-train"></i></span>
                                 <input type="hidden" id="fromId" name="fromId"
-                                       value="${fromId}"/>
+                                       value="${userRoute.fromStationId}"/>
                             </div>
                         </div>
 
                         <div class="form-group col-lg-4 col-md-4 col-sm-4">
                             <div class="input-group">
                                 <input aria-describedby="sizing-addon2" type="text" class="form-control input-lg typeahead"
-                                       name="to" value="${to}"
+                                       name="to" value="${userRoute.toStationName}"
                                        id="to" autocomplete="off" rel="autocomp2"
                                        placeholder="<fmt:message key="where.input.placeholder" bundle = "${lang}"/>"
                                        required onchange="clearId('toId');"/>
                                 <span class="input-group-addon right-radius" id="sizing-addon2"><i class="fa fa-train"></i></span>
-                                <input type="hidden" id="toId" name="toId" value="${toId}"/>
+                                <input type="hidden" id="toId" name="toId" value="${userRoute.toStationId}"/>
                             </div>
                         </div>
 
                         <div class="form-group col-lg-3 col-md-3 col-sm-3">
                             <div class="input-group">
                                 <input type="text" class="form-control input-lg" name="date" id="date"
-                                       value="${date}" autocomplete="off"
+                                       value="${userRoute.dateString}" autocomplete="off"
                                        placeholder="<fmt:message key="when.input.placeholder" bundle = "${lang}"/>"
                                        required>
                                 <span aria-describedby="sizing-addon3" class="input-group-addon" id="sizing-addon3"><i

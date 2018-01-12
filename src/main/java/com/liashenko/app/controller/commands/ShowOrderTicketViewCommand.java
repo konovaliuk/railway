@@ -1,11 +1,14 @@
 package com.liashenko.app.controller.commands;
 
+import com.liashenko.app.authorization.Authorization;
+import com.liashenko.app.controller.RequestHelper;
 import com.liashenko.app.controller.manager.LocaleQueryConf;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
 import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.service.OrderService;
+import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.OrderServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -18,8 +21,10 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
+@Authorization.Allowed(roles = {RoleDto.GUEST_ROLE_ID, RoleDto.USER_ROLE_ID}, defAction = RequestHelper.LOGIN_PAGE_URL_ATTR)
+@Authorization.Restricted(roles = RoleDto.ADMIN_ROLE_ID, action = RequestHelper.ERROR_ACTION)
+
 public class ShowOrderTicketViewCommand implements ICommand {
-    private static final String ERROR_MSG_ATTR = "errorMessage";
     private static final String ROUTE_ID_ATTR = "routeId";
     private static final String TRAIN_ID_ATTR = "trainId";
     private static final String TRAIN_ATTR = "train";

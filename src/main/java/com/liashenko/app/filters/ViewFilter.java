@@ -38,10 +38,6 @@ public class ViewFilter implements Filter {
     private static final Logger classLogger = LogManager.getLogger(ViewFilter.class);
     private static final String LANGUAGE_ATTR = "lang";
 
-//    @Override
-//    public void init(FilterConfig filterConfig) throws ServletException {
-//    }
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -49,7 +45,6 @@ public class ViewFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession(true);
-//        System.out.println("servletPath : "+ req.getServletPath());
 
         if (session.isNew()) {//check it!!!
             chain.doFilter(req, response);

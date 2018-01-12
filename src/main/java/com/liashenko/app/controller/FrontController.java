@@ -41,7 +41,6 @@ public class FrontController extends HttpServlet {
     private RequestHelper requestHelper = RequestHelper.getInstance();
 
     public FrontController() {
-//        super();
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)

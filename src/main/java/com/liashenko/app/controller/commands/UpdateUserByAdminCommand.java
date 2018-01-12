@@ -1,6 +1,8 @@
 package com.liashenko.app.controller.commands;
 
 import com.google.gson.Gson;
+import com.liashenko.app.authorization.Authorization;
+import com.liashenko.app.controller.RequestHelper;
 import com.liashenko.app.controller.manager.LocaleQueryConf;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
@@ -10,6 +12,7 @@ import com.liashenko.app.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.persistance.domain.User;
 import com.liashenko.app.service.AdminService;
+import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.dto.UserDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.AdminServiceImpl;
@@ -25,7 +28,7 @@ import java.util.ResourceBundle;
 
 import static com.liashenko.app.controller.utils.Asserts.assertIsNull;
 
-
+@Authorization.Allowed(roles = {RoleDto.ADMIN_ROLE_ID})
 public class UpdateUserByAdminCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(UpdateUserByAdminCommand.class);
     private static final Gson GSON = new Gson();

@@ -44,7 +44,7 @@ public abstract class MsgSender {
     }
 
 
-//    public static void sendJsonMsg(HttpServletResponse resp, List<AutocompleteDto> advices) {
+//    public static void sendJsonMsg(HttpServletResponse resp, Rights<AutocompleteDto> advices) {
 //        resp.setHeader("Content-Type", "application/json;charset=UTF-8");
 //        try {
 //            PrintWriter out = resp.getWriter();

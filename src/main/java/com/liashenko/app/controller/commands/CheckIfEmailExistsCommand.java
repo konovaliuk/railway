@@ -1,5 +1,6 @@
 package com.liashenko.app.controller.commands;
 
+import com.liashenko.app.authorization.Authorization;
 import com.liashenko.app.controller.manager.LocaleQueryConf;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
@@ -7,6 +8,7 @@ import com.liashenko.app.controller.utils.MsgSender;
 import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.service.UserProfileService;
+import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.UserProfileServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
+@Authorization.Allowed(roles = {RoleDto.GUEST_ROLE_ID})
 public class CheckIfEmailExistsCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(CheckIfEmailExistsCommand.class);
 

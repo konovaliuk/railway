@@ -1,6 +1,8 @@
 package com.liashenko.app.controller.commands;
 
 import com.google.gson.Gson;
+import com.liashenko.app.authorization.Authorization;
+import com.liashenko.app.controller.RequestHelper;
 import com.liashenko.app.controller.manager.LocaleQueryConf;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
@@ -12,6 +14,7 @@ import com.liashenko.app.controller.utils.exceptions.SendMsgException;
 import com.liashenko.app.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.service.AuthorizationService;
 import com.liashenko.app.service.dto.PrinciplesDto;
+import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.dto.UserSessionProfileDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.AuthorizationServiceImpl;
@@ -28,6 +31,7 @@ import java.util.ResourceBundle;
 
 import static com.liashenko.app.controller.utils.Asserts.assertIsNull;
 
+@Authorization.Allowed(roles = RoleDto.GUEST_ROLE_ID)
 public class SignInCommand implements ICommand {
 
     private static final Logger classLogger = LogManager.getLogger(SignInCommand.class);
@@ -54,7 +58,6 @@ public class SignInCommand implements ICommand {
             } else {
                 MsgSender.sendJsonMsg(response, "", false);
             }
-
         } catch (ControllerException | ServiceException e) {
             classLogger.error(e);
             MsgSender.sendJsonMsg(response, "", false);

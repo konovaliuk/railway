@@ -5,10 +5,7 @@ import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -115,20 +112,30 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
     @Override
     public Optional<T> persist(T object) {
         // Добавляем запись
+        Object insertedId;
         try {
             String sql = getCreateQuery();
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 prepareStatementForInsert(statement, object);
                 int count = statement.executeUpdate();
                 if (count != 1) {
-                    throw new DAOException("On persist modify more then 1 record: " + count);
+                    throw new DAOException("There was an error on persist, rows affected: " + count);
+                }
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        insertedId = generatedKeys.getObject(1);
+                    }
+                    else {
+                        throw new SQLException("Creating user failed, no ID obtained.");
+                    }
                 }
             } catch (DAOException | SQLException e) {
                 throw new DAOException(e);
             }
             // Получаем только что вставленную запись
-            sql = getSelectQuery() + " WHERE id = last_insert_id();";
+            sql = getSelectQuery() + " WHERE id = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setObject(1, insertedId);
                 ResultSet rs = statement.executeQuery();
                 List<T> list = parseResultSet(rs);
                 if ((list == null) || (list.size() != 1)) {

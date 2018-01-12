@@ -14,5 +14,4 @@ public class NoCommand implements ICommand {
         /*в случае прямого обращения к контроллеру переадресация на страницу ввода логина*/
         return PageManagerConf.getInstance().getProperty(PageManagerConf.INDEX_PAGE_PATH);
     }
-
 }

@@ -1,16 +1,13 @@
 package com.liashenko.app.controller.commands;
 
-import com.google.gson.Gson;
+import com.liashenko.app.authorization.Authorization;
 import com.liashenko.app.controller.manager.LocaleQueryConf;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
-import com.liashenko.app.controller.utils.MsgSender;
 import com.liashenko.app.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.controller.utils.exceptions.ControllerException;
-import com.liashenko.app.controller.utils.exceptions.HttpParserException;
-import com.liashenko.app.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.service.TrainSearchingService;
-import com.liashenko.app.service.dto.RouteDto;
+import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.dto.TrainDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.TrainSearchingServiceImpl;
@@ -27,9 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static com.liashenko.app.controller.utils.Asserts.assertIsNull;
-import static com.liashenko.app.controller.utils.Asserts.assertStringIsNullOrEmpty;
-
+@Authorization.Allowed(roles = {RoleDto.GUEST_ROLE_ID, RoleDto.USER_ROLE_ID, RoleDto.ADMIN_ROLE_ID})
 public class SearchTrainsCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(SearchTrainsCommand.class);
 
@@ -93,7 +88,7 @@ public class SearchTrainsCommand implements ICommand {
             }
 
 //            if (trainsOpt.isPresent()){
-//                List<TrainDto> trains = trainsOpt.get();
+//                Rights<TrainDto> trains = trainsOpt.get();
 //                if (!trains.isEmpty()) {
 //                    MsgSender.sendJsonMsg(response, "", true);
 //                } else {

@@ -1,6 +1,7 @@
 package com.liashenko.app.controller.commands;
 
 import com.google.gson.Gson;
+import com.liashenko.app.authorization.Authorization;
 import com.liashenko.app.controller.manager.LocaleQueryConf;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
@@ -24,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
+
+@Authorization.Allowed(roles = RoleDto.GUEST_ROLE_ID)
 public class RegisterNewUserCommand implements ICommand {
 
     private static final Logger classLogger = LogManager.getLogger(RegisterNewUserCommand.class);

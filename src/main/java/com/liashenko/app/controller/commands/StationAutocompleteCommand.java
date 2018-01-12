@@ -1,5 +1,7 @@
 package com.liashenko.app.controller.commands;
 
+import com.liashenko.app.authorization.Authorization;
+import com.liashenko.app.controller.RequestHelper;
 import com.liashenko.app.controller.manager.LocaleQueryConf;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.controller.utils.HttpParser;
@@ -9,6 +11,7 @@ import com.liashenko.app.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.controller.utils.exceptions.SendMsgException;
 import com.liashenko.app.service.TrainSearchingService;
 import com.liashenko.app.service.dto.AutocompleteDto;
+import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.TrainSearchingServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+@Authorization.Allowed(roles = {RoleDto.GUEST_ROLE_ID, RoleDto.USER_ROLE_ID, RoleDto.ADMIN_ROLE_ID})
 public class StationAutocompleteCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(SignInCommand.class);
 

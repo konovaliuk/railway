@@ -5,6 +5,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.RoleDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Role;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,10 +59,12 @@ public class RoleDaoImpl extends AbstractJDBCDao implements RoleDao {
         List<Role> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                Role role = new Role();
-                role.setId(rs.getLong("id"));
-                role.setName(rs.getString("name" + localeQueries.getString("locale_suffix")));
-                list.add(role);
+                try {
+                    Role role = ResultSetParser.fillBeanWithResultData(rs, Role.class, localeQueries.getString("locale_suffix"));
+                    list.add(role);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
             }
         } catch (SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);
@@ -95,28 +99,11 @@ public class RoleDaoImpl extends AbstractJDBCDao implements RoleDao {
     }
 
     @Override
-//  INSERT INTO railway.role (name) VALUES (?)
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-//        try {
-//            Role role = (Role) object;
-//            statement.setString(1, role.getName());
-//        } catch (ClassCastException | SQLException e) {
-//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override
-//    UPDATE railway.password SET name=? WHERE id= ?
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-//        try {
-//            Role role = (Role) object;
-//            statement.setString(1, role.getName());
-//            statement.setLong(2, role.getId());
-//        } catch (ClassCastException | SQLException e) {
-//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override

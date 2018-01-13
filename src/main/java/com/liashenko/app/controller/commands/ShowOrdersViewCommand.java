@@ -16,6 +16,7 @@ import java.io.IOException;
 public class ShowOrdersViewCommand implements ICommand {
 
     private static final Logger classLogger = LogManager.getLogger(ShowOrdersViewCommand.class);
+
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         return PageManagerConf.getInstance().getProperty(PageManagerConf.ORDERS_PAGE_PATH);

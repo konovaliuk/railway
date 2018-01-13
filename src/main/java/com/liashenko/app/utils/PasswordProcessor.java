@@ -13,7 +13,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 
 import static com.liashenko.app.controller.utils.Asserts.assertIsNull;
-import static com.liashenko.app.controller.utils.Asserts.assertStringIsNullOrEmpty;
 
 public abstract class PasswordProcessor {
     private static final Logger classLogger = LogManager.getLogger(PasswordProcessor.class);
@@ -42,7 +41,7 @@ public abstract class PasswordProcessor {
         }
     }
 
-    public static boolean checkPassword(char[] originalPass, Password storedPass){
+    public static boolean checkPassword(char[] originalPass, Password storedPass) {
         if (assertIsNull(originalPass) || assertIsNull(storedPass)) {
             throw new PasswordProcessorException("Wrong parameters");
         }

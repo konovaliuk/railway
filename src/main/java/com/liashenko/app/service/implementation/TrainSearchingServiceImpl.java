@@ -48,7 +48,7 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
 
             stationDao.getStationsLike(stationLike).ifPresent(stations
                     -> stations.forEach(station
-                            -> autocompleteWordList.add(new AutocompleteDto(station.getId(), station.getName()))));
+                    -> autocompleteWordList.add(new AutocompleteDto(station.getId(), station.getName()))));
 
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
@@ -59,11 +59,8 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
         return Optional.of(autocompleteWordList);
     }
 
-//    @Override
-//    public Optional<List<TrainDto>> getTrainsForTheRouteOnDate(Long stationFromId, String stationFromName, Long stationToId,
-//                                                               String stationToName, LocalDate date) {
-     @Override
-     public Optional<List<TrainDto>> getTrainsForTheRouteOnDate(RouteDto routeDto) {
+    @Override
+    public Optional<List<TrainDto>> getTrainsForTheRouteOnDate(RouteDto routeDto) {
 
         Connection conn = dbConnectService.getConnection();
         List<TrainDto> trainDtoList = null;
@@ -82,8 +79,7 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
                             routeDto.getToStationId(), routeDto.getToStationName(), route, trainDto);
                     setTrainIdAndNumber(conn, route, trainDto);
                     setLeavingAndArrivalDatesForTrain(routeDto.getFromStationId(), routeDto.getToStationId(),
-                            HttpParser.convertStringToDate(routeDto.getDateString()), conn,
-                            trainDtoList, route, trainDto);
+                            routeDto.getDateString(), conn, trainDtoList, route, trainDto);
                 }
             }
         } catch (ServiceException | DAOException e) {
@@ -114,20 +110,23 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
         trainDto.setRouteId(route.getRouteNumberId());
     }
 
-    private void setLeavingAndArrivalDatesForTrain(Long stationFromId, Long stationToId, LocalDate date,
+    private void setLeavingAndArrivalDatesForTrain(Long stationFromId, Long stationToId, String dateStr,
                                                    Connection conn, List<TrainDto> trainDtoList,
                                                    Route route, TrainDto trainDto) {
+
+        LocalDate localDate = HttpParser.convertStringToDate(dateStr);
+        System.out.println("TrainSearchingServiceImpl.setLeavingAndArrivalDatesForTrain: " + localDate);
 
         Optional<GenericJDBCDao> timeTableDaoOpt = daoFactory.getDao(conn, TimeTable.class, localeQueries);
         TimeTableDao timeTableDao = (TimeTableDao) timeTableDaoOpt
                 .orElseThrow(() -> new ServiceException("TimeTableDao is null"));
 
-        timeTableDao.getTimeTableForStationByDataAndRoute(stationFromId, route.getRouteNumberId(), date)
+        timeTableDao.getTimeTableForStationByDataAndRoute(stationFromId, route.getRouteNumberId(), localDate)
                 .ifPresent(stationFromTimeTable
                         -> trainDto.setLeavingDate(
                         HttpParser.convertDateTimeToHumanReadableString(stationFromTimeTable.getDeparture())));
 
-        timeTableDao.getTimeTableForStationByDataAndRoute(stationToId, route.getRouteNumberId(), date)
+        timeTableDao.getTimeTableForStationByDataAndRoute(stationToId, route.getRouteNumberId(), localDate)
                 .ifPresent(stationToTimeTable
                         -> trainDto.setArrivalDate(
                         HttpParser.convertDateTimeToHumanReadableString(stationToTimeTable.getArrival())));

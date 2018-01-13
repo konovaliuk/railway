@@ -26,9 +26,9 @@ public class PageManagerConf {
         PageManagerConf localInstance = instance;
 
         if (localInstance == null) {
-            synchronized (PageManagerConf.class){
+            synchronized (PageManagerConf.class) {
                 localInstance = instance;
-                if (localInstance == null){
+                if (localInstance == null) {
                     instance = localInstance = new PageManagerConf();
                 }
             }

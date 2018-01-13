@@ -14,6 +14,7 @@ import java.io.IOException;
 @Authorization.Allowed(roles = {RoleDto.GUEST_ROLE_ID})
 public class ShowLoginViewCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(ShowLoginViewCommand.class);
+
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         return PageManagerConf.getInstance().getProperty(PageManagerConf.LOGIN_PAGE_PATH);

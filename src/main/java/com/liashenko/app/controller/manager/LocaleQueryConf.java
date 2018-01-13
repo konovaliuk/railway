@@ -21,8 +21,8 @@ public class LocaleQueryConf {
 
     public static LocaleQueryConf getInstance() {
         LocaleQueryConf localeInstance = instance;
-        if (localeInstance == null){
-            synchronized (LocaleQueryConf.class){
+        if (localeInstance == null) {
+            synchronized (LocaleQueryConf.class) {
                 localeInstance = instance;
                 if (localeInstance == null) {
                     instance = localeInstance = new LocaleQueryConf();

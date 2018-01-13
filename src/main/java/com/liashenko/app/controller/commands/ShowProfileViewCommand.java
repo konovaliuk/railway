@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 public class ShowProfileViewCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(ShowProfileViewCommand.class);
     private static final String USER_ATTR = "user";
+
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String page = null;
@@ -37,7 +38,7 @@ public class ShowProfileViewCommand implements ICommand {
             ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(localStr);
             Long userId = HttpParser.getLongSessionAttr(SessionAttrInitializer.USER_ID, session).orElse(0L);
             UserProfileService userProfileService = new UserProfileServiceImpl(localeQueries);
-            Optional<UserDto> userProfileOpt  = userProfileService.getUserById(userId);
+            Optional<UserDto> userProfileOpt = userProfileService.getUserById(userId);
             if (userProfileOpt.isPresent()) {
                 request.setAttribute(USER_ATTR, userProfileOpt.get());
                 page = PageManagerConf.getInstance().getProperty(PageManagerConf.PROFILE_PAGE_PATH);

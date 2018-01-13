@@ -24,12 +24,12 @@ import java.util.ResourceBundle;
 @Authorization.Allowed(roles = {RoleDto.USER_ROLE_ID, RoleDto.ADMIN_ROLE_ID})
 public class CheckIfOtherUsersWithEmailExist implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(CheckIfOtherUsersWithEmailExist.class);
-    private static final String EMAIL_ATTR =  "email";
+    private static final String EMAIL_ATTR = "email";
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       HttpSession session = request.getSession();
-       try{
+        HttpSession session = request.getSession();
+        try {
             String currentLocaleStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, request.getSession());
             ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(currentLocaleStr);
             UserProfileService userProfileService = new UserProfileServiceImpl(localeQueries);
@@ -40,10 +40,10 @@ public class CheckIfOtherUsersWithEmailExist implements ICommand {
             } else {
                 MsgSender.sendJsonMsg(response, "{\"valid\" : true }");
             }
-    } catch (ControllerException | ServiceException e) {
-        classLogger.error(e);
-        MsgSender.sendJsonMsg(response, "{\"valid\" : true }");
-    }
+        } catch (ControllerException | ServiceException e) {
+            classLogger.error(e);
+            MsgSender.sendJsonMsg(response, "{\"valid\" : true }");
+        }
         return PageManagerConf.getInstance().getProperty(PageManagerConf.EMPTY_RESULT);
     }
 }

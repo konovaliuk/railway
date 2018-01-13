@@ -56,8 +56,6 @@ public class ShowOrderTicketViewCommand implements ICommand {
 
             RouteDto routeDto = (RouteDto) session.getAttribute(SessionAttrInitializer.USER_ROUTE);
 
-//            Long fromStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.FROM_STATION_ID_ATTR, session).orElse(0L);
-//            Long toStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.TO_STATION_ID_ATTR, session).orElse(0L);
             Long fromStationId = routeDto.getFromStationId();
             Long toStationId = routeDto.getToStationId();
             request.setAttribute(DATE_ATTR, routeDto.getDateString());

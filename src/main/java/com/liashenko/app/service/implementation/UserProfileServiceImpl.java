@@ -121,8 +121,8 @@ public class UserProfileServiceImpl implements UserProfileService {
             Optional<GenericJDBCDao> userDaoOpt = daoFactory.getDao(conn, User.class, localeQueries);
             UserDao userDao = (UserDao) userDaoOpt.orElseThrow(() -> new ServiceException("UserDao is null"));
             Optional<User> userOpt = userDao.getByPK(userId);
-            if (userOpt.isPresent()){
-               userDto = UserDto.builder()
+            if (userOpt.isPresent()) {
+                userDto = UserDto.builder()
                         .email(userOpt.get().getEmail())
                         .firstName(userOpt.get().getFirstName())
                         .lastName(userOpt.get().getLastName())
@@ -172,7 +172,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         } finally {
             DbConnectService.close(conn);
         }
-
     }
 
     @Override

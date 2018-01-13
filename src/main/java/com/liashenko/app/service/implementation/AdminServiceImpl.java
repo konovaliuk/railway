@@ -46,14 +46,14 @@ public class AdminServiceImpl implements AdminService {
             Optional<List<User>> userListOpt = userDao.getPages(rowsPerPage, offset);
             userListOpt.ifPresent(users
                     -> users.forEach(user
-                        -> userDtoList.add(UserDto.builder()
-                            .userId(user.getId())
-                            .firstName(user.getFirstName())
-                            .lastName(user.getLastName())
-                            .roleId(user.getRoleId())
-                            .isBanned(user.getBanned())
-                            .email(user.getEmail())
-                            .build())));
+                    -> userDtoList.add(UserDto.builder()
+                    .userId(user.getId())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .roleId(user.getRoleId())
+                    .isBanned(user.getBanned())
+                    .email(user.getEmail())
+                    .build())));
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
             throw new ServiceException(e);
@@ -87,7 +87,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void updateUserInfo(UserDto userDto) {
-        if (assertIsNull(userDto)) throw  new ServiceException("userDto is null");
+        if (assertIsNull(userDto)) throw new ServiceException("userDto is null");
         Connection conn = dbConnectService.getConnection();
         try {
             Optional<GenericJDBCDao> userDaoOpt = daoFactory.getDao(conn, User.class, localeQueries);

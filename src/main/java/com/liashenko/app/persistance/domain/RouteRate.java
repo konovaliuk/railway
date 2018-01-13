@@ -1,20 +1,20 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
 public class RouteRate implements Serializable, Identified {
     private static final long serialVersionUID = 1L;
+
+    @Column(name = "id")
     private Integer id;
+
+    @Column(name = "rate")
     private Float rate;
 
     public RouteRate() {
-    }
-
-    public RouteRate(Integer id, Float rate) {
-        this.id = id;
-        this.rate = rate;
     }
 
     @Override

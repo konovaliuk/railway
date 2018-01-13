@@ -124,8 +124,7 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         insertedId = generatedKeys.getObject(1);
-                    }
-                    else {
+                    } else {
                         throw new SQLException("Creating user failed, no ID obtained.");
                     }
                 }
@@ -145,7 +144,7 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
             } catch (DAOException | SQLException e) {
                 throw new DAOException(e.getMessage());
             }
-        } catch (DAOException ex){
+        } catch (DAOException ex) {
             classLogger.error(ex.getMessage());
             return Optional.empty();
         }

@@ -51,7 +51,7 @@ public class RegisterNewUserCommand implements ICommand {
 
     private UserDto getValidUserDtoFromRequest(String jsonData, String currentLocaleStr,
                                                UserProfileService userProfileService) {
-        try{
+        try {
             UserDto userDto = GSON.fromJson(jsonData, UserDto.class);
             if (userProfileService.isEmailExists(userDto.getEmail())) {
                 throw new ValidationException("Password already exists");
@@ -65,7 +65,7 @@ public class RegisterNewUserCommand implements ICommand {
                     .isBanned(Boolean.FALSE)
                     .language(currentLocaleStr)
                     .build();
-        } catch (ClassCastException ex){
+        } catch (ClassCastException ex) {
             throw new ValidationException(ex.getMessage());
         }
     }

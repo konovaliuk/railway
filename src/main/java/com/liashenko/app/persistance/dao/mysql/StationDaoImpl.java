@@ -5,6 +5,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.StationDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Station;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,11 +64,13 @@ public class StationDaoImpl extends AbstractJDBCDao implements StationDao {
         List<Station> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                Station station = new Station();
-                station.setId(rs.getLong("id"));
-                station.setCity(rs.getString("city" + localeQueries.getString("locale_suffix")));
-                station.setName(rs.getString("name" + localeQueries.getString("locale_suffix")));
-                list.add(station);
+                try {
+                    Station station = ResultSetParser.fillBeanWithResultData(rs, Station.class,
+                            localeQueries.getString("locale_suffix"));
+                    list.add(station);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
             }
         } catch (SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);
@@ -102,22 +106,10 @@ public class StationDaoImpl extends AbstractJDBCDao implements StationDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-//        try {
-//            Station station = (Station) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-//        try {
-//            Station user = (Station) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override

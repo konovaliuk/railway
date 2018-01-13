@@ -22,7 +22,7 @@
                 <fieldset>
                     <h2><fmt:message key="page.header" bundle="${lang}"/></h2>
                     <hr class="colorgraph">
-                    <p id="msg_container" style="display : none;" class="a-container" ><fmt:message
+                    <p id="msg_container" style="display : none;" class="a-container"><fmt:message
                             key="invalid.login.or.password.msg" bundle="${lang}"/></p>
 
                     <div class="form-group">
@@ -66,7 +66,7 @@
 <script>
 
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#login_form')
             .bootstrapValidator({
 //                message: 'This value is not valid',
@@ -91,8 +91,8 @@
                                 message: '<fmt:message key="not.valid.email.msg" bundle="${lang}"/>'
                             },
                             <%--remote: {--%>
-                                <%--url: '/ajax/check_email',--%>
-                                <%--message: '<fmt:message key="email.exists.msg" bundle="${lang}"/>'--%>
+                            <%--url: '/ajax/check_email',--%>
+                            <%--message: '<fmt:message key="email.exists.msg" bundle="${lang}"/>'--%>
                             <%--}--%>
 //                            regexp: {
 //                                regexp: /^[a-zA-Z0-9_\.]+$/,
@@ -114,7 +114,7 @@
                     }
                 }
             })
-            .on('success.form.bv', function(e) {
+            .on('success.form.bv', function (e) {
                 // Prevent form submission
                 e.preventDefault();
 

@@ -41,5 +41,5 @@ public interface TimeTableDao extends GenericJDBCDao {
 
     Optional<TimeTable> getTimeTableForStationByDataAndRoute(Long departureStationId, Long routeId, LocalDate date);
 
-    Optional<TimeTable> getTimeTableForStationByDataAndRoute(Long departureStationId, Long routeId, String date);
+//    Optional<TimeTable> getTimeTableForStationByDataAndRoute(Long departureStationId, Long routeId, String date);
 }

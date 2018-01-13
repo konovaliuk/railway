@@ -1,6 +1,7 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -9,21 +10,22 @@ public class TimeTable implements Serializable, Identified {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "station_id")
     private Long stationId;
+
+    @Column(name = "departure")
     private LocalDateTime departure;
+
+    @Column(name = "arrival")
     private LocalDateTime arrival;
+
+    @Column(name = "route_number_id")
     private Long routeNumberId;
 
     public TimeTable() {
-    }
-
-    public TimeTable(Long id, Long stationId, LocalDateTime departure, LocalDateTime arrival, Long routeNumberId) {
-        this.id = id;
-        this.stationId = stationId;
-        this.departure = departure;
-        this.arrival = arrival;
-        this.routeNumberId = routeNumberId;
     }
 
     public Long getId() {

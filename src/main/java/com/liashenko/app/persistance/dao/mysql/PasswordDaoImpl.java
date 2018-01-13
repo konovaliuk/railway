@@ -5,6 +5,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.PasswordDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Password;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,13 +54,13 @@ public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
         List<Password> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                Password password = new Password();
-                password.setId(rs.getLong("id"));
-                password.setPassword(rs.getBytes("password"));
-                password.setSalt(rs.getBytes("salt"));
-                password.setAlgorithm(rs.getString("algorithm"));
-                password.setIterations(rs.getInt("iterations"));
-                list.add(password);
+                try {
+                    Password password = ResultSetParser.fillBeanWithResultData(rs, Password.class,
+                            localeQueries.getString("locale_suffix"));
+                    list.add(password);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
             }
         } catch (SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);

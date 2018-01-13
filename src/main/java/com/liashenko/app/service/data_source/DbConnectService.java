@@ -26,29 +26,15 @@ public class DbConnectService {
 
     public static DbConnectService getInstance() {
         DbConnectService localInstance = instance;
-        if (localInstance == null){
-            synchronized (DbConnectService.class){
+        if (localInstance == null) {
+            synchronized (DbConnectService.class) {
                 localInstance = instance;
-                if(localInstance == null) {
+                if (localInstance == null) {
                     instance = localInstance = new DbConnectService();
                 }
             }
         }
         return instance;
-    }
-
-    public synchronized Connection getConnection() {
-        Connection conn = null;
-        try {
-            if (dataSource != null) {
-                conn = dataSource.getConnection();
-                if (conn == null) throw new SQLException("Couldn't get connection with database. Connection is null");
-            }
-        } catch (SQLException e) {
-            classLogger.error(e);
-            throw new DbConnException("Couldn't get connection with database");
-        }
-        return conn;
     }
 
     public static void rollback(Connection connection) {
@@ -74,5 +60,19 @@ public class DbConnectService {
                 throw new DbConnException("Couldn't close connection with database");
             }
         }
+    }
+
+    public synchronized Connection getConnection() {
+        Connection conn = null;
+        try {
+            if (dataSource != null) {
+                conn = dataSource.getConnection();
+                if (conn == null) throw new SQLException("Couldn't get connection with database. Connection is null");
+            }
+        } catch (SQLException e) {
+            classLogger.error(e);
+            throw new DbConnException("Couldn't get connection with database");
+        }
+        return conn;
     }
 }

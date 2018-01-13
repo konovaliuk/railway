@@ -1,14 +1,21 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
 public class TrainRate implements Serializable, Identified {
 
     private static final long serialVersionUID = 1L;
+
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "rate")
     private Float rate;
+
+    @Column(name = "train_id")
     private Long trainId;
 
     public TrainRate() {

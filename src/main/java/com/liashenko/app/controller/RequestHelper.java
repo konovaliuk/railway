@@ -56,7 +56,7 @@ public class RequestHelper {
 
 
     private static volatile RequestHelper instance;
-    private static final RightsChecker RIGHTS_CHECKER = RightsChecker.getInstance();
+    //    private static final RightsChecker RIGHTS_CHECKER = RightsChecker.getInstance();
     private HashMap<String, ICommand> commands;
 
     private RequestHelper() {
@@ -87,9 +87,9 @@ public class RequestHelper {
     public static RequestHelper getInstance() {
         RequestHelper localInstance = instance;
         if (localInstance == null) {
-            synchronized (RequestHelper.class){
+            synchronized (RequestHelper.class) {
                 localInstance = instance;
-                if (localInstance == null){
+                if (localInstance == null) {
                     instance = localInstance = new RequestHelper();
                 }
             }
@@ -101,6 +101,6 @@ public class RequestHelper {
         String action = request.getServletPath();
         Long currentRole = HttpParser.getLongSessionAttr(SessionAttrInitializer.USER_CURRENT_ROLE, request.getSession())
                 .orElse(RoleDto.GUEST_ROLE_ID);
-        return (ICommand) RIGHTS_CHECKER.checkUserRightsAndGetCommand(action, DEFAULT_ACTION, currentRole, commands);
+        return RightsChecker.checkUserRightsAndGetCommand(action, DEFAULT_ACTION, currentRole, commands);
     }
 }

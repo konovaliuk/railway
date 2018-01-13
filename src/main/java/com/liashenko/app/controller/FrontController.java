@@ -53,7 +53,7 @@ public class FrontController extends HttpServlet {
              классу-обработчику конкретной команды*/
             page = ICommand.execute(request, response);
             //метод возвращает страницу ответа
-        } catch ( IOException  | ServletException e) {
+        } catch (IOException | ServletException e) {
             classLogger.error(e);
             page = PageManagerConf.getInstance().getProperty(PageManagerConf.ERROR_PAGE_PATH);
         }

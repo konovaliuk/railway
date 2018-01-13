@@ -46,9 +46,6 @@ public class ShowBillViewCommand implements ICommand {
 
             Long routeId = HttpParser.getLongSessionAttr(SessionAttrInitializer.ROUTE_ID_ATTR, session).orElse(0L);
             Long trainId = HttpParser.getLongSessionAttr(SessionAttrInitializer.TRAIN_ID_ATTR, session).orElse(0L);
-//            Long fromStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.FROM_STATION_ID_ATTR, session).orElse(0L);
-//            Long toStationId = HttpParser.getLongSessionAttr(SessionAttrInitializer.TO_STATION_ID_ATTR, session).orElse(0L);
-//            String date = HttpParser.getStringSessionAttr(SessionAttrInitializer.DATE_ATTR, session);
             String trainName = HttpParser.getStringSessionAttr(SessionAttrInitializer.TRAIN_NAME_ATTR, session);
 
 

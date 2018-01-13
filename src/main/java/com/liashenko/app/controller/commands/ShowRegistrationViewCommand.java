@@ -1,7 +1,6 @@
 package com.liashenko.app.controller.commands;
 
 import com.liashenko.app.authorization.Authorization;
-import com.liashenko.app.controller.RequestHelper;
 import com.liashenko.app.controller.manager.PageManagerConf;
 import com.liashenko.app.service.dto.RoleDto;
 import org.apache.logging.log4j.LogManager;

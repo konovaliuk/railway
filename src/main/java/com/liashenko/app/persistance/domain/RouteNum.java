@@ -1,6 +1,7 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
@@ -8,15 +9,13 @@ public class RouteNum implements Serializable, Identified {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "number")
     private Integer number;
 
     public RouteNum() {
-    }
-
-    public RouteNum(Long id, Integer number) {
-        this.id = id;
-        this.number = number;
     }
 
     @Override

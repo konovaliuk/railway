@@ -37,21 +37,6 @@ public class LanguageChangingFilter implements Filter {
     private static final Logger classLogger = LogManager.getLogger(LanguageChangingFilter.class);
     private static final String LANGUAGE_ATTR = "lang";
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-
-        HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse resp = (HttpServletResponse) response;
-        HttpSession session = req.getSession(true);
-
-        if (session.isNew()) {
-            chain.doFilter(req, response);
-        } else {
-            localeProcessing(req, resp, chain, session);
-        }
-    }
-
     private static void localeProcessing(HttpServletRequest req, HttpServletResponse resp, FilterChain chain, HttpSession session)
             throws IOException, ServletException {
         String page = req.getServletPath();
@@ -80,6 +65,21 @@ public class LanguageChangingFilter implements Filter {
 //            System.out.println("LanguageChangingFilter.localeProcessing: " + page);
             session.setAttribute(SessionAttrInitializer.USER_LAST_PAGE, page);
             chain.doFilter(req, resp);
+        }
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        HttpSession session = req.getSession(true);
+
+        if (session.isNew()) {
+            chain.doFilter(req, response);
+        } else {
+            localeProcessing(req, resp, chain, session);
         }
     }
 }

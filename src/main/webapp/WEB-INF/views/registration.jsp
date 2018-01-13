@@ -14,16 +14,16 @@
 
 <c:import url="../colon/navbar.jsp" charEncoding="utf-8"/>
 <%--<div class="container">--%>
-    <%--<div class="page-header">--%>
-        <%--<h1>--%>
-            <%--<c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.USER_ROLE_ATTR || sessionScope.USER_CURRENT_ROLE eq sessionScope.ADMIN_ROLE_ATTR}">--%>
-                <%--<fmt:message key="page.profile.header" bundle="${lang}"/>--%>
-            <%--</c:if>--%>
-            <%--<c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.GUEST_ROLE_ATTR}">--%>
-                <%--<fmt:message key="page.registration.header" bundle="${lang}"/>--%>
-            <%--</c:if>--%>
-        <%--</h1>--%>
-    <%--</div>--%>
+<%--<div class="page-header">--%>
+<%--<h1>--%>
+<%--<c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.USER_ROLE_ATTR || sessionScope.USER_CURRENT_ROLE eq sessionScope.ADMIN_ROLE_ATTR}">--%>
+<%--<fmt:message key="page.profile.header" bundle="${lang}"/>--%>
+<%--</c:if>--%>
+<%--<c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.GUEST_ROLE_ATTR}">--%>
+<%--<fmt:message key="page.registration.header" bundle="${lang}"/>--%>
+<%--</c:if>--%>
+<%--</h1>--%>
+<%--</div>--%>
 <%--</div>--%>
 
 
@@ -32,9 +32,9 @@
         <div class="col-xs-12 col-sm-8 col-md-6 col-centered">
             <%--method="POST" action="<c:url value='/'/>sign_in"--%>
 
-            <form  role="form" method="post" action="#" name="reg_form" id="reg_form">
+            <form role="form" method="post" action="#" name="reg_form" id="reg_form">
                 <h1><fmt:message key="page.registration.header" bundle="${lang}"/></h1>
-                <p id="msg_container" style="display : none;" class="a-container" ><fmt:message
+                <p id="msg_container" style="display : none;" class="a-container"><fmt:message
                         key="unsuccessful.profile.update.msg" bundle="${lang}"/></p>
 
                 <fieldset>
@@ -61,39 +61,41 @@
                     <div class="form-group">
                         <label for="email" class="cols-sm-2 control-label"><fmt:message key="email.input.label"
                                                                                         bundle="${lang}"/></label>
-                            <div class="input-group input-group-lg">
-                                <input type="text" required=""
-                                       placeholder="<fmt:message key="email.input.placeholder" bundle="${lang}"/>"
-                                       class="form-control" id="email" name="email"/>
-                                <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw" aria-hidden="true"></i></span>
-                            </div>
+                        <div class="input-group input-group-lg">
+                            <input type="text" required=""
+                                   placeholder="<fmt:message key="email.input.placeholder" bundle="${lang}"/>"
+                                   class="form-control" id="email" name="email"/>
+                            <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"
+                                                               aria-hidden="true"></i></span>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label for="password" class="cols-sm-2 control-label"><fmt:message key="password.input.label"
-                                                                                       bundle="${lang}"/></label>
-                            <div class="input-group input-group-lg">
-                                <input type="password" class="form-control" id="password" name="password" required=""
-                                       placeholder="<fmt:message key="password.input.placeholder" bundle="${lang}"/>"/>
-                                <span class="input-group-addon"><i class="fa fa-key fa-fw" aria-hidden="true"></i></span>
-                            </div>
+                                                                                           bundle="${lang}"/></label>
+                        <div class="input-group input-group-lg">
+                            <input type="password" class="form-control" id="password" name="password" required=""
+                                   placeholder="<fmt:message key="password.input.placeholder" bundle="${lang}"/>"/>
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw" aria-hidden="true"></i></span>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label for="repeatedPass" class="cols-sm-2 control-label"><fmt:message
                                 key="repeated_password.input.label" bundle="${lang}"/></label>
-                            <div class="input-group input-group-lg">
-                                <input type="password" class="form-control" id="repeatedPass" name="repeatedPass" required=""
-                                       placeholder="<fmt:message key="repeated_password.input.placeholder" bundle="${lang}"/>"/>
-                                <span class="input-group-addon"><i class="fa fa-key fa-fw" aria-hidden="true"></i></span>
-                            </div>
+                        <div class="input-group input-group-lg">
+                            <input type="password" class="form-control" id="repeatedPass" name="repeatedPass"
+                                   required=""
+                                   placeholder="<fmt:message key="repeated_password.input.placeholder" bundle="${lang}"/>"/>
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw" aria-hidden="true"></i></span>
+                        </div>
                     </div>
 
                     <!-- Button -->
                     <div class="form-group btn-group-lg">
                         <button id="submit_button" type="submit" name="submit_button"
                                 class="btn btn-primary">
-                                <fmt:message key="submit.register.button.name" bundle="${lang}"/>
+                            <fmt:message key="submit.register.button.name" bundle="${lang}"/>
                         </button>
                     </div>
                 </fieldset>
@@ -111,7 +113,7 @@
 
 <script>
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#reg_form')
             .bootstrapValidator({
                 feedbackIcons: {
@@ -127,8 +129,8 @@
                             },
                             stringLength: {
                                 min: 0,
-                                    max: 255,
-                                    message: '<fmt:message key="not.more.than.firstname.validation.msg" bundle="${lang}"/>'
+                                max: 255,
+                                message: '<fmt:message key="not.more.than.firstname.validation.msg" bundle="${lang}"/>'
                             }
                         }
                     },
@@ -214,7 +216,7 @@
                     }
                 }
             })
-            .on('success.form.bv', function(e) {
+            .on('success.form.bv', function (e) {
                 // Prevent form submission
                 e.preventDefault();
 

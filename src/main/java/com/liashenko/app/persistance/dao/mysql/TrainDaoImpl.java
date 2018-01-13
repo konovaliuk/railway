@@ -5,6 +5,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.TrainDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Train;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,12 +63,13 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
         List<Train> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                Train train = new Train();
-                train.setId(rs.getLong("id"));
-                train.setNumber(rs.getString("vagon_number"));
-                train.setRouteNumId(rs.getLong("route_num_id"));
-                train.setVagonCount(rs.getInt("vagon_count"));
-                list.add(train);
+                try {
+                    Train train = ResultSetParser.fillBeanWithResultData(rs, Train.class, localeQueries.getString("locale_suffix"));
+                    list.add(train);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
+
             }
         } catch (SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);
@@ -102,22 +105,10 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-//        try {
-//            Train train = (Train) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-//        try {
-//            Train train = (Train) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override

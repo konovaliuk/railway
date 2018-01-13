@@ -54,27 +54,27 @@ public abstract class AppProperties {
         }
     }
 
-    public static int getFirstNameMaxLength(){
+    public static int getFirstNameMaxLength() {
         return getIntValue("user.first.name.max.length", 255);
     }
 
-    public static int getFirstNameMinLength(){
+    public static int getFirstNameMinLength() {
         return getIntValue("user.first.name.min.length", 1);
     }
 
-    public static int getLastNameMaxLength(){
+    public static int getLastNameMaxLength() {
         return getIntValue("user.last.name.max.length", 255);
     }
 
-    public static int getLastNameMinLength(){
+    public static int getLastNameMinLength() {
         return getIntValue("user.last.name.min.length", 1);
     }
 
-    public static int getPassMaxLength(){
+    public static int getPassMaxLength() {
         return getIntValue("user.pass.max.length", 255);
     }
 
-    public static int getPassMinLength(){
+    public static int getPassMinLength() {
         return getIntValue("user.pass.min.length", 1);
     }
 

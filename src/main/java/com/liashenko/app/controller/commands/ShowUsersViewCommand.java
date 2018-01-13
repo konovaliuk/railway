@@ -43,7 +43,7 @@ public class ShowUsersViewCommand implements ICommand {
         HttpSession session = request.getSession(true);
         try {
             String localStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, session);
-            Integer offset = HttpParser.getIntRequestParam (OFFSET_ATTR, request).orElse(0);
+            Integer offset = HttpParser.getIntRequestParam(OFFSET_ATTR, request).orElse(0);
             request.setAttribute(OFFSET_ATTR, offset);
 
             Integer usersOnPage = HttpParser.getIntAttrFromRequestOrSessionOrDefaultAndSetToSession(request, USERS_ON_PAGE_ATTR,

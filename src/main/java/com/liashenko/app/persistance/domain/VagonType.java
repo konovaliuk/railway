@@ -1,6 +1,7 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
@@ -8,8 +9,13 @@ public class VagonType implements Serializable, Identified {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "id")
     private Integer id;
+
+    @Column(name = "type_name", useLocaleSuffix = true)
     private String typeName;
+
+    @Column(name = "places_count")
     private Integer placesCount;
 
     public VagonType() {

@@ -1,6 +1,7 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
@@ -8,13 +9,28 @@ public class User implements Identified, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "firstname")
     private String firstName;
+
+    @Column(name = "lastname")
     private String lastName;
+
+    @Column(name = "e_mail")
     private String email;
+
+    @Column(name = "password_id")
     private Long passwordId;
+
+    @Column(name = "role_id")
     private Long roleId;
+
+    @Column(name = "is_banned")
     private Boolean isBanned;
+
+    @Column(name = "language")
     private String language;
 
     public User() {

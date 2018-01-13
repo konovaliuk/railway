@@ -1,6 +1,7 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
@@ -8,9 +9,16 @@ public class Train implements Serializable, Identified {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "vagon_number")
     private String number;
+
+    @Column(name = "route_num_id")
     private Long routeNumId;
+
+    @Column(name = "vagon_count")
     private Integer vagonCount;
 
     public Train() {

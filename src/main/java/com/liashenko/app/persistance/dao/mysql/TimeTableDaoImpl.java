@@ -6,6 +6,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.TimeTableDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.TimeTable;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,13 +65,14 @@ public class TimeTableDaoImpl extends AbstractJDBCDao implements TimeTableDao {
         List<TimeTable> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                TimeTable timeTable = new TimeTable();
-                timeTable.setId(rs.getLong("id"));
-                timeTable.setStationId(rs.getLong("station_id"));
-                timeTable.setDeparture(rs.getTimestamp("departure").toLocalDateTime());
-                timeTable.setArrival(rs.getTimestamp("arrival").toLocalDateTime());
-                timeTable.setRouteNumberId(rs.getLong("route_number_id"));
-                list.add(timeTable);
+                try {
+                    TimeTable timeTable = ResultSetParser.fillBeanWithResultData(rs, TimeTable.class,
+                            localeQueries.getString("locale_suffix"));
+                    System.out.println("TimeTableDaoImpl.parseResultSet: " + timeTable);
+                    list.add(timeTable);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
             }
         } catch (SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);
@@ -105,22 +108,10 @@ public class TimeTableDaoImpl extends AbstractJDBCDao implements TimeTableDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-//        try {
-//            TimeTable timeTable = (TimeTable) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-//        try {
-//            TimeTable timeTable = (TimeTable) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override
@@ -130,20 +121,12 @@ public class TimeTableDaoImpl extends AbstractJDBCDao implements TimeTableDao {
 
     @Override
     public Optional<TimeTable> getTimeTableForStationByDataAndRoute(Long stationId, Long routeId, LocalDate date) {
-        return getTimeTableForStationByDataAndRoute(stationId, routeId, HttpParser.convertDateToDbString(date));
-    }
-
-    @Override
-    public Optional<TimeTable> getTimeTableForStationByDataAndRoute(Long stationId, Long routeId, String date) {
         String sql = getTimeTableForDepartureStationByDataAndRouteQuery();
-//        System.out.println("TimeTableDaoImpl.getTimeTableForStationByDataAndRoute : " + sql);
-//        System.out.println("stationId = [" + stationId + "], routeId = [" + routeId + "], date = [" + HttpParser.convertDateToDbString(date) + "]");
         List<TimeTable> timeTableList;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, routeId);
             statement.setLong(2, stationId);
-//            statement.setObject(3, date);
-            statement.setString(3, date);
+            statement.setString(3, HttpParser.convertDateToDbString(date));
             ResultSet rs = statement.executeQuery();
             timeTableList = parseResultSet(rs);
         } catch (DAOException | SQLException e) {

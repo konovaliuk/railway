@@ -1,7 +1,6 @@
 package com.liashenko.app.controller.utils;
 
 import com.liashenko.app.controller.utils.exceptions.HttpParserException;
-import com.liashenko.app.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.utils.AppProperties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +58,7 @@ public abstract class HttpParser {
         try {
             return LocalDate.parse(stringDate, formatter);
         } catch (DateTimeParseException ex) {
-            throw new HttpParserException (ex.getMessage());
+            throw new HttpParserException(ex.getMessage());
         }
     }
 
@@ -155,34 +154,34 @@ public abstract class HttpParser {
     }
 
     public static Integer getIntFromRequestOrFromSessionOrDefault(HttpServletRequest request, String reqAttr,
-                                                                  String sessionAttr, Integer defaultVal){
+                                                                  String sessionAttr, Integer defaultVal) {
         return getIntRequestParam(reqAttr, request).orElseGet(()
                 -> getIntSessionAttr(sessionAttr, request.getSession()).orElse(defaultVal));
     }
 
     public static Long getLongFromRequestOrFromSessionOrDefault(HttpServletRequest request, String reqAttr,
-                                                                String sessionAttr, Long defaultVal){
+                                                                String sessionAttr, Long defaultVal) {
         return getLongRequestParam(reqAttr, request).orElseGet(()
                 -> getLongSessionAttr(sessionAttr, request.getSession()).orElse(defaultVal));
     }
 
-    public static String getStrAttrFromRequestAndSetToSession(HttpServletRequest request, String reqAttr, String sessionAttr){
+    public static String getStrAttrFromRequestAndSetToSession(HttpServletRequest request, String reqAttr, String sessionAttr) {
         String value = getStringRequestParam(reqAttr, request);
-        if (!value.isEmpty()){
+        if (!value.isEmpty()) {
             request.getSession().setAttribute(sessionAttr, value);
         }
-         return value;
+        return value;
     }
 
     public static Long getLongAttrFromRequestOrSessionOrDefaultAndSetToSession(HttpServletRequest request, String reqAttr,
-                                                                      String sessionAttr, Long defaultValue){
+                                                                               String sessionAttr, Long defaultValue) {
         Long value = getLongFromRequestOrFromSessionOrDefault(request, reqAttr, sessionAttr, defaultValue);
         request.getSession().setAttribute(sessionAttr, value);
         return value;
     }
 
     public static Integer getIntAttrFromRequestOrSessionOrDefaultAndSetToSession(HttpServletRequest request, String reqAttr,
-                                                                               String sessionAttr, Integer defaultValue){
+                                                                                 String sessionAttr, Integer defaultValue) {
         Integer value = getIntFromRequestOrFromSessionOrDefault(request, reqAttr, sessionAttr, defaultValue);
         request.getSession().setAttribute(sessionAttr, value);
         return value;

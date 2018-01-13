@@ -24,15 +24,15 @@ import java.util.ResourceBundle;
 public class CheckIfEmailExistsCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(CheckIfEmailExistsCommand.class);
 
-    private static final String EMAIL_ATTR =  "email";
+    private static final String EMAIL_ATTR = "email";
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-        String currentLocaleStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, request.getSession());
-        ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(currentLocaleStr);
-        UserProfileService userProfileService = new UserProfileServiceImpl(localeQueries);
-        String email = HttpParser.getStringRequestParam(EMAIL_ATTR, request);
+            String currentLocaleStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, request.getSession());
+            ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(currentLocaleStr);
+            UserProfileService userProfileService = new UserProfileServiceImpl(localeQueries);
+            String email = HttpParser.getStringRequestParam(EMAIL_ATTR, request);
             if (userProfileService.isEmailExists(email)) {
                 MsgSender.sendJsonMsg(response, "{\"valid\" : false }");
             } else {

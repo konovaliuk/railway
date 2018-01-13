@@ -20,17 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 @Authorization.Allowed(roles = {RoleDto.GUEST_ROLE_ID, RoleDto.USER_ROLE_ID, RoleDto.ADMIN_ROLE_ID})
 public class SearchTrainsCommand implements ICommand {
-    private static final Logger classLogger = LogManager.getLogger(SearchTrainsCommand.class);
-
-//    private static final Gson GSON = new Gson();
     public static final String USER_ROUTE = "userRoute";
+    private static final Logger classLogger = LogManager.getLogger(SearchTrainsCommand.class);
     private static final String FROM_ID_ATTR = "fromId";
     private static final String TO_ID_ATTR = "toId";
     private static final String FROM_ATTR = "from";
@@ -54,38 +51,21 @@ public class SearchTrainsCommand implements ICommand {
                     .dateString(HttpParser.getStringRequestParam(DATE_ATTR, request))
                     .build();
 
-//            LocalDate dateTime = HttpParser.convertStringToDate(dateString);
-
             ResourceBundle localeQueries = LocaleQueryConf.getInstance().getLocalQueries(currentLocaleStr);
             TrainSearchingService trainSearchingService = new TrainSearchingServiceImpl(localeQueries);
-//            Optional<List<TrainDto>> trainsOpt = trainSearchingService.getTrainsForTheRouteOnDate(fromStationId,
-//                    fromStationName, toStationId, toStationName, dateTime);
             Optional<List<TrainDto>> trainsOpt = trainSearchingService.getTrainsForTheRouteOnDate(routeDto);
 
             request.setAttribute(USER_ROUTE, routeDto);
             session.setAttribute(SessionAttrInitializer.USER_ROUTE, routeDto);
-//            request.setAttribute(FROM_ID_ATTR, fromStationId);
-//            request.setAttribute(FROM_ATTR, fromStationName);
-//            request.setAttribute(TO_ID_ATTR, toStationId);
-//            request.setAttribute(TO_ATTR, toStationName);
-//            request.setAttribute(DATE_ATTR, dateString);
-
-//            session.setAttribute(SessionAttrInitializer.FROM_STATION_ID_ATTR, fromStationId);
-//            session.setAttribute(SessionAttrInitializer.FROM_STATION_NAME_ATTR, fromStationName);
-//            session.setAttribute(SessionAttrInitializer.TO_STATION_ID_ATTR, toStationId);
-//            session.setAttribute(SessionAttrInitializer.TO_STATION_NAME_ATTR, toStationName);
-//            session.setAttribute(SessionAttrInitializer.DATE_ATTR, dateString);
-
             trainsOpt.ifPresent(trainDtos -> request.setAttribute(TRAINS_ATTR, trainDtos));
 
-            if (trainsOpt.isPresent() && !trainsOpt.get().isEmpty()){
+            if (trainsOpt.isPresent() && !trainsOpt.get().isEmpty()) {
                 request.setAttribute(TRAINS_ATTR, trainsOpt.get());
             } else {
                 request.setAttribute(TRAINS_ATTR, null);
                 request.setAttribute(IS_LIST_EMPTY, Boolean.TRUE);
             }
 
-//            session.setAttribute(SessionAttrInitializer.DATE_ATTR, HttpParser.convertDateToHumanReadableString(dateTime));//??
             page = PageManagerConf.getInstance().getProperty(PageManagerConf.INDEX_PAGE_PATH);
         } catch (ControllerException | ServiceException e) {
             classLogger.error(e);

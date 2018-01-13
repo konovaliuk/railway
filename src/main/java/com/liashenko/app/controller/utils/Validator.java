@@ -3,8 +3,6 @@ package com.liashenko.app.controller.utils;
 import com.liashenko.app.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.utils.AppProperties;
 
-import java.util.Arrays;
-
 import static com.liashenko.app.controller.utils.Asserts.*;
 
 //try to use chain pattern
@@ -50,7 +48,7 @@ public abstract class Validator {
         return pass;
     }
 
-    public static String removeFirstSymbolFromString(String str){
+    public static String removeFirstSymbolFromString(String str) {
         if (assertStringIsNullOrEmpty(str) || str.length() < 1) return str;
         return str.substring(1);
     }

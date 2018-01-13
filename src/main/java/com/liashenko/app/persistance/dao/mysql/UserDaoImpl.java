@@ -5,6 +5,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.UserDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.User;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +19,6 @@ import java.util.*;
 public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
 
     private static final Logger classLogger = LogManager.getLogger(UserDaoImpl.class);
-
 
     public UserDaoImpl(Connection connection, ResourceBundle localeQueries) {
         super(connection, localeQueries);
@@ -57,7 +58,7 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
         return localeQueries.getString("get_user_by_email_field");
     }
 
-    public String getUserByIdAndEmailQuery(){
+    public String getUserByIdAndEmailQuery() {
         return localeQueries.getString("get_user_by_email_and_excluded_id");
     }
 
@@ -82,16 +83,13 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
         List<User> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                User user = new User();
-                user.setId(rs.getLong("id"));
-                user.setFirstName(rs.getString("firstname"));
-                user.setLastName(rs.getString("lastname"));
-                user.setEmail(rs.getString("e_mail"));
-                user.setPasswordId(rs.getLong("password_id"));
-                user.setRoleId(rs.getLong("role_id"));
-                user.setBanned(rs.getBoolean("is_banned"));
-                user.setLanguage(rs.getString("language"));
-                list.add(user);
+                try {
+                    User user = ResultSetParser.fillBeanWithResultData(rs, User.class,
+                            localeQueries.getString("locale_suffix"));
+                    list.add(user);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
             }
         } catch (SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);

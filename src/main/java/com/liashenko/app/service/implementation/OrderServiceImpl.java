@@ -69,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ServiceException("StationDao is null"));
         Optional<Station> firstStationOpt = stationDao.getByPK(firstStationId);
         Optional<Station> lastStationOpt = stationDao.getByPK(lastStationId);
-        if (firstStationOpt.isPresent() && lastStationOpt.isPresent()){
+        if (firstStationOpt.isPresent() && lastStationOpt.isPresent()) {
             fullRouteDto = new FullRouteDto();
             fullRouteDto.setFirstTerminalStation(firstStationOpt.get().getCity());
             fullRouteDto.setLastTerminalStation(lastStationOpt.get().getCity());
@@ -102,8 +102,8 @@ public class OrderServiceImpl implements OrderService {
             Optional<List<VagonType>> vagonTypeListOpt = vagonTypeDao.getAll();
             vagonTypeListOpt.ifPresent(vagonTypes
                     -> vagonTypes.forEach(vagonType
-                            -> calculateAndFillListOfPricesForVagons(conn, pricesForVagonList, vagonType,
-                                        distance, routeRateFloat)));
+                    -> calculateAndFillListOfPricesForVagons(conn, pricesForVagonList, vagonType,
+                    distance, routeRateFloat)));
 
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);

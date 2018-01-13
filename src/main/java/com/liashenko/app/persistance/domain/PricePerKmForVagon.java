@@ -1,6 +1,7 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
@@ -8,17 +9,16 @@ public class PricePerKmForVagon implements Serializable, Identified {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "price")
     private Double price;
+
+    @Column(name = "vagon_type_id")
     private Integer vagonTypeId;
 
     public PricePerKmForVagon() {
-    }
-
-    public PricePerKmForVagon(Long id, Double price, Integer vagonTypeId) {
-        this.id = id;
-        this.price = price;
-        this.vagonTypeId = vagonTypeId;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -8,10 +9,19 @@ import java.util.Arrays;
 public class Password implements Identified, Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "password")
     private byte[] password;
+
+    @Column(name = "salt")
     private byte[] salt;
+
+    @Column(name = "iterations")
     private Integer iterations;
+
+    @Column(name = "algorithm")
     private String algorithm;
 
     public Password() {

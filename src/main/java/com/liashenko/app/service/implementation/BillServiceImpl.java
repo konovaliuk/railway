@@ -111,13 +111,12 @@ public class BillServiceImpl implements BillService {
         TimeTableDao timeTableDao = (TimeTableDao) timeTableDaoOpt.orElseThrow(()
                 -> new ServiceException("TimeTableDao is null"));
 
-
-        timeTableDao.getTimeTableForStationByDataAndRoute(fromStationId, routeId, HttpParser.convertDateToDbString(localDate))
+        timeTableDao.getTimeTableForStationByDataAndRoute(fromStationId, routeId, localDate)
                 .ifPresent(stationFromTimeTable
                         -> billDto.setFromStationLeavingDate(
-                        HttpParser.convertDateTimeToHumanReadableString (stationFromTimeTable.getDeparture())));
+                        HttpParser.convertDateTimeToHumanReadableString(stationFromTimeTable.getDeparture())));
 
-        timeTableDao.getTimeTableForStationByDataAndRoute(toStationId, routeId, HttpParser.convertDateToDbString(localDate))
+        timeTableDao.getTimeTableForStationByDataAndRoute(toStationId, routeId, localDate)
                 .ifPresent(stationToTimeTable
                         -> billDto.setToStationArrivalDate(
                         HttpParser.convertDateTimeToHumanReadableString(stationToTimeTable.getArrival())));

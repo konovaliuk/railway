@@ -1,12 +1,17 @@
 package com.liashenko.app.persistance.domain;
 
 import com.liashenko.app.persistance.dao.Identified;
+import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
 public class Role implements Identified, Serializable {
+    private static final long serialVersionUID = 1L;
 
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "name", useLocaleSuffix = true)
     private String name;
 
     public Role() {

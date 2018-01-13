@@ -5,6 +5,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.RouteNumDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.RouteNum;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,10 +59,12 @@ public class RouteNumDaoImpl extends AbstractJDBCDao implements RouteNumDao {
         List<RouteNum> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                RouteNum routeNum = new RouteNum();
-                routeNum.setId(rs.getLong("id"));
-                routeNum.setNumber(rs.getInt("number"));
-                list.add(routeNum);
+                try {
+                    RouteNum routeNum = ResultSetParser.fillBeanWithResultData(rs, RouteNum.class, localeQueries.getString("locale_suffix"));
+                    list.add(routeNum);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
             }
         } catch (SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);
@@ -96,22 +100,10 @@ public class RouteNumDaoImpl extends AbstractJDBCDao implements RouteNumDao {
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-//        try {
-//            RouteNum routeNum = (RouteNum) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-//        try {
-//            RouteNum routeNum = (RouteNum) object;
-//        } catch (ClassCastException e) {
-//            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-//            throw new DAOException(e);
-//        }
     }
 
     @Override

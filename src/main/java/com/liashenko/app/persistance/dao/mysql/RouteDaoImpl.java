@@ -5,6 +5,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.RouteDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Route;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,12 +76,12 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
         List<Route> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                Route route = new Route();
-                route.setId(rs.getLong("id"));
-                route.setStationId(rs.getLong("station_id"));
-                route.setRouteNumberId(rs.getLong("rout_number_id"));
-                route.setDistance(rs.getFloat("distance"));
-                list.add(route);
+                try {
+                    Route route = ResultSetParser.fillBeanWithResultData(rs, Route.class, localeQueries.getString("locale_suffix"));
+                    list.add(route);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
             }
         } catch (SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);

@@ -1,7 +1,6 @@
 package com.liashenko.app.controller.utils;
 
 import com.liashenko.app.controller.RequestHelper;
-import com.liashenko.app.persistance.domain.Role;
 import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.utils.AppProperties;
 

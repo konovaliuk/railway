@@ -5,6 +5,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.VagonTypeDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.VagonType;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,11 +59,17 @@ public class VagonTypeDaoImpl extends AbstractJDBCDao implements VagonTypeDao {
         List<VagonType> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                VagonType vagonType = new VagonType();
-                vagonType.setId(rs.getInt("id"));
-                vagonType.setTypeName(rs.getString("type_name" + localeQueries.getString("locale_suffix")));
-                vagonType.setPlacesCount(rs.getInt("places_count"));
-                list.add(vagonType);
+//                VagonType vagonType = new VagonType();
+//                vagonType.setId(rs.getInt("id"));
+//                vagonType.setTypeName(rs.getString("type_name" + localeQueries.getString("locale_suffix")));
+//                vagonType.setPlacesCount(rs.getInt("places_count"));
+
+                try {
+                    VagonType vagonType = ResultSetParser.fillBeanWithResultData(rs, VagonType.class, localeQueries.getString("locale_suffix"));
+                    list.add(vagonType);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
             }
         } catch (SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);

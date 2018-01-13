@@ -63,13 +63,13 @@
 
             <div class="row">
                 <div class="form-group col-lg-2 col-md-2 col-sm-2">
-                     <input type="userName" class="form-control input-lg" name="first_name" id="first_name" value=""
-                               placeholder="<fmt:message key="firstname.input.placeholder" bundle = "${lang}"/>"/>
+                    <input type="userName" class="form-control input-lg" name="first_name" id="first_name" value=""
+                           placeholder="<fmt:message key="firstname.input.placeholder" bundle = "${lang}"/>"/>
                 </div>
 
                 <div class="form-group col-lg-2 col-md-2 col-sm-2">
-                        <input type="userName" class="form-control input-lg" name="last_name" id="last_name" value=""
-                               placeholder="<fmt:message key="lastname.input.placeholder" bundle = "${lang}"/>"/>
+                    <input type="userName" class="form-control input-lg" name="last_name" id="last_name" value=""
+                           placeholder="<fmt:message key="lastname.input.placeholder" bundle = "${lang}"/>"/>
                 </div>
             </div>
             <div class="text-right form-group btn-group-lg">
@@ -95,14 +95,14 @@
         var lastname = $('#last_name').val();
 
         <c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.USER_ROLE_ATTR}">
-            location.href = "<c:url value='/'/>bill?vagonTypeId=" + vagonTypeId + "&firstName=" + firstName + "&lastName=" + lastname;
+        location.href = "<c:url value='/'/>bill?vagonTypeId=" + vagonTypeId + "&firstName=" + firstName + "&lastName=" + lastname;
         </c:if>
         <c:if test="${sessionScope.USER_CURRENT_ROLE ne sessionScope.USER_ROLE_ATTR}">
-            location.href = "<c:url value='/'/>login";
+        location.href = "<c:url value='/'/>login";
         </c:if>
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#order_form').bootstrapValidator({
             live: 'disabled',
             feedbackIcons: {
@@ -138,11 +138,11 @@
                 }
             }
         })
-        .on('success.form.bv', function(e) {
+            .on('success.form.bv', function (e) {
                 // Prevent form submission
                 e.preventDefault();
                 goToBill();
-        });
+            });
     });
 
 </script>

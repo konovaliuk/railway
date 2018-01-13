@@ -4,7 +4,6 @@ import com.liashenko.app.service.dto.AutocompleteDto;
 import com.liashenko.app.service.dto.RouteDto;
 import com.liashenko.app.service.dto.TrainDto;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 

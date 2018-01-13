@@ -19,6 +19,7 @@
 <a href="<c:url value='/'/>"><fmt:message key="error.page.ref" bundle="${lang}"/></a>
 
 
-<img src="./res/images/404.jpg" alt="Error" style="position: absolute; left: 50%; top: 50%; margin-left: -285px; margin-top: -190px;">
+<img src="./res/images/404.jpg" alt="Error"
+     style="position: absolute; left: 50%; top: 50%; margin-left: -285px; margin-top: -190px;">
 </body>
 </html>

@@ -6,27 +6,32 @@ import java.lang.annotation.*;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface Authorization {
 
-    @Target(value= ElementType.TYPE)
-    @Retention(value= RetentionPolicy.RUNTIME)
+    @Target(value = ElementType.TYPE)
+    @Retention(value = RetentionPolicy.RUNTIME)
     @interface Allowed {
-        long[] roles ();
+        long[] roles();
+
         String defAction() default "";
+
         String description() default "";
     }
 
     @Target(value = ElementType.TYPE)
-    @Retention(value= RetentionPolicy.RUNTIME)
+    @Retention(value = RetentionPolicy.RUNTIME)
     @Repeatable(Restrictions.class)
     @interface Restricted {
         long[] roles();
+
         String action();
+
         int priority() default 0;
+
         String description() default "";
     }
 
     @Target(value = ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
-    @interface Restrictions{
+    @interface Restrictions {
         Restricted[] value();
     }
 }

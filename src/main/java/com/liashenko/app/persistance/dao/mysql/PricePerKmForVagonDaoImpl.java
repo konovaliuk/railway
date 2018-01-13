@@ -5,6 +5,8 @@ import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.PricePerKmForVagonDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.PricePerKmForVagon;
+import com.liashenko.app.persistance.result_parser.ResultSetParser;
+import com.liashenko.app.persistance.result_parser.ResultSetParserException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,11 +63,13 @@ public class PricePerKmForVagonDaoImpl extends AbstractJDBCDao implements PriceP
         List<PricePerKmForVagon> list = new ArrayList<>();
         try {
             while (rs.next()) {
-                PricePerKmForVagon pricePerKmForVagon = new PricePerKmForVagon();
-                pricePerKmForVagon.setId(rs.getLong("id"));
-                pricePerKmForVagon.setPrice(rs.getDouble("price"));
-                pricePerKmForVagon.setVagonTypeId(rs.getInt("vagon_type_id"));
-                list.add(pricePerKmForVagon);
+                try {
+                    PricePerKmForVagon pricePerKmForVagon = ResultSetParser.fillBeanWithResultData(rs,
+                            PricePerKmForVagon.class, localeQueries.getString("locale_suffix"));
+                    list.add(pricePerKmForVagon);
+                } catch (ResultSetParserException ex) {
+                    classLogger.error(ex);
+                }
             }
         } catch (DAOException | SQLException e) {
             classLogger.error("Couldn't parse ResultSet", e);
@@ -101,22 +105,10 @@ public class PricePerKmForVagonDaoImpl extends AbstractJDBCDao implements PriceP
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
-        try {
-            PricePerKmForVagon pricePerKmForVagon = (PricePerKmForVagon) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
-            throw new DAOException(e);
-        }
     }
 
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
-        try {
-            PricePerKmForVagon pricePerKmForVagon = (PricePerKmForVagon) object;
-        } catch (ClassCastException e) {
-            classLogger.error("Couldn't make PreparedStatement for UPDATE", e);
-            throw new DAOException(e);
-        }
     }
 
     @Override

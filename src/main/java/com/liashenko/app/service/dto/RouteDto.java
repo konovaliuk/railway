@@ -23,6 +23,10 @@ public class RouteDto implements Serializable {
         this.dateString = dateString;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public Long getFromStationId() {
         return fromStationId;
     }
@@ -81,10 +85,6 @@ public class RouteDto implements Serializable {
         sb.append(", dateString='").append(dateString).append('\'');
         sb.append('}');
         return sb.toString();
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public static final class Builder {

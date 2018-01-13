@@ -15,24 +15,24 @@ public class MySQLDaoFactory implements DaoFactory {
     private static final Logger classLogger = LogManager.getLogger(MySQLDaoFactory.class);
     private static volatile MySQLDaoFactory instance;
 
-    private MySQLDaoFactory(){
+    private MySQLDaoFactory() {
     }
 
-    public static MySQLDaoFactory getInstance(){
+    public static MySQLDaoFactory getInstance() {
         MySQLDaoFactory localInstance = instance;
         if (localInstance == null) {
-            synchronized (MySQLDaoFactory.class){
-              localInstance = instance;
-              if (localInstance == null) {
-                  instance = localInstance = new MySQLDaoFactory();
-              }
+            synchronized (MySQLDaoFactory.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new MySQLDaoFactory();
+                }
             }
         }
         return instance;
     }
 
     @Override
-    public synchronized Optional<GenericJDBCDao> getDao(Connection connection, Class clazz, ResourceBundle localeQueries){
+    public synchronized Optional<GenericJDBCDao> getDao(Connection connection, Class clazz, ResourceBundle localeQueries) {
         if (connection == null) throw new DAOException("No connection with db");
 
         if (clazz == User.class) return Optional.of(new UserDaoImpl(connection, localeQueries));

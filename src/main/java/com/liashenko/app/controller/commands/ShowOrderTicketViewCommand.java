@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 @Authorization.Allowed(roles = {RoleDto.GUEST_ROLE_ID, RoleDto.USER_ROLE_ID}, defAction = RequestHelper.LOGIN_PAGE_URL_ATTR)
-@Authorization.Restricted(roles = RoleDto.ADMIN_ROLE_ID, action = RequestHelper.ERROR_ACTION)
+@Authorization.Restricted(roles = RoleDto.ADMIN_ROLE_ID, action = RequestHelper.ADMIN_WARNING_URL_ATTR)
 
 public class ShowOrderTicketViewCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(ShowOrderTicketViewCommand.class);

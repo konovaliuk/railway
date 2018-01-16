@@ -14,6 +14,9 @@ public class RouteRate implements Serializable, Identified {
     @Column(name = "rate")
     private Float rate;
 
+    @Column(name = "route_id")
+    private Long routeId;
+
     public RouteRate() {
     }
 
@@ -34,6 +37,14 @@ public class RouteRate implements Serializable, Identified {
         this.rate = rate;
     }
 
+    public Long getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(Long routeId) {
+        this.routeId = routeId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,13 +53,15 @@ public class RouteRate implements Serializable, Identified {
         RouteRate routeRate = (RouteRate) o;
 
         if (id != null ? !id.equals(routeRate.id) : routeRate.id != null) return false;
-        return rate != null ? rate.equals(routeRate.rate) : routeRate.rate == null;
+        if (rate != null ? !rate.equals(routeRate.rate) : routeRate.rate != null) return false;
+        return routeId != null ? routeId.equals(routeRate.routeId) : routeRate.routeId == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (rate != null ? rate.hashCode() : 0);
+        result = 31 * result + (routeId != null ? routeId.hashCode() : 0);
         return result;
     }
 
@@ -57,6 +70,7 @@ public class RouteRate implements Serializable, Identified {
         final StringBuilder sb = new StringBuilder("RouteRate{");
         sb.append("id=").append(id);
         sb.append(", rate=").append(rate);
+        sb.append(", routeId=").append(routeId);
         sb.append('}');
         return sb.toString();
     }

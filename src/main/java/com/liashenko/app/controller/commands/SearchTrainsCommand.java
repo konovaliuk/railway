@@ -26,8 +26,9 @@ import java.util.ResourceBundle;
 
 @Authorization.Allowed(roles = {RoleDto.GUEST_ROLE_ID, RoleDto.USER_ROLE_ID, RoleDto.ADMIN_ROLE_ID})
 public class SearchTrainsCommand implements ICommand {
-    public static final String USER_ROUTE = "userRoute";
     private static final Logger classLogger = LogManager.getLogger(SearchTrainsCommand.class);
+
+    private static final String USER_ROUTE = "userRoute";
     private static final String FROM_ID_ATTR = "fromId";
     private static final String TO_ID_ATTR = "toId";
     private static final String FROM_ATTR = "from";
@@ -39,7 +40,7 @@ public class SearchTrainsCommand implements ICommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String page;
-        HttpSession session = request.getSession(true);
+        HttpSession session = request.getSession(Boolean.TRUE);
 
         try {
             String currentLocaleStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, session);

@@ -12,14 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Authorization.Allowed(roles = {RoleDto.USER_ROLE_ID}, defAction = RequestHelper.LOGIN_PAGE_URL_ATTR)
-public class ShowOrdersViewCommand implements ICommand {
-
-    private static final Logger classLogger = LogManager.getLogger(ShowOrdersViewCommand.class);
+@Authorization.Allowed(roles = {RoleDto.ADMIN_ROLE_ID}, defAction = RequestHelper.INDEX_PAGE_URL_ATTR)
+public class ShowAdminWarningCommand implements ICommand {
+    private static final Logger classLogger = LogManager.getLogger(ShowAdminWarningCommand.class);
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        return PageManagerConf.getInstance().getProperty(PageManagerConf.ORDERS_PAGE_PATH);
+        return PageManagerConf.getInstance().getProperty(PageManagerConf.ADMIN_WARNING_PAGE_PATH);
     }
-
 }

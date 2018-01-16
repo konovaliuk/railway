@@ -13,6 +13,7 @@ public class RequestHelper {
     //common commands
     public static final String DEFAULT_ACTION = "/default";
     public static final String ERROR_ACTION = "/error";
+    public static final String ADMIN_WARNING_URL_ATTR = "/admin_warning";
     public static final String INDEX_PAGE_URL_ATTR = "/index.jsp";
 
     //"index" view commands
@@ -81,6 +82,7 @@ public class RequestHelper {
         commands.put(CHECK_IF_USER_WITH_EMAIL_EXISTS_AJAX_ATTR, new CheckIfOtherUsersWithEmailExist());//+
         commands.put(DEFAULT_ACTION, new NoCommand());//+
         commands.put(ERROR_ACTION, new ShowErrorViewCommand());//+
+        commands.put(ADMIN_WARNING_URL_ATTR, new ShowAdminWarningCommand());//+
     }
 
     //создание единственного объекта по шаблону Singleton

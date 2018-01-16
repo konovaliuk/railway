@@ -68,7 +68,6 @@ public class TimeTableDaoImpl extends AbstractJDBCDao implements TimeTableDao {
                 try {
                     TimeTable timeTable = ResultSetParser.fillBeanWithResultData(rs, TimeTable.class,
                             localeQueries.getString("locale_suffix"));
-                    System.out.println("TimeTableDaoImpl.parseResultSet: " + timeTable);
                     list.add(timeTable);
                 } catch (ResultSetParserException ex) {
                     classLogger.error(ex);

@@ -85,4 +85,24 @@ public abstract class AppProperties {
             return defaultValue;
         }
     }
+
+    public static float getDefPriceForVagonKm(){
+        return getFloatValue("default_price_for_vagon_km", 1.0F);
+    }
+
+    public static float getDefRouteRate(){
+        return getFloatValue("default_route_rate", 1.0F);
+    }
+
+    public static int getMaxTicketNumber(){
+        return getIntValue("max_ticket_number", 100_000);
+    }
+
+    private static float getFloatValue(String key, float defaultValue) {
+        try {
+            return Float.parseFloat(properties.getProperty(key));
+        } catch (ClassCastException ignore) {
+            return defaultValue;
+        }
+    }
 }

@@ -13,6 +13,7 @@ public class PageManagerConf {
     public static final String INDEX_PAGE_PATH = "INDEX_PAGE_PATH";
     public static final String ERROR_PAGE_PATH = "ERROR_PAGE_PATH";
     public static final String EMPTY_RESULT = "EMPTY_RESULT";
+    public static final String ADMIN_WARNING_PAGE_PATH = "ADMIN_WARNING_PAGE_PATH";
     //класс извлекает информацию из файла config.properties
     private static final String BUNDLE_NAME = "app_settings";
     private static volatile PageManagerConf instance;

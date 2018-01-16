@@ -65,7 +65,7 @@ CREATE TABLE `password` (
   `iterations` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,7 +122,7 @@ CREATE TABLE `route` (
   KEY `fk_route_2_idx` (`rout_number_id`),
   CONSTRAINT `fk_route_1` FOREIGN KEY (`station_id`) REFERENCES `station` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_route_2` FOREIGN KEY (`rout_number_id`) REFERENCES `route_num` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=220 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,7 +137,7 @@ CREATE TABLE `route_num` (
   `number` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,9 +150,25 @@ DROP TABLE IF EXISTS `route_rate`;
 CREATE TABLE `route_rate` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `rate` float unsigned DEFAULT NULL,
+  `route_id` bigint(44) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary table structure for view `route_view`
+--
+
+DROP TABLE IF EXISTS `route_view`;
+/*!50001 DROP VIEW IF EXISTS `route_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `route_view` AS SELECT 
+ 1 AS `order`,
+ 1 AS `station`,
+ 1 AS `route number`,
+ 1 AS `distance`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `station`
@@ -165,13 +181,13 @@ CREATE TABLE `station` (
   `id` bigint(44) unsigned NOT NULL AUTO_INCREMENT,
   `city` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `city_en_GB` varchar(255) DEFAULT NULL,
-  `name_en_GB` varchar(255) DEFAULT NULL,
+  `city_en_GB` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `name_en_GB` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `city_uk_UA` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `name_uk_UA` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -193,8 +209,23 @@ CREATE TABLE `timetable` (
   KEY `fk_timetable_2_idx` (`route_number_id`),
   CONSTRAINT `fk_timetable_1` FOREIGN KEY (`station_id`) REFERENCES `station` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_timetable_2` FOREIGN KEY (`route_number_id`) REFERENCES `route_num` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary table structure for view `timetable_view`
+--
+
+DROP TABLE IF EXISTS `timetable_view`;
+/*!50001 DROP VIEW IF EXISTS `timetable_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `timetable_view` AS SELECT 
+ 1 AS `route number`,
+ 1 AS `station`,
+ 1 AS `departure`,
+ 1 AS `arrival`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `train`
@@ -212,26 +243,21 @@ CREATE TABLE `train` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `fk_train_1_idx` (`route_num_id`),
   CONSTRAINT `fk_train_1` FOREIGN KEY (`route_num_id`) REFERENCES `route_num` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `train_rate`
+-- Temporary table structure for view `trains_view`
 --
 
-DROP TABLE IF EXISTS `train_rate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `train_rate` (
-  `id` bigint(44) unsigned NOT NULL AUTO_INCREMENT,
-  `rate` float unsigned NOT NULL DEFAULT '1',
-  `train_id` bigint(44) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `fk_train_rate_1_idx` (`train_id`),
-  CONSTRAINT `fk_train_rate_1` FOREIGN KEY (`train_id`) REFERENCES `train` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `trains_view`;
+/*!50001 DROP VIEW IF EXISTS `trains_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `trains_view` AS SELECT 
+ 1 AS `number`,
+ 1 AS `route_num`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `user`
@@ -255,8 +281,25 @@ CREATE TABLE `user` (
   KEY `fk_user_2_idx` (`password_id`),
   CONSTRAINT `fk_user_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_user_2` FOREIGN KEY (`password_id`) REFERENCES `password` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary table structure for view `users_view`
+--
+
+DROP TABLE IF EXISTS `users_view`;
+/*!50001 DROP VIEW IF EXISTS `users_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `users_view` AS SELECT 
+ 1 AS `id`,
+ 1 AS `firstname`,
+ 1 AS `lastname`,
+ 1 AS `e_mail`,
+ 1 AS `role`,
+ 1 AS `is_banned`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `vagon_type`
@@ -274,6 +317,78 @@ CREATE TABLE `vagon_type` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Final view structure for view `route_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `route_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `route_view` AS select `p`.`order` AS `order`,`p`.`name` AS `station`,`railway`.`route_num`.`number` AS `route number`,`p`.`distance` AS `distance` from (((select `railway`.`route`.`stations_order` AS `order`,`railway`.`route`.`rout_number_id` AS `rout_number_id`,`railway`.`route`.`distance` AS `distance`,`railway`.`station`.`name` AS `name` from (`railway`.`route` left join `railway`.`station` on((`railway`.`route`.`station_id` = `railway`.`station`.`id`))))) `p` left join `railway`.`route_num` on((`p`.`rout_number_id` = `railway`.`route_num`.`id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `timetable_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `timetable_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `timetable_view` AS select `d`.`number` AS `route number`,`railway`.`station`.`name` AS `station`,`d`.`departure` AS `departure`,`d`.`arrival` AS `arrival` from (((select `railway`.`route_num`.`number` AS `number`,`railway`.`timetable`.`departure` AS `departure`,`railway`.`timetable`.`arrival` AS `arrival`,`railway`.`timetable`.`station_id` AS `station_id` from (`railway`.`timetable` left join `railway`.`route_num` on((`railway`.`timetable`.`route_number_id` = `railway`.`route_num`.`id`))))) `d` left join `railway`.`station` on((`d`.`station_id` = `railway`.`station`.`id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `trains_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `trains_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `trains_view` AS select `train`.`vagon_number` AS `number`,`route_num`.`number` AS `route_num` from (`train` left join `route_num` on((`train`.`route_num_id` = `route_num`.`id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `users_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `users_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `users_view` AS select `user`.`id` AS `id`,`user`.`firstname` AS `firstname`,`user`.`lastname` AS `lastname`,`user`.`e_mail` AS `e_mail`,`role`.`name` AS `role`,`user`.`is_banned` AS `is_banned` from (`user` left join `role` on((`user`.`role_id` = `role`.`id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -284,4 +399,4 @@ CREATE TABLE `vagon_type` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-05 12:49:07
+-- Dump completed on 2018-01-16 13:21:41

@@ -9,12 +9,14 @@ import com.liashenko.app.service.BillService;
 import com.liashenko.app.service.data_source.DbConnectService;
 import com.liashenko.app.service.dto.BillDto;
 import com.liashenko.app.service.exceptions.ServiceException;
+import com.liashenko.app.utils.AppProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -24,11 +26,6 @@ public class BillServiceImpl implements BillService {
 
     private static final DbConnectService dbConnectService = DbConnectService.getInstance();
     private static final DaoFactory daoFactory = MySQLDaoFactory.getInstance();
-
-    //make it in AppSettings
-    private static final int MAX_TICKET_NUM = 100_000;
-    private static final float DEFAULT_ROUTE_RATE = 1.0F;
-    private static final float DEFAULT_PRICE_FOR_VAGON_PER_KM = 1.0F;
 
     private ResourceBundle localeQueries;
 
@@ -100,26 +97,40 @@ public class BillServiceImpl implements BillService {
     }
 
     private void setTicketNumberAndDate(BillDto billDto) {
-        billDto.setTicketNumber(String.format("%06d", CalculatorUtil.generateValue(MAX_TICKET_NUM)));
+        billDto.setTicketNumber(String.format("%06d", CalculatorUtil.generateValue(AppProperties.getMaxTicketNumber())));
         billDto.setTicketDate(HttpParser.convertDateToHumanReadableString(LocalDateTime.now().toLocalDate()));
     }
 
-    private void setLeavingAndArrivalDate(BillDto billDto, Long fromStationId, Long toStationId, LocalDate localDate, Long routeId,
-                                          Connection conn) {
+    private void setLeavingAndArrivalDate(BillDto billDto, Long fromStationId, Long toStationId, LocalDate requiredDate,
+                                          Long routeId, Connection conn) {
 
         Optional<GenericJDBCDao> timeTableDaoOpt = daoFactory.getDao(conn, TimeTable.class, localeQueries);
         TimeTableDao timeTableDao = (TimeTableDao) timeTableDaoOpt.orElseThrow(()
                 -> new ServiceException("TimeTableDao is null"));
 
-        timeTableDao.getTimeTableForStationByDataAndRoute(fromStationId, routeId, localDate)
-                .ifPresent(stationFromTimeTable
-                        -> billDto.setFromStationLeavingDate(
-                        HttpParser.convertDateTimeToHumanReadableString(stationFromTimeTable.getDeparture())));
+        Optional<TimeTable> leavingTimeTableOpt = timeTableDao
+                .getTimeTableForStationByDataAndRoute(fromStationId, routeId, requiredDate);
+        Optional<TimeTable> arrivalTimeTableOpt = timeTableDao
+                .getTimeTableForStationByDataAndRoute(toStationId, routeId, requiredDate);
 
-        timeTableDao.getTimeTableForStationByDataAndRoute(toStationId, routeId, localDate)
-                .ifPresent(stationToTimeTable
-                        -> billDto.setToStationArrivalDate(
-                        HttpParser.convertDateTimeToHumanReadableString(stationToTimeTable.getArrival())));
+        if (arrivalTimeTableOpt.isPresent() && leavingTimeTableOpt.isPresent()) {
+            LocalDateTime leavingTime = leavingTimeTableOpt.get().getDeparture();
+            LocalDateTime arrivalTime = arrivalTimeTableOpt.get().getArrival();
+
+            LocalDateTime leavingTimeForRequiredDate = leavingTime
+                    .withDayOfMonth(requiredDate.getDayOfMonth())
+                    .withMonth(requiredDate.getMonthValue())
+                    .withYear(requiredDate.getYear());
+
+            LocalDateTime arrivalTimeForRequiredDate = leavingTimeForRequiredDate
+                    .plusDays(Period.between(leavingTime.toLocalDate(), arrivalTime.toLocalDate()).getDays())
+                    .withHour(arrivalTime.getHour())
+                    .withMinute(arrivalTime.getMinute())
+                    .withSecond(arrivalTime.getSecond());
+
+            billDto.setFromStationLeavingDate(HttpParser.convertDateTimeToHumanReadableString(leavingTimeForRequiredDate));
+            billDto.setToStationArrivalDate(HttpParser.convertDateTimeToHumanReadableString(arrivalTimeForRequiredDate));
+        }
     }
 
     private void setPrice(BillDto billDto, Long routeId, Connection conn, Long fromStationId, Long toStationId) {
@@ -133,7 +144,7 @@ public class BillServiceImpl implements BillService {
         RouteRateDao routeRateDao = (RouteRateDao) routeRateDaoOpt.orElseThrow(() -> new ServiceException("RouteRateDao is null"));
 
         Optional<RouteRate> routeRateOpt = routeRateDao.getByRouteId(routeId);
-        Float routeRateFloat = routeRateOpt.isPresent() ? routeRateOpt.get().getRate() : DEFAULT_ROUTE_RATE;
+        Float routeRateFloat = routeRateOpt.isPresent() ? routeRateOpt.get().getRate() : AppProperties.getDefRouteRate();
 
         Optional<GenericJDBCDao> vagonTypeDaoOpt = daoFactory.getDao(conn, VagonType.class, localeQueries);
         VagonTypeDao vagonTypeDao = (VagonTypeDao) vagonTypeDaoOpt.orElseThrow(() -> new ServiceException("VagonTypeDao is null"));
@@ -147,7 +158,7 @@ public class BillServiceImpl implements BillService {
         Optional<PricePerKmForVagon> pricePerKmForVagonOpt = pricePerKmForVagonDao.getPricePerKmForVagon(billDto.getVagonTypeId());
 
         Double pricePerKmForVagonDouble = pricePerKmForVagonOpt.isPresent() ? pricePerKmForVagonOpt.get().getPrice()
-                : DEFAULT_PRICE_FOR_VAGON_PER_KM;
+                : AppProperties.getDefPriceForVagonKm();
         Float price = CalculatorUtil.calculateTicketPrice(routeRateFloat, distance, pricePerKmForVagonDouble, placesCount);
         billDto.setTicketPrice(price);
     }

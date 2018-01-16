@@ -42,7 +42,6 @@ public class MySQLDaoFactory implements DaoFactory {
         if (clazz == Train.class) return Optional.of(new TrainDaoImpl(connection, localeQueries));
         if (clazz == TimeTable.class) return Optional.of(new TimeTableDaoImpl(connection, localeQueries));
         if (clazz == Route.class) return Optional.of(new RouteDaoImpl(connection, localeQueries));
-        if (clazz == TrainRate.class) return Optional.of(new TrainRateDaoImpl(connection, localeQueries));
         if (clazz == VagonType.class) return Optional.of(new VagonTypeDaoImpl(connection, localeQueries));
         if (clazz == RouteRate.class) return Optional.of(new RouteRateDaoImpl(connection, localeQueries));
         if (clazz == RouteNum.class) return Optional.of(new RouteNumDaoImpl(connection, localeQueries));

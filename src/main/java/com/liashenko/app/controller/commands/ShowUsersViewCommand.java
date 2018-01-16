@@ -40,7 +40,7 @@ public class ShowUsersViewCommand implements ICommand {
     public String execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String page = null;
-        HttpSession session = request.getSession(true);
+        HttpSession session = request.getSession(Boolean.TRUE);
         try {
             String localStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, session);
             Integer offset = HttpParser.getIntRequestParam(OFFSET_ATTR, request).orElse(0);

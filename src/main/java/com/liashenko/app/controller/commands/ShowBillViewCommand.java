@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 
 @Authorization.Allowed(roles = RoleDto.USER_ROLE_ID, defAction = RequestHelper.LOGIN_PAGE_URL_ATTR)
-@Authorization.Restricted(roles = {RoleDto.ADMIN_ROLE_ID}, action = RequestHelper.ERROR_ACTION)
+@Authorization.Restricted(roles = {RoleDto.ADMIN_ROLE_ID}, action = RequestHelper.ADMIN_WARNING_URL_ATTR)
 public class ShowBillViewCommand implements ICommand {
     private static final Logger classLogger = LogManager.getLogger(ShowBillViewCommand.class);
 
@@ -35,7 +35,7 @@ public class ShowBillViewCommand implements ICommand {
     public String execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String page = null;
-        HttpSession session = request.getSession(true);
+        HttpSession session = request.getSession(Boolean.TRUE);
 
         try {
             String localStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, session);

@@ -19,6 +19,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -114,22 +116,35 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
                                                    Connection conn, List<TrainDto> trainDtoList,
                                                    Route route, TrainDto trainDto) {
 
-        LocalDate localDate = HttpParser.convertStringToDate(dateStr);
-        System.out.println("TrainSearchingServiceImpl.setLeavingAndArrivalDatesForTrain: " + localDate);
+        LocalDate requiredDate = HttpParser.convertStringToDate(dateStr);
 
         Optional<GenericJDBCDao> timeTableDaoOpt = daoFactory.getDao(conn, TimeTable.class, localeQueries);
         TimeTableDao timeTableDao = (TimeTableDao) timeTableDaoOpt
                 .orElseThrow(() -> new ServiceException("TimeTableDao is null"));
 
-        timeTableDao.getTimeTableForStationByDataAndRoute(stationFromId, route.getRouteNumberId(), localDate)
-                .ifPresent(stationFromTimeTable
-                        -> trainDto.setLeavingDate(
-                        HttpParser.convertDateTimeToHumanReadableString(stationFromTimeTable.getDeparture())));
+        Optional<TimeTable> leavingTimeTableOpt = timeTableDao
+                .getTimeTableForStationByDataAndRoute(stationFromId, route.getRouteNumberId(), requiredDate);
+        Optional<TimeTable> arrivalTimeTableOpt = timeTableDao
+                .getTimeTableForStationByDataAndRoute(stationToId, route.getRouteNumberId(), requiredDate);
 
-        timeTableDao.getTimeTableForStationByDataAndRoute(stationToId, route.getRouteNumberId(), localDate)
-                .ifPresent(stationToTimeTable
-                        -> trainDto.setArrivalDate(
-                        HttpParser.convertDateTimeToHumanReadableString(stationToTimeTable.getArrival())));
-        trainDtoList.add(trainDto);
+        if (arrivalTimeTableOpt.isPresent() && leavingTimeTableOpt.isPresent()){
+            LocalDateTime leavingTime = leavingTimeTableOpt.get().getDeparture();
+            LocalDateTime arrivalTime = arrivalTimeTableOpt.get().getArrival();
+
+            LocalDateTime leavingTimeForRequiredDate = leavingTime
+                    .withDayOfMonth(requiredDate.getDayOfMonth())
+                    .withMonth(requiredDate.getMonthValue())
+                    .withYear(requiredDate.getYear());
+
+            LocalDateTime arrivalTimeForRequiredDate = leavingTimeForRequiredDate
+                    .plusDays(Period.between(leavingTime.toLocalDate(), arrivalTime.toLocalDate()).getDays())
+                    .withHour(arrivalTime.getHour())
+                    .withMinute(arrivalTime.getMinute())
+                    .withSecond(arrivalTime.getSecond());
+
+            trainDto.setLeavingDate(HttpParser.convertDateTimeToHumanReadableString(leavingTimeForRequiredDate));
+            trainDto.setArrivalDate(HttpParser.convertDateTimeToHumanReadableString(arrivalTimeForRequiredDate));
+            trainDtoList.add(trainDto);
+        }
     }
 }

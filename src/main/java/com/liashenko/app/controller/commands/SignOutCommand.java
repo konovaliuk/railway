@@ -20,7 +20,7 @@ public class SignOutCommand implements ICommand {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(true);
+        HttpSession session = request.getSession(Boolean.TRUE);
         if (!session.isNew()) {
             session.invalidate();
         } else {

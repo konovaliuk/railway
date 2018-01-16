@@ -9,6 +9,7 @@ import com.liashenko.app.service.data_source.DbConnectService;
 import com.liashenko.app.service.dto.FullRouteDto;
 import com.liashenko.app.service.dto.PriceForVagonDto;
 import com.liashenko.app.service.exceptions.ServiceException;
+import com.liashenko.app.utils.AppProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,10 +22,6 @@ import java.util.ResourceBundle;
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger classLogger = LogManager.getLogger(OrderServiceImpl.class);
-
-    //make it in AppSettings
-    private static final float DEFAULT_ROUTE_RATE = 1.0F;
-    private static final float DEFAULT_PRICE_FOR_VAGON_PER_KM = 1.0F;
 
     private static final DbConnectService dbConnectService = DbConnectService.getInstance();
     private static final DaoFactory daoFactory = MySQLDaoFactory.getInstance();
@@ -94,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
             RouteRateDao routeRateDao = (RouteRateDao) routeRateDaoOpt.orElseThrow(() -> new ServiceException("RouteRateDao is null"));
 
             Optional<RouteRate> routeRateOpt = routeRateDao.getByRouteId(routeId);
-            Float routeRateFloat = routeRateOpt.isPresent() ? routeRateOpt.get().getRate() : DEFAULT_ROUTE_RATE;
+            Float routeRateFloat = routeRateOpt.isPresent() ? routeRateOpt.get().getRate() : AppProperties.getDefRouteRate();
 
             Optional<GenericJDBCDao> vagonTypeDaoOpt = daoFactory.getDao(conn, VagonType.class, localeQueries);
             VagonTypeDao vagonTypeDao = (VagonTypeDao) vagonTypeDaoOpt.orElseThrow(() -> new ServiceException("VagonTypeDao is null"));
@@ -126,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
 
         Double pricePerKmForVagonDouble = pricePerKmForVagonOpt.isPresent()
                 ? pricePerKmForVagonOpt.get().getPrice()
-                : DEFAULT_PRICE_FOR_VAGON_PER_KM;
+                : AppProperties.getDefPriceForVagonKm();
 
         Float price = CalculatorUtil.calculateTicketPrice(routeRateFloat, distance, pricePerKmForVagonDouble, vagonType.getPlacesCount());
 

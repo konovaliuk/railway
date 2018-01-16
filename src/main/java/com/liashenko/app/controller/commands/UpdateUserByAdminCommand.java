@@ -33,7 +33,7 @@ public class UpdateUserByAdminCommand implements ICommand {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(true);
+        HttpSession session = request.getSession(Boolean.TRUE);
         try {
             String currentLocaleStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, session);
             String jsonData = HttpParser.getJsonDataFromRequest(request);

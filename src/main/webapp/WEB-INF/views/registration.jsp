@@ -13,27 +13,13 @@
 <body>
 
 <c:import url="../colon/navbar.jsp" charEncoding="utf-8"/>
-<%--<div class="container">--%>
-<%--<div class="page-header">--%>
-<%--<h1>--%>
-<%--<c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.USER_ROLE_ATTR || sessionScope.USER_CURRENT_ROLE eq sessionScope.ADMIN_ROLE_ATTR}">--%>
-<%--<fmt:message key="page.profile.header" bundle="${lang}"/>--%>
-<%--</c:if>--%>
-<%--<c:if test="${sessionScope.USER_CURRENT_ROLE eq sessionScope.GUEST_ROLE_ATTR}">--%>
-<%--<fmt:message key="page.registration.header" bundle="${lang}"/>--%>
-<%--</c:if>--%>
-<%--</h1>--%>
-<%--</div>--%>
-<%--</div>--%>
-
 
 <div class="container">
     <div class="row" style="margin-top:20px">
         <div class="col-xs-12 col-sm-8 col-md-6 col-centered">
-            <%--method="POST" action="<c:url value='/'/>sign_in"--%>
 
             <form role="form" method="post" action="#" name="reg_form" id="reg_form">
-                <h1><fmt:message key="page.registration.header" bundle="${lang}"/></h1>
+                <h1><fmt:message key="page.orders.header" bundle="${lang}"/></h1>
                 <p id="msg_container" style="display : none;" class="a-container"><fmt:message
                         key="unsuccessful.profile.update.msg" bundle="${lang}"/></p>
 
@@ -189,6 +175,10 @@
                                 field: 'email',
                                 message: '<fmt:message key="different.pass.with.email.field.validation.msg" bundle="${lang}"/>'
                             },
+                            regexp: {
+                                regexp: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/,
+                                message: '<fmt:message key="regex.password.requirements.msg" bundle="${lang}"/>'
+                            },
                             stringLength: {
                                 min: 0,
                                 max: 255,
@@ -236,7 +226,6 @@
             lastName: $('#lastName').val(),
             email: $('#email').val(),
             password: $('#password').val().split(''),
-//            repeatedPass: $('#repeatedPass').val().split(''),
             language: $('#language').val()
         };
 

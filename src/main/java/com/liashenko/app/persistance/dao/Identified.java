@@ -2,13 +2,9 @@ package com.liashenko.app.persistance.dao;
 
 import java.io.Serializable;
 
-/**
- * Интерфейс идентифицируемых объектов.
- */
+//The interface for objects which have identifier
 public interface Identified<PK extends Serializable> {
 
-    /**
-     * Возвращает идентификатор объекта
-     */
+    //Returns PK of the row (entity)
     PK getId();
 }

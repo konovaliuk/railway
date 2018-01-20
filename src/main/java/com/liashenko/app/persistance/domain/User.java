@@ -5,6 +5,7 @@ import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
+//Entity for the table with name "user"
 public class User implements Identified, Serializable {
 
     private static final long serialVersionUID = 1L;

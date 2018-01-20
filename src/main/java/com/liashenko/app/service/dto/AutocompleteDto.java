@@ -2,6 +2,8 @@ package com.liashenko.app.service.dto;
 
 import java.io.Serializable;
 
+
+//Used to contain data to transfer data with autocompleted words to front-end
 public class AutocompleteDto implements Serializable {
     private static final long serialVersionUID = 1L;
 

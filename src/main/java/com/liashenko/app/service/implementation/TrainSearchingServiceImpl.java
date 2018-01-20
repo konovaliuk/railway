@@ -1,15 +1,12 @@
 package com.liashenko.app.service.implementation;
 
-import com.liashenko.app.controller.utils.HttpParser;
+import com.liashenko.app.web.controller.utils.HttpParser;
 import com.liashenko.app.persistance.dao.*;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
-import com.liashenko.app.persistance.dao.mysql.MySQLDaoFactory;
 import com.liashenko.app.persistance.domain.Route;
-import com.liashenko.app.persistance.domain.Station;
 import com.liashenko.app.persistance.domain.TimeTable;
-import com.liashenko.app.persistance.domain.Train;
+import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.TrainSearchingService;
-import com.liashenko.app.service.data_source.DbConnectService;
 import com.liashenko.app.service.dto.AutocompleteDto;
 import com.liashenko.app.service.dto.RouteDto;
 import com.liashenko.app.service.dto.TrainDto;
@@ -26,28 +23,28 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TrainSearchingServiceImpl implements TrainSearchingService {
+import static com.liashenko.app.utils.Asserts.assertIsNull;
 
+public class TrainSearchingServiceImpl implements TrainSearchingService {
     private static final Logger classLogger = LogManager.getLogger(UserProfileServiceImpl.class);
 
-    private static final DbConnectService dbConnectService = DbConnectService.getInstance();
-    private static final DaoFactory daoFactory = MySQLDaoFactory.getInstance();
-
     private ResourceBundle localeQueries;
+    private DbConnectionService dbConnServ;
+    private DaoFactory daoFactory;
 
-    public TrainSearchingServiceImpl(ResourceBundle localeQueries) {
+    public TrainSearchingServiceImpl(ResourceBundle localeQueries, DaoFactory daoFactory, DbConnectionService dbConnSrvc) {
         this.localeQueries = localeQueries;
+        this.daoFactory = daoFactory;
+        this.dbConnServ = dbConnSrvc;
     }
 
     @Override
     public Optional<List<AutocompleteDto>> getStationAutocomplete(String stationLike) {
         List<AutocompleteDto> autocompleteWordList = new ArrayList<>();
-        Connection conn = dbConnectService.getConnection();
+        Connection conn = dbConnServ.getConnection();
         try {
 //            conn.setReadOnly(true);
-            Optional<GenericJDBCDao> stationDaoOpt = daoFactory.getDao(conn, Station.class, localeQueries);
-            StationDao stationDao = (StationDao) stationDaoOpt.orElseThrow(() -> new ServiceException("StationDao is null"));
-
+            StationDao stationDao  = daoFactory.getStationDao(conn, localeQueries);
             stationDao.getStationsLike(stationLike).ifPresent(stations
                     -> stations.forEach(station
                     -> autocompleteWordList.add(new AutocompleteDto(station.getId(), station.getName()))));
@@ -56,20 +53,19 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
             classLogger.error(e);
             throw new ServiceException(e);
         } finally {
-            DbConnectService.close(conn);
+            dbConnServ.close(conn);
         }
         return Optional.of(autocompleteWordList);
     }
 
     @Override
     public Optional<List<TrainDto>> getTrainsForTheRouteOnDate(RouteDto routeDto) {
-
-        Connection conn = dbConnectService.getConnection();
+        if (assertIsNull(routeDto)) throw new ServiceException("routeDao is null");
+        Connection conn = dbConnServ.getConnection();
         List<TrainDto> trainDtoList = null;
         try {
 //            conn.setReadOnly(true);
-            Optional<GenericJDBCDao> routeDaoOpt = daoFactory.getDao(conn, Route.class, localeQueries);
-            RouteDao routeDao = (RouteDao) routeDaoOpt.orElseThrow(() -> new ServiceException("RouteDao is null"));
+            RouteDao routeDao = daoFactory.getRouteDao(conn, localeQueries);
             Optional<List<Route>> routesOpt = routeDao.getRoutesByDepartureAndArrivalStationsId(routeDto.getFromStationId(),
                     routeDto.getToStationId());
             if (routesOpt.isPresent()) {
@@ -88,14 +84,13 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
             classLogger.error(e);
             throw new ServiceException(e);
         } finally {
-            DbConnectService.close(conn);
+            dbConnServ.close(conn);
         }
         return Optional.ofNullable(trainDtoList);
     }
 
     private void setTrainIdAndNumber(Connection conn, Route route, TrainDto trainDto) {
-        Optional<GenericJDBCDao> trainDaoOpt = daoFactory.getDao(conn, Train.class, localeQueries);
-        TrainDao trainDao = (TrainDao) trainDaoOpt.orElseThrow(() -> new ServiceException("TrainDao is null"));
+        TrainDao trainDao = daoFactory.getTrainDao(conn, localeQueries);
         trainDao.getByRoute(route.getRouteNumberId())
                 .ifPresent(train -> {
                     trainDto.setTrainNumber(train.getNumber());
@@ -117,16 +112,14 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
                                                    Route route, TrainDto trainDto) {
 
         LocalDate requiredDate = HttpParser.convertStringToDate(dateStr);
-
-        Optional<GenericJDBCDao> timeTableDaoOpt = daoFactory.getDao(conn, TimeTable.class, localeQueries);
-        TimeTableDao timeTableDao = (TimeTableDao) timeTableDaoOpt
-                .orElseThrow(() -> new ServiceException("TimeTableDao is null"));
-
+        //retrieving arrival and departure time from timetable
+        TimeTableDao timeTableDao = daoFactory.getTimeTableDao(conn, localeQueries);
         Optional<TimeTable> leavingTimeTableOpt = timeTableDao
                 .getTimeTableForStationByDataAndRoute(stationFromId, route.getRouteNumberId(), requiredDate);
         Optional<TimeTable> arrivalTimeTableOpt = timeTableDao
                 .getTimeTableForStationByDataAndRoute(stationToId, route.getRouteNumberId(), requiredDate);
 
+        //calculate arrival and departure time to required date
         if (arrivalTimeTableOpt.isPresent() && leavingTimeTableOpt.isPresent()){
             LocalDateTime leavingTime = leavingTimeTableOpt.get().getDeparture();
             LocalDateTime arrivalTime = arrivalTimeTableOpt.get().getArrival();

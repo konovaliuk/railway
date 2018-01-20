@@ -16,6 +16,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.liashenko.app.utils.Asserts.assertIntIsNullOrZeroOrLessZero;
+import static com.liashenko.app.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
+
 public class PricePerKmForVagonDaoImpl extends AbstractJDBCDao implements PricePerKmForVagonDao {
     private static final Logger classLogger = LogManager.getLogger(PricePerKmForVagonDaoImpl.class);
 
@@ -48,12 +52,14 @@ public class PricePerKmForVagonDaoImpl extends AbstractJDBCDao implements PriceP
         return localeQueries.getString("");
     }
 
+    //method used by this method should be implemented
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
-    public String getPricePerKmForVagonQuery() {
+    private String getPricePerKmForVagonQuery() {
         return localeQueries.getString("select_price_per_km_for_vagon_type");
     }
 
@@ -78,28 +84,40 @@ public class PricePerKmForVagonDaoImpl extends AbstractJDBCDao implements PriceP
         return list;
     }
 
+    //method used by this method should be implemented
     @Override
     public void create(PricePerKmForVagon object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         super.create(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<PricePerKmForVagon> persist(PricePerKmForVagon object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (PricePerKmForVagon) obj);
     }
 
+    //method used by this method should be implemented
     @Override
     public void update(PricePerKmForVagon object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public void delete(PricePerKmForVagon object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<PricePerKmForVagon> getByPK(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (PricePerKmForVagon) obj);
     }
 
@@ -111,6 +129,7 @@ public class PricePerKmForVagonDaoImpl extends AbstractJDBCDao implements PriceP
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<List<PricePerKmForVagon>> getAll() {
         return super.getAll().map(list -> (List<PricePerKmForVagon>) list);
@@ -118,6 +137,7 @@ public class PricePerKmForVagonDaoImpl extends AbstractJDBCDao implements PriceP
 
     @Override
     public Optional<PricePerKmForVagon> getPricePerKmForVagon(Integer vagonTypeId) {
+        if (assertIntIsNullOrZeroOrLessZero(vagonTypeId)) return Optional.empty();
         String sql = getPricePerKmForVagonQuery();
         List<PricePerKmForVagon> priceList;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

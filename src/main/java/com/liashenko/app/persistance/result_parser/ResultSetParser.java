@@ -8,9 +8,23 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * @autor Vitalii Liashenko
+ * Class contains methods to parse ResultSet according to corresponding to it entity
+ * @param <T> Field of entity marked with annotation @Column
+ * @version 1.0
+ */
 public abstract class ResultSetParser<T> {
     private static final Logger classLogger = LogManager.getLogger(ResultSetParser.class);
 
+    /**
+     * @param rs - ResultSet contains results of select-query to the relevant table
+     * @param clazz - entity class corresponds to the relevant table
+     * @param localeSuffix - locale suffix for the column corresponds select-query
+     * @param <T> - field of entity marked with annotation @Column
+     * @return Entity of type <T> contains results retrieved from the table
+     * @throws SQLException
+     */
     public static <T> T fillBeanWithResultData(ResultSet rs, Class<T> clazz, String localeSuffix) throws SQLException {
         T obj = null;
         try {
@@ -39,6 +53,7 @@ public abstract class ResultSetParser<T> {
         return obj;
     }
 
+    //Sets to the field of Entity relevant data from the ResultSet
     private static <T> void setValue(T newInstanceObj, Field field, ResultSet rs, String columnName)
             throws IllegalAccessException, SQLException {
 

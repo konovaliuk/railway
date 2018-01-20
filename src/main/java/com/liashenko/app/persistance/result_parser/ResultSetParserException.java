@@ -1,5 +1,8 @@
 package com.liashenko.app.persistance.result_parser;
 
+/*
+ * Class designed to wrap possible exceptions from ResultSetParser to unchecked exception
+ */
 public class ResultSetParserException extends RuntimeException {
     public ResultSetParserException() {
     }

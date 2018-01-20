@@ -7,45 +7,40 @@ import java.util.Optional;
 
 public interface UserDao extends GenericJDBCDao {
 
+    //If the row with PK exists returns true, otherwise - false
     boolean isExists(Long key);
 
-    /**
-     * Создает новую запись и соответствующий ей объект
-     */
+    //Creates new row in the db corresponds to its object
     void create(User object);
 
-    /**
-     * Создает новую запись, соответствующую объекту object
-     */
+    //Creates new row in the db corresponds to its object and returns it from db or empty optional
     Optional<User> persist(User object);
 
-    /**
-     * Возвращает объект соответствующий записи с первичным ключом key или null
-     */
+    //Returns an object corresponds to row with PK or empty optional
     Optional<User> getByPK(Long key);
 
-    /**
-     * Сохраняет состояние объекта group в базе данных
-     */
+    //Saves object's state to db
     void update(User object);
 
-    /**
-     * Удаляет запись об объекте из базы данных
-     */
+    //Deletes the row with PK corresponds to object's id
     void delete(User object);
 
-    /**
-     * Возвращает список объектов соответствующих всем записям в базе данных
-     */
+    //Returns all rows from table
     Optional<List<User>> getAll();
 
+    //Returns true if one (or more) exists in the table with specified email,
+    //otherwise returns false
     boolean isEmailExists(String email);
 
+    //Returns true if specified email exists in the table for any other except specified userId,
+    //otherwise returns false
     boolean isOtherUsersWithEmailExist(Long userId, String email);
 
     Optional<User> getUserByEmail(String email);
 
+    //Returns count of rows in the table
     Integer getCount();
 
+    //Returns count of page with specified rows per page, starting from the offset position
     Optional<List<User>> getPages(int rowsPerPage, int offset);
 }

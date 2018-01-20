@@ -2,6 +2,7 @@ package com.liashenko.app.service.dto;
 
 import java.io.Serializable;
 
+//Contains first end last terminal stations for the train route
 public class FullRouteDto implements Serializable {
 
     private static final long serialVersionUID = 1L;

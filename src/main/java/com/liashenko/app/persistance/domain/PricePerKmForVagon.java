@@ -5,6 +5,7 @@ import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
+//Entity for the table with name "price_per_km_for_vagon"
 public class PricePerKmForVagon implements Serializable, Identified {
 
     private static final long serialVersionUID = 1L;

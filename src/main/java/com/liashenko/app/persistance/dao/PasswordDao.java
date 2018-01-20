@@ -7,35 +7,24 @@ import java.util.Optional;
 
 public interface PasswordDao extends GenericJDBCDao {
 
+    //If the row with PK exists returns true, otherwise - false
     boolean isExists(Long key);
 
-    /**
-     * Создает новую запись и соответствующий ей объект
-     */
+    //Creates new row in the db corresponds to its object
     void create(Password object);
 
-    /**
-     * Создает новую запись, соответствующую объекту object
-     */
+    //Creates new row in the db corresponds to its object and returns it from db or empty optional
     Optional<Password> persist(Password object);
 
-    /**
-     * Возвращает объект соответствующий записи с первичным ключом key или null
-     */
+    //Returns an object corresponds to row with PK or empty optional
     Optional<Password> getByPK(Long key);
 
-    /**
-     * Сохраняет состояние объекта group в базе данных
-     */
+    //Saves object's state to db
     void update(Password object);
 
-    /**
-     * Удаляет запись об объекте из базы данных
-     */
+    //Deletes the row with PK corresponds to object's id
     void delete(Password object);
 
-    /**
-     * Возвращает список объектов соответствующих всем записям в базе данных
-     */
+    //Returns all rows from table
     Optional<List<Password>> getAll();
 }

@@ -6,6 +6,7 @@ import com.liashenko.app.persistance.result_parser.Column;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+//Entity for the table with name "timetable"
 public class TimeTable implements Serializable, Identified {
 
     private static final long serialVersionUID = 1L;

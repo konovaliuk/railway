@@ -19,7 +19,7 @@
         <div class="col-xs-12 col-sm-8 col-md-6 col-centered">
 
             <form role="form" method="post" action="#" name="reg_form" id="reg_form">
-                <h1><fmt:message key="page.orders.header" bundle="${lang}"/></h1>
+                <h1><fmt:message key="page.registration.header" bundle="${lang}"/></h1>
                 <p id="msg_container" style="display : none;" class="a-container"><fmt:message
                         key="unsuccessful.profile.update.msg" bundle="${lang}"/></p>
 
@@ -209,12 +209,6 @@
             .on('success.form.bv', function (e) {
                 // Prevent form submission
                 e.preventDefault();
-
-                // Get the form instance
-                var $form = $(e.target);
-
-                // Get the BootstrapValidator instance
-                var bv = $form.data('bootstrapValidator');
                 saveUserProfile();
             });
     });

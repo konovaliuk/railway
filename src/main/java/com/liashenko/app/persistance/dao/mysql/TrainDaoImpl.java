@@ -16,6 +16,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.liashenko.app.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
+
 public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
     private static final Logger classLogger = LogManager.getLogger(TrainDaoImpl.class);
 
@@ -48,12 +51,13 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
         return localeQueries.getString("");
     }
 
-    public String getByRouteQuery() {
+    private String getByRouteQuery() {
         return localeQueries.getString("select_train_by_route");
     }
 
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
@@ -78,28 +82,39 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
         return list;
     }
 
+    //method used by this method should be implemented
     @Override
     public void create(Train object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         super.create(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<Train> persist(Train object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (Train) obj);
     }
 
+    //method used by this method should be implemented
     @Override
     public void update(Train object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public void delete(Train object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
     @Override
     public Optional<Train> getByPK(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (Train) obj);
     }
 
@@ -118,6 +133,7 @@ public class TrainDaoImpl extends AbstractJDBCDao implements TrainDao {
 
     @Override
     public Optional<Train> getByRoute(Long routeId) {
+        if (assertLongIsNullOrZeroOrLessZero(routeId)) return Optional.empty();
         String sql = getByRouteQuery();
         List<Train> userList;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

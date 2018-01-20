@@ -2,6 +2,7 @@ package com.liashenko.app.service.dto;
 
 import java.io.Serializable;
 
+//Contains info about user's rout
 public class RouteDto implements Serializable {
 
     private static final long serialVersionUID = 1L;

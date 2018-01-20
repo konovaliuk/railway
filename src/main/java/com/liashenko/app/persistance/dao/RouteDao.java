@@ -6,43 +6,35 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RouteDao extends GenericJDBCDao {
+
+    //If the row with PK exists returns true, otherwise - false
     boolean isExists(Long key);
 
-    /**
-     * Создает новую запись и соответствующий ей объект
-     */
+    //Creates new row in the db corresponds to its object
     void create(Route object);
 
-    /**
-     * Создает новую запись, соответствующую объекту object
-     */
+    //Creates new row in the db corresponds to its object and returns it from db or empty optional
     Optional<Route> persist(Route object);
 
-    /**
-     * Возвращает объект соответствующий записи с первичным ключом key или null
-     */
+    //Returns an object corresponds to row with PK or empty optional
     Optional<Route> getByPK(Long key);
 
-    /**
-     * Сохраняет состояние объекта group в базе данных
-     */
+    //Saves object's state to db
     void update(Route object);
 
-    /**
-     * Удаляет запись об объекте из базы данных
-     */
+    //Deletes the row with PK corresponds to object's id
     void delete(Route object);
 
-    /**
-     * Возвращает список объектов соответствующих всем записям в базе данных
-     */
+    //Returns all rows from table
     Optional<List<Route>> getAll();
 
+    //Returns routes with the specified stations taking into account their order by distance
     Optional<List<Route>> getRoutesByDepartureAndArrivalStationsId(Long departureStationId, Long arrivalStationId);
 
     Optional<Route> getFirstTerminalStationOnRoute(Long routeId);
 
     Optional<Route> getLastTerminalStationOnRoute(Long routeId);
 
+    //Returns details for the specified station belongs to the specified route
     Optional<Route> getStationOnRoute(Long stationId, Long routeId);
 }

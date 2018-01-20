@@ -1,12 +1,11 @@
 package com.liashenko.app.service.implementation;
 
-import com.liashenko.app.controller.utils.HttpParser;
+import com.liashenko.app.web.controller.utils.HttpParser;
 import com.liashenko.app.persistance.dao.*;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
-import com.liashenko.app.persistance.dao.mysql.MySQLDaoFactory;
 import com.liashenko.app.persistance.domain.*;
 import com.liashenko.app.service.BillService;
-import com.liashenko.app.service.data_source.DbConnectService;
+import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.dto.BillDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.utils.AppProperties;
@@ -20,17 +19,19 @@ import java.time.Period;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class BillServiceImpl implements BillService {
+import static com.liashenko.app.utils.Asserts.assertIsNull;
 
+public class BillServiceImpl implements BillService {
     private static final Logger classLogger = LogManager.getLogger(BillServiceImpl.class);
 
-    private static final DbConnectService dbConnectService = DbConnectService.getInstance();
-    private static final DaoFactory daoFactory = MySQLDaoFactory.getInstance();
-
     private ResourceBundle localeQueries;
+    private DbConnectionService dbConnSrvc;
+    private DaoFactory daoFactory;
 
-    public BillServiceImpl(ResourceBundle localeQueries) {
+    public BillServiceImpl(ResourceBundle localeQueries, DaoFactory daoFactory, DbConnectionService dbConnSrvc) {
         this.localeQueries = localeQueries;
+        this.daoFactory = daoFactory;
+        this.dbConnSrvc = dbConnSrvc;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class BillServiceImpl implements BillService {
                                       String firstName, String lastName, Integer vagonTypeId, String date) {
         LocalDate localDate = HttpParser.convertStringToDate(date);
         BillDto billDto = new BillDto();
-        Connection conn = dbConnectService.getConnection();
+        Connection conn = dbConnSrvc.getConnection();
         try {
 //          conn.setReadOnly(true);
             setFirstAndLastName(billDto, firstName, lastName);
@@ -48,11 +49,12 @@ public class BillServiceImpl implements BillService {
             setTicketNumberAndDate(billDto);
             setLeavingAndArrivalDate(billDto, fromStationId, toStationId, localDate, routeId, conn);
             setPrice(billDto, routeId, conn, fromStationId, toStationId);
+            if (!isAllFieldsFilled(billDto)) throw new ServiceException("Not all fields are filled");
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
             throw new ServiceException(e);
         } finally {
-            DbConnectService.close(conn);
+            dbConnSrvc.close(conn);
         }
         return Optional.of(billDto);
     }
@@ -65,8 +67,7 @@ public class BillServiceImpl implements BillService {
     private void setStationsAndCity(BillDto billDto, Long fromStationId, Long toStationId, Connection connection) {
         billDto.setFromStationId(fromStationId);
         billDto.setToStationId(toStationId);
-        Optional<GenericJDBCDao> stationDaoOpt = daoFactory.getDao(connection, Station.class, localeQueries);
-        StationDao stationDao = (StationDao) stationDaoOpt.orElseThrow(() -> new ServiceException("StationDao is null"));
+        StationDao stationDao = daoFactory.getStationDao(connection, localeQueries);
 
         stationDao.getByPK(fromStationId).ifPresent(station -> {
             billDto.setFromCityName(station.getCity());
@@ -79,15 +80,12 @@ public class BillServiceImpl implements BillService {
 
     private void setTrainNameAndVagonNumber(BillDto billDto, Long trainId, String trainName, Connection conn) {
         billDto.setTrainNumber(trainName);
-        Optional<GenericJDBCDao> trainDaoOpt = daoFactory.getDao(conn, Train.class, localeQueries);
-        TrainDao trainDao = (TrainDao) trainDaoOpt.orElseThrow(() -> new ServiceException("TrainDao is null"));
+        TrainDao trainDao = daoFactory.getTrainDao(conn, localeQueries);
         trainDao.getByPK(trainId).ifPresent(train -> billDto.setVagonNumber(CalculatorUtil.generateValue(train.getVagonCount())));
     }
 
     private void setVagonTypeAndPlace(BillDto billDto, Integer vagonId, Connection connection) {
-        Optional<GenericJDBCDao> vagonTypeDaoOpt = daoFactory.getDao(connection, VagonType.class, localeQueries);
-        VagonTypeDao vagonTypeDao = (VagonTypeDao) vagonTypeDaoOpt
-                .orElseThrow(() -> new ServiceException("VagonTypeDao is null"));
+        VagonTypeDao vagonTypeDao = daoFactory.getVagonTypeDao(connection, localeQueries);
 
         vagonTypeDao.getByPK(vagonId).ifPresent(vagonType -> {
             billDto.setVagonTypeName(vagonType.getTypeName());
@@ -104,15 +102,14 @@ public class BillServiceImpl implements BillService {
     private void setLeavingAndArrivalDate(BillDto billDto, Long fromStationId, Long toStationId, LocalDate requiredDate,
                                           Long routeId, Connection conn) {
 
-        Optional<GenericJDBCDao> timeTableDaoOpt = daoFactory.getDao(conn, TimeTable.class, localeQueries);
-        TimeTableDao timeTableDao = (TimeTableDao) timeTableDaoOpt.orElseThrow(()
-                -> new ServiceException("TimeTableDao is null"));
-
+        //retrieving arrival and departure time from timetable
+        TimeTableDao timeTableDao = daoFactory.getTimeTableDao(conn, localeQueries);
         Optional<TimeTable> leavingTimeTableOpt = timeTableDao
                 .getTimeTableForStationByDataAndRoute(fromStationId, routeId, requiredDate);
         Optional<TimeTable> arrivalTimeTableOpt = timeTableDao
                 .getTimeTableForStationByDataAndRoute(toStationId, routeId, requiredDate);
 
+        //converting arrival and departure time to required date
         if (arrivalTimeTableOpt.isPresent() && leavingTimeTableOpt.isPresent()) {
             LocalDateTime leavingTime = leavingTimeTableOpt.get().getDeparture();
             LocalDateTime arrivalTime = arrivalTimeTableOpt.get().getArrival();
@@ -134,32 +131,44 @@ public class BillServiceImpl implements BillService {
     }
 
     private void setPrice(BillDto billDto, Long routeId, Connection conn, Long fromStationId, Long toStationId) {
-        Optional<GenericJDBCDao> routeDaoOpt = daoFactory.getDao(conn, Route.class, localeQueries);
-        RouteDao routeDao = (RouteDao) routeDaoOpt.orElseThrow(() -> new ServiceException("RouteDao is null"));
-
+        RouteDao routeDao = daoFactory.getRouteDao(conn, localeQueries);
         Float distance = CalculatorUtil.calculateDistanceFromStationToStationOnTheRoute(routeDao, routeId,
                 fromStationId, toStationId);
 
-        Optional<GenericJDBCDao> routeRateDaoOpt = daoFactory.getDao(conn, RouteRate.class, localeQueries);
-        RouteRateDao routeRateDao = (RouteRateDao) routeRateDaoOpt.orElseThrow(() -> new ServiceException("RouteRateDao is null"));
-
+        RouteRateDao routeRateDao = daoFactory.getRouteRateDao(conn, localeQueries);
         Optional<RouteRate> routeRateOpt = routeRateDao.getByRouteId(routeId);
         Float routeRateFloat = routeRateOpt.isPresent() ? routeRateOpt.get().getRate() : AppProperties.getDefRouteRate();
 
-        Optional<GenericJDBCDao> vagonTypeDaoOpt = daoFactory.getDao(conn, VagonType.class, localeQueries);
-        VagonTypeDao vagonTypeDao = (VagonTypeDao) vagonTypeDaoOpt.orElseThrow(() -> new ServiceException("VagonTypeDao is null"));
+        VagonTypeDao vagonTypeDao = daoFactory.getVagonTypeDao(conn, localeQueries);
         Integer placesCount = vagonTypeDao.getByPK(billDto.getVagonTypeId())
                 .orElseThrow(() -> new ServiceException("VagonType is null")).getPlacesCount();
 
-        Optional<GenericJDBCDao> pricePerKmForVagonDaoOpt = daoFactory.getDao(conn, PricePerKmForVagon.class, localeQueries);
-        PricePerKmForVagonDao pricePerKmForVagonDao = (PricePerKmForVagonDao) pricePerKmForVagonDaoOpt
-                .orElseThrow(() -> new ServiceException("PricePerKmForVagonDao is null"));
-
+        PricePerKmForVagonDao pricePerKmForVagonDao = daoFactory.getPricePerKmForVagonDao(conn, localeQueries);
         Optional<PricePerKmForVagon> pricePerKmForVagonOpt = pricePerKmForVagonDao.getPricePerKmForVagon(billDto.getVagonTypeId());
 
         Double pricePerKmForVagonDouble = pricePerKmForVagonOpt.isPresent() ? pricePerKmForVagonOpt.get().getPrice()
                 : AppProperties.getDefPriceForVagonKm();
         Float price = CalculatorUtil.calculateTicketPrice(routeRateFloat, distance, pricePerKmForVagonDouble, placesCount);
         billDto.setTicketPrice(price);
+    }
+
+    private boolean isAllFieldsFilled(BillDto billDto){
+        if (assertIsNull(billDto.getFirstName())) return false;
+        if (assertIsNull(billDto.getLastName())) return false;
+        if (assertIsNull(billDto.getFromStationName())) return false;
+        if (assertIsNull(billDto.getFromStationId())) return false;
+        if (assertIsNull(billDto.getToStationId())) return false;
+        if (assertIsNull(billDto.getFromCityName())) return false;
+        if (assertIsNull(billDto.getFromStationLeavingDate())) return false;
+        if (assertIsNull(billDto.getToStationArrivalDate())) return false;
+        if (assertIsNull(billDto.getVagonTypeName())) return false;
+        if (assertIsNull(billDto.getVagonTypeId())) return false;
+        if (assertIsNull(billDto.getVagonNumber())) return false;
+        if (assertIsNull(billDto.getTrainNumber())) return false;
+        if (assertIsNull(billDto.getPlaceNumber())) return false;
+        if (assertIsNull(billDto.getTicketPrice())) return false;
+        if (assertIsNull(billDto.getTicketNumber())) return false;
+        if (assertIsNull(billDto.getTicketDate())) return false;
+        return true;
     }
 }

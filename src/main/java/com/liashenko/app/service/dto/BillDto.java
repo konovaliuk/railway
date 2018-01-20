@@ -2,6 +2,7 @@ package com.liashenko.app.service.dto;
 
 import java.io.Serializable;
 
+//Contains all required data to show the bill on the front-end
 public class BillDto implements Serializable {
 
     private static final long serialVersionUID = 1L;

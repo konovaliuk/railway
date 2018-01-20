@@ -5,10 +5,8 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.Writer;
 
+//Custom jstl-tag designed to implement pagination on the view
 public class PaginationTaglib extends SimpleTagSupport {
-
-    //	public static  int MAX_PAGE_COUNT = 3;
-//	public static int STEPS = 4;
 
     //	action to be hit when clicked.
     private String uri;
@@ -20,11 +18,9 @@ public class PaginationTaglib extends SimpleTagSupport {
     private int count;
 
     //	maximum number of pages to be shown in the pagination bar.
-//	private int max = MAX_PAGE_COUNT;
     private int max;
 
     //	maximum number of elements to be shown per page.
-//	private int steps = STEPS;
     private int steps;
 
     //	text to be shown for previous page link.

@@ -1,6 +1,6 @@
 package com.liashenko.app.service.dto;
 
-
+//Contains messages and result of performed operation to transfer to front-end with JSON
 public class ResponseMsgDto {
     private static final long serialVersionUID = 1L;
 

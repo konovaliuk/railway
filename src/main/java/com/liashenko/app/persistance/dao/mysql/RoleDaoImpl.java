@@ -16,6 +16,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.liashenko.app.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
+
 public class RoleDaoImpl extends AbstractJDBCDao implements RoleDao {
     private static final Logger classLogger = LogManager.getLogger(RoleDaoImpl.class);
 
@@ -50,6 +53,7 @@ public class RoleDaoImpl extends AbstractJDBCDao implements RoleDao {
 
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
@@ -74,32 +78,46 @@ public class RoleDaoImpl extends AbstractJDBCDao implements RoleDao {
     }
 
     @Override
-    public void create(Role role) {
-        super.create(role);
+    public void create(Role object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        super.create(object);
     }
 
     @Override
     public Optional<Role> persist(Role object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (Role) obj);
     }
 
     @Override
     public void update(Role object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
     @Override
     public void delete(Role object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
     @Override
     public Optional<Role> getByPK(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (Role) obj);
     }
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Identified object) {
+        try {
+            Role role = (Role) object;
+            statement.setString(1, role.getName());
+        } catch (ClassCastException | SQLException e) {
+            classLogger.error("Couldn't make PreparedStatement for INSERT", e);
+            throw new DAOException(e);
+        }
     }
 
     @Override

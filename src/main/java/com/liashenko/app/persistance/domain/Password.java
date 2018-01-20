@@ -6,6 +6,7 @@ import com.liashenko.app.persistance.result_parser.Column;
 import java.io.Serializable;
 import java.util.Arrays;
 
+//Entity for the table with name "password"
 public class Password implements Identified, Serializable {
     private static final long serialVersionUID = 1L;
 

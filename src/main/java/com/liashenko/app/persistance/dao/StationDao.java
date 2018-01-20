@@ -6,37 +6,28 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StationDao {
+
+    //If the row with PK exists returns true, otherwise - false
     boolean isExists(Long key);
 
-    /**
-     * Создает новую запись и соответствующий ей объект
-     */
+    //Creates new row in the db corresponds to its object
     void create(Station object);
 
-    /**
-     * Создает новую запись, соответствующую объекту object
-     */
+    //Creates new row in the db corresponds to its object and returns it from db or empty optional
     Optional<Station> persist(Station object);
 
-    /**
-     * Возвращает объект соответствующий записи с первичным ключом key или null
-     */
+    //Returns an object corresponds to row with PK or empty optional
     Optional<Station> getByPK(Long key);
 
-    /**
-     * Сохраняет состояние объекта group в базе данных
-     */
+    //Saves object's state to db
     void update(Station object);
 
-    /**
-     * Удаляет запись об объекте из базы данных
-     */
+    //Deletes the row with PK corresponds to object's id
     void delete(Station object);
 
-    /**
-     * Возвращает список объектов соответствующих всем записям в базе данных
-     */
+    //Returns all rows from table
     Optional<List<Station>> getAll();
 
+    //Returns stations correspond to the specified pattern
     Optional<List<Station>> getStationsLike(String likePattern);
 }

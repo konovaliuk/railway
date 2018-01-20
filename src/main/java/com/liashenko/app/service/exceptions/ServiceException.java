@@ -1,5 +1,6 @@
 package com.liashenko.app.service.exceptions;
 
+//Class designed to wrap all exceptions from the service layer
 public class ServiceException extends RuntimeException {
 
     public ServiceException() {

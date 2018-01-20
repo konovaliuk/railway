@@ -3,6 +3,8 @@ package com.liashenko.app.service.dto;
 import java.io.Serializable;
 import java.util.Arrays;
 
+
+//Contains user's personal info. Dto uset to remain info when user registers or updates his profile
 public class UserDto implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -16,6 +16,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.liashenko.app.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
+
 public class StationDaoImpl extends AbstractJDBCDao implements StationDao {
     private static final Logger classLogger = LogManager.getLogger(StationDaoImpl.class);
 
@@ -49,12 +52,13 @@ public class StationDaoImpl extends AbstractJDBCDao implements StationDao {
     }
 
 
-    public String getStationsLikeQuery() {
+    private String getStationsLikeQuery() {
         return localeQueries.getString("select_from_station_tbl_like");
     }
 
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
@@ -79,28 +83,39 @@ public class StationDaoImpl extends AbstractJDBCDao implements StationDao {
         return list;
     }
 
+    //method used by this method should be implemented
     @Override
     public void create(Station object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         super.create(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<Station> persist(Station object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (Station) obj);
     }
 
+    //method used by this method should be implemented
     @Override
     public void update(Station object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public void delete(Station object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
     @Override
     public Optional<Station> getByPK(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (Station) obj);
     }
 
@@ -118,6 +133,7 @@ public class StationDaoImpl extends AbstractJDBCDao implements StationDao {
     }
 
     public Optional<List<Station>> getStationsLike(String likePattern) {
+        if (assertIsNull(likePattern)) throw new DAOException("pattern is null");
         Optional<List<Station>> listOpt;
         String sql = getStationsLikeQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

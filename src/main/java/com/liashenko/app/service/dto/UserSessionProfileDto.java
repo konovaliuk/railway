@@ -2,8 +2,8 @@ package com.liashenko.app.service.dto;
 
 import java.io.Serializable;
 
+//Contains info about user shoud be stored in the http-session
 public class UserSessionProfileDto implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     private Long userId;

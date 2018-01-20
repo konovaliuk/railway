@@ -2,6 +2,8 @@ package com.liashenko.app.service.dto;
 
 import java.io.Serializable;
 
+//Contains required data for calculation the price of ticket for
+//specified route, type of vagon and distance
 public class PriceForVagonDto implements Serializable {
     private static final long serialVersionUID = 1L;
 

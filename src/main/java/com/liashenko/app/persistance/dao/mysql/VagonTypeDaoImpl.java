@@ -16,6 +16,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.liashenko.app.utils.Asserts.assertIntIsNullOrZeroOrLessZero;
+import static com.liashenko.app.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
+
 public class VagonTypeDaoImpl extends AbstractJDBCDao implements VagonTypeDao {
     private static final Logger classLogger = LogManager.getLogger(VagonTypeDaoImpl.class);
 
@@ -50,6 +54,7 @@ public class VagonTypeDaoImpl extends AbstractJDBCDao implements VagonTypeDao {
 
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
@@ -59,11 +64,6 @@ public class VagonTypeDaoImpl extends AbstractJDBCDao implements VagonTypeDao {
         List<VagonType> list = new ArrayList<>();
         try {
             while (rs.next()) {
-//                VagonType vagonType = new VagonType();
-//                vagonType.setId(rs.getInt("id"));
-//                vagonType.setTypeName(rs.getString("type_name" + localeQueries.getString("locale_suffix")));
-//                vagonType.setPlacesCount(rs.getInt("places_count"));
-
                 try {
                     VagonType vagonType = ResultSetParser.fillBeanWithResultData(rs, VagonType.class, localeQueries.getString("locale_suffix"));
                     list.add(vagonType);
@@ -78,28 +78,39 @@ public class VagonTypeDaoImpl extends AbstractJDBCDao implements VagonTypeDao {
         return list;
     }
 
+    //method used by this method should be implemented
     @Override
     public void create(VagonType object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         super.create(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<VagonType> persist(VagonType object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (VagonType) obj);
     }
 
+    //method used by this method should be implemented
     @Override
     public void update(VagonType object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertIntIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public void delete(VagonType object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertIntIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
     @Override
     public Optional<VagonType> getByPK(Integer key) {
+        if (assertIntIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (VagonType) obj);
     }
 

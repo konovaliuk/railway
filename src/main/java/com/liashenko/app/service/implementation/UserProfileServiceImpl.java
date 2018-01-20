@@ -1,20 +1,17 @@
 package com.liashenko.app.service.implementation;
 
 import com.liashenko.app.persistance.dao.DaoFactory;
-import com.liashenko.app.persistance.dao.GenericJDBCDao;
 import com.liashenko.app.persistance.dao.PasswordDao;
 import com.liashenko.app.persistance.dao.UserDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
-import com.liashenko.app.persistance.dao.mysql.MySQLDaoFactory;
 import com.liashenko.app.persistance.domain.Password;
 import com.liashenko.app.persistance.domain.User;
+import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.UserProfileService;
-import com.liashenko.app.service.data_source.DbConnectService;
 import com.liashenko.app.service.dto.UserDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.utils.AppProperties;
-import com.liashenko.app.utils.PasswordProcessor;
-import com.liashenko.app.utils.exceptions.PasswordProcessorException;
+import com.liashenko.app.service.utils.PasswordProcessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,49 +20,45 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static com.liashenko.app.controller.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertIsNull;
 
 public class UserProfileServiceImpl implements UserProfileService {
     private static final Logger classLogger = LogManager.getLogger(UserProfileServiceImpl.class);
 
-    private static final DbConnectService dbConnectService = DbConnectService.getInstance();
-    private static final DaoFactory daoFactory = MySQLDaoFactory.getInstance();
-
     private ResourceBundle localeQueries;
+    private DbConnectionService dbConnSrvc;
+    private DaoFactory daoFactory;
 
-    public UserProfileServiceImpl(ResourceBundle localeQueries) {
+    public UserProfileServiceImpl(ResourceBundle localeQueries, DaoFactory daoFactory, DbConnectionService dbConnSrvc) {
         this.localeQueries = localeQueries;
+        this.daoFactory = daoFactory;
+        this.dbConnSrvc = dbConnSrvc;
     }
 
     @Override
     public void createProfile(UserDto userDto) {
         if (assertIsNull(userDto)) throw new ServiceException("userDto is null");
-        Connection conn = dbConnectService.getConnection();
+        Connection conn = dbConnSrvc.getConnection();
         try {
             conn.setAutoCommit(false);
-            Optional<GenericJDBCDao> passwordDaoOpt = daoFactory.getDao(conn, Password.class, localeQueries);
-            PasswordDao passwordDao = (PasswordDao) passwordDaoOpt
-                    .orElseThrow(() -> new ServiceException("PasswordDao is null"));
-
+            PasswordDao passwordDao = daoFactory.getPasswordDao(conn, localeQueries);
             byte[] salt = PasswordProcessor.generateSalt(userDto.getPassword().length);
             byte[] encryptedPass = PasswordProcessor.getEncryptedPass(userDto.getPassword(), salt);
 
-            Password password = new Password(encryptedPass, salt, AppProperties.getPassAlgIterationValue(), AppProperties.getPassGenerationAlg());
+            Password password = new Password(encryptedPass, salt, AppProperties.getPassAlgIterationValue(),
+                    AppProperties.getPassGenerationAlg());
             password = passwordDao.persist(password)
                     .orElseThrow(() -> new ServiceException("Couldn't persist password"));
-
             User newUser = getUserEntity(userDto, password);
-
-            Optional<GenericJDBCDao> userDaoOpt = daoFactory.getDao(conn, User.class, localeQueries);
-            UserDao userDao = (UserDao) userDaoOpt.orElseThrow(() -> new ServiceException("UserDao is null"));
+            UserDao userDao = daoFactory.getUserDao(conn, localeQueries);
             userDao.create(newUser);
             conn.commit();
-        } catch (PasswordProcessorException | ServiceException | SQLException | DAOException e) {
+        } catch (ServiceException | SQLException | DAOException e) {
             classLogger.error(e);
-            DbConnectService.rollback(conn);
+            dbConnSrvc.rollback(conn);
             throw new ServiceException(e);
         } finally {
-            DbConnectService.close(conn);
+            dbConnSrvc.close(conn);
         }
     }
 
@@ -83,10 +76,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public void changeLanguage(Long userId, String newLanguage) {
-        Connection conn = dbConnectService.getConnection();
+        Connection conn = dbConnSrvc.getConnection();
         try {
-            Optional<GenericJDBCDao> userDaoOpt = daoFactory.getDao(conn, User.class, localeQueries);
-            UserDao userDao = (UserDao) userDaoOpt.orElseThrow(() -> new ServiceException("UserDao is null"));
+            UserDao userDao = daoFactory.getUserDao(conn, localeQueries);
             User newUser = userDao.getByPK(userId).orElseThrow(() -> new ServiceException("User doesn't exist"));
             newUser.setLanguage(newLanguage);
             userDao.update(newUser);
@@ -94,32 +86,30 @@ public class UserProfileServiceImpl implements UserProfileService {
             classLogger.error(e);
             throw new ServiceException(e);
         } finally {
-            DbConnectService.close(conn);
+            dbConnSrvc.close(conn);
         }
     }
 
     @Override
     public boolean isEmailExists(String email) {
-        Connection conn = dbConnectService.getConnection();
+        Connection conn = dbConnSrvc.getConnection();
         try {
-            Optional<GenericJDBCDao> userDaoOpt = daoFactory.getDao(conn, User.class, localeQueries);
-            UserDao userDao = (UserDao) userDaoOpt.orElseThrow(() -> new ServiceException("UserDao is null"));
+            UserDao userDao = daoFactory.getUserDao(conn, localeQueries);
             return userDao.isEmailExists(email);
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
             throw new ServiceException(e);
         } finally {
-            DbConnectService.close(conn);
+            dbConnSrvc.close(conn);
         }
     }
 
     @Override
     public Optional<UserDto> getUserById(Long userId) {
-        Connection conn = dbConnectService.getConnection();
+        Connection conn = dbConnSrvc.getConnection();
         UserDto userDto = null;
         try {
-            Optional<GenericJDBCDao> userDaoOpt = daoFactory.getDao(conn, User.class, localeQueries);
-            UserDao userDao = (UserDao) userDaoOpt.orElseThrow(() -> new ServiceException("UserDao is null"));
+            UserDao userDao = daoFactory.getUserDao(conn, localeQueries);
             Optional<User> userOpt = userDao.getByPK(userId);
             if (userOpt.isPresent()) {
                 userDto = UserDto.builder()
@@ -132,35 +122,17 @@ public class UserProfileServiceImpl implements UserProfileService {
             classLogger.error(e);
             throw new ServiceException(e);
         } finally {
-            DbConnectService.close(conn);
+            dbConnSrvc.close(conn);
         }
         return Optional.ofNullable(userDto);
     }
 
     @Override
-    public void banUserProfile(Long userId) {
-        Connection conn = dbConnectService.getConnection();
-        try {
-            Optional<GenericJDBCDao> userDaoOpt = daoFactory.getDao(conn, User.class, localeQueries);
-            UserDao userDao = (UserDao) userDaoOpt.orElseThrow(() -> new ServiceException("UserDao is null"));
-            User user = userDao.getByPK(userId).orElseThrow(() -> new ServiceException("User doesn't exist"));
-            user.setBanned(Boolean.TRUE);
-            userDao.update(user);
-        } catch (ServiceException | DAOException e) {
-            classLogger.error(e);
-            throw new ServiceException(e);
-        } finally {
-            DbConnectService.close(conn);
-        }
-    }
-
-    @Override
     public void updateProfile(UserDto userDto) {
         if (assertIsNull(userDto)) throw new ServiceException("userDto is null");
-        Connection conn = dbConnectService.getConnection();
+        Connection conn = dbConnSrvc.getConnection();
         try {
-            Optional<GenericJDBCDao> userDaoOpt = daoFactory.getDao(conn, User.class, localeQueries);
-            UserDao userDao = (UserDao) userDaoOpt.orElseThrow(() -> new ServiceException("UserDao is null"));
+            UserDao userDao = daoFactory.getUserDao(conn, localeQueries);
             User user = userDao.getByPK(userDto.getId()).orElseThrow(() -> new ServiceException("User doesn't exist"));
             user.setFirstName(userDto.getFirstName());
             user.setLastName(userDto.getLastName());
@@ -170,22 +142,21 @@ public class UserProfileServiceImpl implements UserProfileService {
             classLogger.error(e);
             throw new ServiceException(e);
         } finally {
-            DbConnectService.close(conn);
+            dbConnSrvc.close(conn);
         }
     }
 
     @Override
     public boolean isOtherUsersWithEmailExist(Long userId, String email) {
-        Connection conn = dbConnectService.getConnection();
+        Connection conn = dbConnSrvc.getConnection();
         try {
-            Optional<GenericJDBCDao> userDaoOpt = daoFactory.getDao(conn, User.class, localeQueries);
-            UserDao userDao = (UserDao) userDaoOpt.orElseThrow(() -> new ServiceException("UserDao is null"));
+            UserDao userDao = daoFactory.getUserDao(conn, localeQueries);
             return userDao.isOtherUsersWithEmailExist(userId, email);
         } catch (ServiceException | DAOException e) {
             classLogger.error(e);
             throw new ServiceException(e);
         } finally {
-            DbConnectService.close(conn);
+            dbConnSrvc.close(conn);
         }
     }
 }

@@ -3,6 +3,7 @@ package com.liashenko.app.service.dto;
 import java.io.Serializable;
 import java.util.Arrays;
 
+//Contains entered by user info to sign in
 public class PrinciplesDto implements Serializable {
     private static final long serialVersionUID = 1L;
 

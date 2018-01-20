@@ -22,49 +22,23 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
         this.localeQueries = localeQueries;
     }
 
-    public abstract String getExistsQuery();
+//    public abstract String getExistsQuery();
+//
+//    public abstract String getSelectQuery();
+//
+//    public abstract String getCreateQuery();
+//
+//    public abstract String getUpdateQuery();
+//
+//    public abstract String getDeleteQuery();
 
-    /**
-     * Возвращает sql запрос для получения всех записей.
-     * <p/>
-     * SELECT * FROM [Table]
-     */
-    public abstract String getSelectQuery();
-
-    /**
-     * Возвращает sql запрос для вставки новой записи в базу данных.
-     * <p/>
-     * INSERT INTO [Table] ([column, column, ...]) VALUES (?, ?, ...);
-     */
-    public abstract String getCreateQuery();
-
-    /**
-     * Возвращает sql запрос для обновления записи.
-     * <p/>
-     * UPDATE [Table] SET [column = ?, column = ?, ...] WHERE id = ?;
-     */
-    public abstract String getUpdateQuery();
-
-    /**
-     * Возвращает sql запрос для удаления записи из базы данных.
-     * <p/>
-     * DELETE FROM [Table] WHERE id= ?;
-     */
-    public abstract String getDeleteQuery();
-
-    /**
-     * Разбирает ResultSet и возвращает список объектов соответствующих содержимому ResultSet.
-     */
+    //Returns parsed result of select query
     protected abstract List<T> parseResultSet(ResultSet rs);
 
-    /**
-     * Устанавливает аргументы insert запроса в соответствии со значением полей объекта object.
-     */
+    //Sets args for insert query according to Object-fields
     protected abstract void prepareStatementForInsert(PreparedStatement statement, T object);
 
-    /**
-     * Устанавливает аргументы update запроса в соответствии со значением полей объекта object.
-     */
+    //Sets args for update query according to Object-fields
     protected abstract void prepareStatementForUpdate(PreparedStatement statement, T object);
 
     public boolean isExists(PK key) {
@@ -95,7 +69,6 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
 
     @Override
     public void create(T object) {
-        // Добавляем запись
         String sql = getCreateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             prepareStatementForInsert(statement, object);
@@ -131,7 +104,7 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
             } catch (DAOException | SQLException e) {
                 throw new DAOException(e);
             }
-            // Получаем только что вставленную запись
+            //Retrieve created row from table
             sql = getSelectQuery() + " WHERE id = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setObject(1, insertedId);
@@ -152,7 +125,6 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
 
     @Override
     public Optional<T> getByPK(PK key) {
-        if (key == null) return Optional.empty();
         List<T> list;
         String sql = getSelectQuery();
         sql += " WHERE id = ?";
@@ -176,7 +148,6 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
 
     @Override
     public void update(T object) {
-        if (object.getId() == null) throw new DAOException("id is null");
         String sql = getUpdateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql);) {
             prepareStatementForUpdate(statement, object);
@@ -192,7 +163,6 @@ public abstract class AbstractJDBCDao<T extends Identified<PK>, PK extends Numbe
 
     @Override
     public void delete(T object) {
-        if (object.getId() == null) throw new DAOException("id is null");
         String sql = getDeleteQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, object.getId());

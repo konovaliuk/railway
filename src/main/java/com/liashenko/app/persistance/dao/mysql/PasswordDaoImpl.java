@@ -16,6 +16,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.liashenko.app.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
+
 public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
 
     private static final Logger classLogger = LogManager.getLogger(PasswordDaoImpl.class);
@@ -25,7 +28,7 @@ public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
     }
 
     public String getExistsQuery() {
-        return localeQueries.getString("is_id_exists_in_password_tbl");
+        return localeQueries.getString("");
     }
 
     @Override
@@ -45,7 +48,7 @@ public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
 
     @Override
     public String getDeleteQuery() {
-        return localeQueries.getString("delete_from_password_tbl");
+        return localeQueries.getString("");
     }
 
     @Override
@@ -69,33 +72,43 @@ public class PasswordDaoImpl extends AbstractJDBCDao implements PasswordDao {
         return list;
     }
 
+    //sql-query is not implemented for this method
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
     @Override
-    public void create(Password password) {
-        super.create(password);
+    public void create(Password object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        super.create(object);
     }
 
     @Override
     public Optional<Password> persist(Password object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (Password) obj);
     }
 
     @Override
     public void update(Password object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
+    //sql-query is not implemented for this method
     @Override
     public void delete(Password object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
     @Override
     public Optional<Password> getByPK(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (Password) obj);
     }
 

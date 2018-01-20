@@ -16,6 +16,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.liashenko.app.utils.Asserts.assertIntIsNullOrZeroOrLessZero;
+import static com.liashenko.app.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
+
 public class RouteRateDaoImpl extends AbstractJDBCDao implements RouteRateDao {
     private static final Logger classLogger = LogManager.getLogger(RouteRateDaoImpl.class);
 
@@ -48,13 +52,14 @@ public class RouteRateDaoImpl extends AbstractJDBCDao implements RouteRateDao {
         return localeQueries.getString("");
     }
 
-    public String getByRouteIdQuery() {
+    private String getByRouteIdQuery() {
         return localeQueries.getString("select_by_route_id");
     }
 
-
+    //method used by this method should be implemented
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
@@ -79,28 +84,39 @@ public class RouteRateDaoImpl extends AbstractJDBCDao implements RouteRateDao {
         return list;
     }
 
+    //method used by this method should be implemented
     @Override
     public void create(RouteRate object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         super.create(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<RouteRate> persist(RouteRate object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (RouteRate) obj);
     }
 
+    //method used by this method should be implemented
     @Override
     public void update(RouteRate object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertIntIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public void delete(RouteRate object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertIntIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
     @Override
     public Optional<RouteRate> getByPK(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (RouteRate) obj);
     }
 
@@ -119,6 +135,7 @@ public class RouteRateDaoImpl extends AbstractJDBCDao implements RouteRateDao {
 
     @Override
     public Optional<RouteRate> getByRouteId(Long routeId) {
+        if (assertLongIsNullOrZeroOrLessZero(routeId)) return Optional.empty();
         String sql = getByRouteIdQuery();
         List<RouteRate> routeRateList;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

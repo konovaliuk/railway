@@ -25,7 +25,6 @@
 
     <form class="form-inline">
         <div class="input-group">
-            <%--<b><fmt:message key="showUsers.count.header.part1" bundle="${lang}"/></b>--%>
             <label for="usersOnPage"><fmt:message key="showUsers.count.header.part1" bundle="${lang}"/></label>
             <select id="usersOnPage" class="form-control" onchange="usersOnPageChange();">
                 <option value="3"  ${usersOnPage == 3 ? 'selected' : '' } >3</option>
@@ -34,7 +33,6 @@
                 <option value="0"  ${usersOnPage == 0 ? 'selected' : '' } ><fmt:message key="showUsers.option.all"
                                                                                         bundle="${lang}"/></option>
             </select>
-            <%--<b><fmt:message key="showUsers.count.header.part2" bundle="${lang}"/></b>--%>
         </div>
     </form>
     <br>

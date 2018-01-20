@@ -2,6 +2,7 @@ package com.liashenko.app.service.dto;
 
 import java.io.Serializable;
 
+//Contains list of role's ids
 public class RoleDto implements Serializable {
     public static final long ADMIN_ROLE_ID = 1;
     public static final long USER_ROLE_ID = 2;

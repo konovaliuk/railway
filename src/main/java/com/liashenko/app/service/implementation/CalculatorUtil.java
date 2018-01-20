@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Random;
 
+//Class deigned to perform routine calculations from service layer
 public abstract class CalculatorUtil {
     private static final int SIGNS_AFTER_ZERO_IN_TICKET_PRICE = 2;
     private static final Random RANDOM = new Random();
@@ -38,12 +39,9 @@ public abstract class CalculatorUtil {
                 .floatValue();
     }
 
+    //returns random positive value from 0 to maxValueCount
     public static int generateValue(int maxValueCount) {
-        int res = 0;
-        do {
-            res = RANDOM.nextInt(maxValueCount);
-        }
-        while (res < 1);
-        return res;
+        int res  = RANDOM.nextInt(maxValueCount);
+        return (res < 0) ? -res : res;
     }
 }

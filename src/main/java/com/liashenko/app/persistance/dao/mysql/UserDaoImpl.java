@@ -16,6 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.liashenko.app.utils.Asserts.*;
+
 public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
 
     private static final Logger classLogger = LogManager.getLogger(UserDaoImpl.class);
@@ -49,30 +51,30 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
         return localeQueries.getString("delete_from_user_tbl");
     }
 
-
-    public String getUserIdByEmailQuery() {
+    private String getUserIdByEmailQuery() {
         return localeQueries.getString("get_user_id_by_email_field");
     }
 
-    public String getUserByEmailQuery() {
+    private String getUserByEmailQuery() {
         return localeQueries.getString("get_user_by_email_field");
     }
 
-    public String getUserByIdAndEmailQuery() {
+    private String getUserByIdAndEmailQuery() {
         return localeQueries.getString("get_user_by_email_and_excluded_id");
     }
 
-    public String getUsersCountQuery() {
+    private String getUsersCountQuery() {
         return localeQueries.getString("get_users_count");
     }
 
-    public String getUsersPagesQuery() {
+    private String getUsersPagesQuery() {
         return localeQueries.getString("select_pages_from_users_tbl");
     }
 
 
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
@@ -100,26 +102,33 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
 
     @Override
     public void create(User object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         super.create(object);
     }
 
     @Override
     public Optional<User> persist(User object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (User) obj);
     }
 
     @Override
     public void update(User object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
     @Override
     public void delete(User object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
     @Override
     public Optional<User> getByPK(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (User) obj);
     }
 
@@ -185,6 +194,8 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
 
     @Override
     public boolean isOtherUsersWithEmailExist(Long userId, String email) {
+        if(assertLongIsNullOrZeroOrLessZero(userId)) throw new DAOException("Wrong userId");
+        if(assertIsNull(email)) return false;
         int i = 0;
         String sql = getUserByIdAndEmailQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -203,6 +214,7 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
 
     @Override
     public Optional<User> getUserByEmail(String email) {
+        if (assertIsNull(email)) return Optional.empty();
         String sql = getUserByEmailQuery();
         List<User> userList;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -213,7 +225,7 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
             classLogger.error(e);
             throw new DAOException(e);
         }
-        if (userList == null || userList.size() == 0) {
+        if (userList.size() == 0) {
             return Optional.empty();
         } else if (userList.size() == 1) {
             return Optional.ofNullable(userList.get(0));
@@ -244,6 +256,8 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
     @Override
 //    SELECT * FROM railway.user LIMIT ? OFFSET ?
     public Optional<List<User>> getPages(int rowsPerPage, int offset) {
+        if (assertIntIsLessThanZero(offset)) throw new DAOException("offset is not valid");
+        if (assertIntIsLessThanZero(rowsPerPage)) throw new DAOException("rowsPerPage is not valid");
         Optional<List<User>> listOpt;
         String sql = getUsersPagesQuery();
         if (rowsPerPage == 0) return getAll();

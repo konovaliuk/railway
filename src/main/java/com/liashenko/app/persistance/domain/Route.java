@@ -5,6 +5,7 @@ import com.liashenko.app.persistance.result_parser.Column;
 
 import java.io.Serializable;
 
+//Entity for the table with name "route"
 public class Route implements Serializable, Identified {
     private static final long serialVersionUID = 1L;
 
@@ -21,6 +22,13 @@ public class Route implements Serializable, Identified {
     private Float distance;
 
     public Route() {
+    }
+
+    public Route(Long id, Long stationId, Long routeNumberId, Float distance) {
+        this.id = id;
+        this.stationId = stationId;
+        this.routeNumberId = routeNumberId;
+        this.distance = distance;
     }
 
     public Long getId() {

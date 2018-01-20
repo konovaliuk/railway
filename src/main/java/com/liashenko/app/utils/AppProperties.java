@@ -81,7 +81,7 @@ public abstract class AppProperties {
     private static int getIntValue(String key, int defaultValue) {
         try {
             return Integer.parseInt(properties.getProperty(key));
-        } catch (ClassCastException ignore) {
+        } catch (NumberFormatException ignore) {
             return defaultValue;
         }
     }

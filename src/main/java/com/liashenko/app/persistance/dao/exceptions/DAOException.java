@@ -1,5 +1,7 @@
 package com.liashenko.app.persistance.dao.exceptions;
 
+
+//Class for all exceptions of DAO layer
 public class DAOException extends RuntimeException {
 
     public DAOException() {

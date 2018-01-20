@@ -16,6 +16,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.liashenko.app.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
+
 public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
     private static final Logger classLogger = LogManager.getLogger(RouteDaoImpl.class);
 
@@ -48,25 +51,27 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
         return localeQueries.getString("");
     }
 
-    public String getFirstTerminalStationOnRouteQuery() {
+    private String getFirstTerminalStationOnRouteQuery() {
         return localeQueries.getString("select_first_terminal_station_on_route");
     }
 
-    public String getLastTerminalStationOnRouteQuery() {
+    private String getLastTerminalStationOnRouteQuery() {
         return localeQueries.getString("select_last_terminal_station_on_route");
     }
 
 
-    public String getRoutesByDepartureAndArrivalQuery() {
+    private String getRoutesByDepartureAndArrivalQuery() {
         return localeQueries.getString("select_routes_by_departure_and_arrival_stations_from_route_tbl");
     }
 
-    public String getStationOnRouteQuery() {
+    private String getStationOnRouteQuery() {
         return localeQueries.getString("select_station_on_route");
     }
 
+    //method used by this method should be implemented
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
@@ -90,28 +95,39 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
         return list;
     }
 
+    //method used by this method should be implemented
     @Override
     public void create(Route object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         super.create(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<Route> persist(Route object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (Route) obj);
     }
 
+    //method used by this method should be implemented
     @Override
     public void update(Route object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public void delete(Route object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
     @Override
     public Optional<Route> getByPK(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (Route) obj);
     }
 
@@ -130,6 +146,8 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
 
     @Override
     public Optional<List<Route>> getRoutesByDepartureAndArrivalStationsId(Long departureStationId, Long arrivalStationId) {
+        if (assertLongIsNullOrZeroOrLessZero(departureStationId)) return Optional.empty();
+        if (assertLongIsNullOrZeroOrLessZero(arrivalStationId)) return Optional.empty();
         String sql = getRoutesByDepartureAndArrivalQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, departureStationId);
@@ -142,6 +160,8 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
     }
 
     public Optional<Route> getStationOnRoute(Long stationId, Long routeId) {
+        if (assertLongIsNullOrZeroOrLessZero(stationId)) return Optional.empty();
+        if (assertLongIsNullOrZeroOrLessZero(routeId)) return Optional.empty();
         List<Route> routeList;
         String sql = getStationOnRouteQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -166,6 +186,7 @@ public class RouteDaoImpl extends AbstractJDBCDao implements RouteDao {
     }
 
     private Optional<Route> getStationFromRoute(Connection conn, String sql, Long routeId) {
+        if (assertLongIsNullOrZeroOrLessZero(routeId)) return Optional.empty();
         List<Route> routeList;
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, routeId);

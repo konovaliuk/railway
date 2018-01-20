@@ -17,7 +17,6 @@
 <div class="container">
     <div class="row" style="margin-top:20px">
         <div class="col-xs-12 col-sm-8 col-md-6 col-centered">
-            <%--method="POST" action="<c:url value='/'/>sign_in"--%>
             <form role="form" action="#" name="login_form" id="login_form">
                 <fieldset>
                     <h2><fmt:message key="page.header" bundle="${lang}"/></h2>
@@ -69,7 +68,6 @@
     $(document).ready(function () {
         $('#login_form')
             .bootstrapValidator({
-//                message: 'This value is not valid',
                 feedbackIcons: {
                     valid: 'glyphicon glyphicon-ok',
                     invalid: 'glyphicon glyphicon-remove',
@@ -77,7 +75,6 @@
                 },
                 fields: {
                     email: {
-//                        message: 'The username is not valid',
                         validators: {
                             notEmpty: {
                                 message: '<fmt:message key="empty.email.field.validation.msg" bundle="${lang}"/>'
@@ -89,15 +86,7 @@
                             },
                             emailAddress: {
                                 message: '<fmt:message key="not.valid.email.msg" bundle="${lang}"/>'
-                            },
-                            <%--remote: {--%>
-                            <%--url: '/ajax/check_email',--%>
-                            <%--message: '<fmt:message key="email.exists.msg" bundle="${lang}"/>'--%>
-                            <%--}--%>
-//                            regexp: {
-//                                regexp: /^[a-zA-Z0-9_\.]+$/,
-//                                message: 'The username can only consist of alphabetical, number, dot and underscore'
-//                            }
+                            }
                         }
                     },
                     password: {
@@ -117,12 +106,6 @@
             .on('success.form.bv', function (e) {
                 // Prevent form submission
                 e.preventDefault();
-
-//                // Get the form instance
-//                var $form = $(e.target);
-//
-//                // Get the BootstrapValidator instance
-//                var bv = $form.data('bootstrapValidator');
                 checkPrinciples();
             });
     });
@@ -145,7 +128,6 @@
                 if (textStatus !== 'success' || !data.success) {
                     msg.style.display = 'block';
                 } else {
-                    <%--location.href = "<c:url value='/'/>";--%>
                     location.href = "<c:url value='/'/>" + data.message;
                 }
             }

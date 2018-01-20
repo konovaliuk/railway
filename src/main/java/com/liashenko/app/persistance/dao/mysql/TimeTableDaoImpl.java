@@ -1,6 +1,6 @@
 package com.liashenko.app.persistance.dao.mysql;
 
-import com.liashenko.app.controller.utils.HttpParser;
+import com.liashenko.app.web.controller.utils.HttpParser;
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.TimeTableDao;
@@ -17,6 +17,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
+
+import static com.liashenko.app.utils.Asserts.assertIsNull;
+import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
 
 public class TimeTableDaoImpl extends AbstractJDBCDao implements TimeTableDao {
     private static final Logger classLogger = LogManager.getLogger(TimeTableDaoImpl.class);
@@ -50,12 +53,14 @@ public class TimeTableDaoImpl extends AbstractJDBCDao implements TimeTableDao {
         return localeQueries.getString("");
     }
 
-    public String getTimeTableForDepartureStationByDataAndRouteQuery() {
+    private String getTimeTableForDepartureStationByDataAndRouteQuery() {
         return localeQueries.getString("select_timetable_for_station_and_route_and_date");
     }
 
+    //method used by this method should be implemented
     @Override
     public boolean isExists(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return false;
         return super.isExists(key);
     }
 
@@ -80,28 +85,40 @@ public class TimeTableDaoImpl extends AbstractJDBCDao implements TimeTableDao {
         return list;
     }
 
+    //method used by this method should be implemented
     @Override
     public void create(TimeTable object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         super.create(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<TimeTable> persist(TimeTable object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
         return super.persist(object).map(obj -> (TimeTable) obj);
     }
 
+    //method used by this method should be implemented
     @Override
     public void update(TimeTable object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.update(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public void delete(TimeTable object) {
+        if (assertIsNull(object)) throw new DAOException("Entity is null!");
+        if (assertLongIsNullOrZeroOrLessZero(object.getId())) throw new DAOException("Entity id is not valid!");
         super.delete(object);
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<TimeTable> getByPK(Long key) {
+        if (assertLongIsNullOrZeroOrLessZero(key)) return Optional.empty();
         return super.getByPK(key).map(obj -> (TimeTable) obj);
     }
 
@@ -113,6 +130,7 @@ public class TimeTableDaoImpl extends AbstractJDBCDao implements TimeTableDao {
     protected void prepareStatementForUpdate(PreparedStatement statement, Identified object) {
     }
 
+    //method used by this method should be implemented
     @Override
     public Optional<List<TimeTable>> getAll() {
         return super.getAll().map(list -> (List<TimeTable>) list);
@@ -120,6 +138,9 @@ public class TimeTableDaoImpl extends AbstractJDBCDao implements TimeTableDao {
 
     @Override
     public Optional<TimeTable> getTimeTableForStationByDataAndRoute(Long stationId, Long routeId, LocalDate date) {
+        if (assertLongIsNullOrZeroOrLessZero(stationId)) return Optional.empty();
+        if (assertLongIsNullOrZeroOrLessZero(routeId)) return Optional.empty();
+        if (assertIsNull(date)) return Optional.empty();
         String sql = getTimeTableForDepartureStationByDataAndRouteQuery();
         List<TimeTable> timeTableList;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

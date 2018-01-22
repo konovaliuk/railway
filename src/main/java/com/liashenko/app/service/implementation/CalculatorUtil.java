@@ -35,7 +35,7 @@ public abstract class CalculatorUtil {
         return BigDecimal.valueOf(routeRateFloat)
                 .multiply(BigDecimal.valueOf(distance))
                 .multiply(BigDecimal.valueOf(pricePerKmForVagonDouble))
-                .divide(BigDecimal.valueOf(placesCogitunt), SIGNS_AFTER_ZERO_IN_TICKET_PRICE, BigDecimal.ROUND_HALF_UP)
+                .divide(BigDecimal.valueOf(placesCount), SIGNS_AFTER_ZERO_IN_TICKET_PRICE, BigDecimal.ROUND_HALF_UP)
                 .floatValue();
     }
 

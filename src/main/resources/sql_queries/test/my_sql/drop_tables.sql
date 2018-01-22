@@ -5,7 +5,7 @@ USE railway_test;
 -- ------------------------------------------------------
 -- Server version	5.7.20-0ubuntu0.16.04.1
 
-SET FOREIGN_KEY_CHECKS=0;
+SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS `user`;
 

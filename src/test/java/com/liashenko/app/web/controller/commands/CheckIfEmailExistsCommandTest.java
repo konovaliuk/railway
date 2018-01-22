@@ -2,14 +2,9 @@ package com.liashenko.app.web.controller.commands;
 
 import com.liashenko.app.service.ServiceFactory;
 import com.liashenko.app.service.ServiceTestFactoryImpl;
-import com.liashenko.app.service.UserProfileService;
-import com.liashenko.app.service.exceptions.ServiceException;
-import com.liashenko.app.web.controller.manager.LocaleQueryConf;
+import com.liashenko.app.web.controller.commands.registration.CheckIfEmailExistsCommand;
 import com.liashenko.app.web.controller.manager.PageManagerConf;
-import com.liashenko.app.web.controller.utils.HttpParser;
-import com.liashenko.app.web.controller.utils.MsgSender;
 import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
-import com.liashenko.app.web.controller.utils.exceptions.ControllerException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

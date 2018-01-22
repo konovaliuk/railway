@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation to mark entity columns should be parsed
  * from the ResultSet
+ *
  * @version 1.0
  */
 @Target(value = ElementType.FIELD)

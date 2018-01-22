@@ -7,39 +7,38 @@ import java.util.Map;
 import static com.liashenko.app.utils.Asserts.assertIsNull;
 
 /**
- * @Author Vitalii Liashenko
- *
- * Class contains logic to resolve allowed command annotated with Authorization for user which have relevant role
- *
- * Annotation Authorization.Allowed used to allow call annotated command by users, counted in the "roles" array.
- * If user's role is not present in the list, he will be redirected to command in the "defAction"
- *
- * Annotation Authorization.Restrict used to restrict calling annotated commands by users, counted in the "roles" array.
- * If user's role is present in the list, he will be redirected to command specified in the "action".
- *
- * If command is annotated more than one time and the same role presents in several lists of restricted roles,
- * would be used action from the annotation with higher value of "priority".
- *
- * If the values of priorities are equal would be used value of "action" from the annotation
- * which happens first in from top-to-bottom direction
- *
- * Annotation Authorization.Restrict always has higher priority above Authorization.Allowed
- *
- * If user role is absent in the lists of Authorization annotations fields he would be redirected to defaultAction
- *
  * @param <T> - any object type annotated with Authorization inner (Allowed or Restrict) annotation
  * @version 1.0
+ * @Author Vitalii Liashenko
+ * <p>
+ * Class contains logic to resolve allowed command annotated with Authorization for user which have relevant role
+ * <p>
+ * Annotation Authorization.Allowed used to allow call annotated command by users, counted in the "roles" array.
+ * If user's role is not present in the list, he will be redirected to command in the "defAction"
+ * <p>
+ * Annotation Authorization.Restrict used to restrict calling annotated commands by users, counted in the "roles" array.
+ * If user's role is present in the list, he will be redirected to command specified in the "action".
+ * <p>
+ * If command is annotated more than one time and the same role presents in several lists of restricted roles,
+ * would be used action from the annotation with higher value of "priority".
+ * <p>
+ * If the values of priorities are equal would be used value of "action" from the annotation
+ * which happens first in from top-to-bottom direction
+ * <p>
+ * Annotation Authorization.Restrict always has higher priority above Authorization.Allowed
+ * <p>
+ * If user role is absent in the lists of Authorization annotations fields he would be redirected to defaultAction
  */
 public abstract class RightsChecker<T> {
 
     /**
      * Method resolves allowed for user command to process request
      *
-     * @param actualAction - name of the requested by user action
+     * @param actualAction  - name of the requested by user action
      * @param defaultAction - default action would be used if not annotation Allowed nor Restrict has users'r role in it's list
-     * @param currentRole - current user's role
-     * @param commands - Map with whole list of commands
-     * @param <T> - any object type annotated with Authorization inner (Allowed or Restrict) annotation
+     * @param currentRole   - current user's role
+     * @param commands      - Map with whole list of commands
+     * @param <T>           - any object type annotated with Authorization inner (Allowed or Restrict) annotation
      * @return - allowed for user action
      */
     public static <T> T checkUserRightsAndGetCommand(String actualAction, String defaultAction, Long currentRole,

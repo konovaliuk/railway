@@ -80,21 +80,21 @@ public class ScriptRunner {
                     }
 
                     Statement stmt = conn.createStatement();
-                        if (this.stopOnError) {
+                    if (this.stopOnError) {
+                        stmt.executeUpdate(command.toString());
+                    } else {
+                        try {
                             stmt.executeUpdate(command.toString());
-                        } else {
-                            try {
-                                stmt.executeUpdate(command.toString());
-                            } catch (final SQLException e) {
-                                e.fillInStackTrace();
-                                err.println("Error executing SQL Command: \"" +
-                                        command + "\"");
-                                err.println(e);
-                                err.flush();
-                                throw e;
-                            }
+                        } catch (final SQLException e) {
+                            e.fillInStackTrace();
+                            err.println("Error executing SQL Command: \"" +
+                                    command + "\"");
+                            err.println(e);
+                            err.flush();
+                            throw e;
                         }
-                        command = null;
+                    }
+                    command = null;
                 } else if (trimmedLine.endsWith(PL_SQL_BLOCK_SPLIT_DELIMITER)) {
                     command.append(line.substring
                             (0, line.lastIndexOf(PL_SQL_BLOCK_SPLIT_DELIMITER)));

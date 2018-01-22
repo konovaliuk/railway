@@ -22,8 +22,9 @@
 
             <form role="form" method="post" action="#" name="profile_form" id="profile_form">
                 <h1><fmt:message key="page.profile.header" bundle="${lang}"/></h1>
-                <p id="msg_container" style="display : none;" class="a-container"><fmt:message
-                        key="unsuccessful.profile.update.msg" bundle="${lang}"/></p>
+                <%--<p id="msg_container" style="display : none;" class="a-container"><fmt:message--%>
+                <%--key="unsuccessful.profile.update.msg" bundle="${lang}"/></p>--%>
+                <p id="msg_container" class="b-container"> <!--Text in Popup--></p>
 
                 <fieldset>
                     <div class="form-group">
@@ -158,15 +159,25 @@
             data: JSON.stringify(jsonArg),
             success: function (data, textStatus) {
                 var msg = document.getElementById("msg_container");
-                if (textStatus !== 'success' || !data.success) {
-                    msg.style.display = 'block';
-                    setTimeout(function () {
-                            msg.style.display = 'none';
-                        },
-                        2000);
+
+                if (textStatus === 'success') {
+                    msg.innerHTML = '<fmt:message key="successful.profile.update.msg" bundle="${lang}"/>';
+                    if (data.success) {
+                        msg.className = 'b-container';
+                    } else {
+                        msg.className = 'a-container'
+                    }
                 } else {
-                    location.reload();
+                    msg.className = 'a-container';
+                    msg.innerHTML = '<fmt:message key="unsuccessful.profile.update.msg" bundle="${lang}"/>';
                 }
+
+                msg.style.display = 'block';
+                setTimeout(function () {
+                        msg.style.display = 'none';
+                    },
+                    2000);
+
             }
         });
     }

@@ -86,15 +86,15 @@ public abstract class AppProperties {
         }
     }
 
-    public static float getDefPriceForVagonKm(){
+    public static float getDefPriceForVagonKm() {
         return getFloatValue("default_price_for_vagon_km", 1.0F);
     }
 
-    public static float getDefRouteRate(){
+    public static float getDefRouteRate() {
         return getFloatValue("default_route_rate", 1.0F);
     }
 
-    public static int getMaxTicketNumber(){
+    public static int getMaxTicketNumber() {
         return getIntValue("max_ticket_number", 100_000);
     }
 

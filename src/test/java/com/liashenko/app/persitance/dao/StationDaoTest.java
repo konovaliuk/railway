@@ -4,14 +4,14 @@ import com.liashenko.app.persistance.dao.StationDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.dao.mysql.StationDaoImpl;
 import com.liashenko.app.persistance.domain.Station;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static junit.framework.TestCase.*;
-import static junit.framework.TestCase.assertEquals;
 
 @RunWith(value = Parameterized.class)
 public class StationDaoTest extends TestDbUtil {
@@ -36,16 +35,16 @@ public class StationDaoTest extends TestDbUtil {
     private StationDao testedDao;
     private String localePattern;
 
-    public StationDaoTest(ResourceBundle localeBundle){
+    public StationDaoTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
         this.localePattern = getLocalePattern(localeBundle);
     }
 
-    private String getLocalePattern(ResourceBundle localeBundle){
+    private String getLocalePattern(ResourceBundle localeBundle) {
         String pattern;
-        if (localeBundle.getLocale().getLanguage().equals("uk")){
+        if (localeBundle.getLocale().getLanguage().equals("uk")) {
             pattern = UA_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS;
-        } else if(localeBundle.getLocale().getLanguage().equals("en")) {
+        } else if (localeBundle.getLocale().getLanguage().equals("en")) {
             pattern = EN_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS;
         } else {
             pattern = UA_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS;
@@ -54,7 +53,7 @@ public class StationDaoTest extends TestDbUtil {
     }
 
     private List<Station> createExpectedEntitiesListForPattern(String pattern) {
-        List <Station> list = new ArrayList<>();
+        List<Station> list = new ArrayList<>();
         switch (pattern) {
             case UA_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS:
                 list.add(new Station(1L, "Київ", "Київ-Пасажирський"));
@@ -73,19 +72,19 @@ public class StationDaoTest extends TestDbUtil {
     }
 
     @Before
-    public void createDao(){
+    public void createDao() {
         connection = getConnection();
         testedDao = new StationDaoImpl(connection, localeBundle);
     }
 
     @After
-    public void dropTestDbAndFlush(){
+    public void dropTestDbAndFlush() {
         close(connection);
     }
 
     //    Optional<List<Entity>> getAll();
     @Test
-    public void returnsEmptyListOnGettingAllFromEmptyTable(){
+    public void returnsEmptyListOnGettingAllFromEmptyTable() {
         dropTablesInTestDb();
         prepareEmptyTablesInTestDb();
         Optional<List<Station>> usersOpt = testedDao.getAll();
@@ -94,33 +93,33 @@ public class StationDaoTest extends TestDbUtil {
     }
 
     @Test(expected = DAOException.class)
-    public void FailsOnGettingAllFromNotExistingTable(){
+    public void FailsOnGettingAllFromNotExistingTable() {
         dropTablesInTestDb();
         testedDao.getAll();
     }
 
-//    Optional<List<Station>> getStationsLike(String likePattern);
+    //    Optional<List<Station>> getStationsLike(String likePattern);
     @Test(expected = DAOException.class)
-    public void failsIfPatternIsNull(){
+    public void failsIfPatternIsNull() {
         testedDao.getStationsLike(null);
     }
 
     @Test
-    public void returnsFullListIfPatternIsEmpty(){
+    public void returnsFullListIfPatternIsEmpty() {
         List<Station> stations = testedDao.getStationsLike("").orElse(null);
         assertNotNull(stations);
         assertEquals(stations.size(), STATIONS_IN_TABLE);
     }
 
     @Test
-    public void returnsEmptyListIfPatternDoesNotMatch(){
+    public void returnsEmptyListIfPatternDoesNotMatch() {
         List<Station> stations = testedDao.getStationsLike(PATTERN_DOES_NOT_MATCH_ANY_STATION).orElse(null);
         assertNotNull(stations);
         assertTrue(stations.isEmpty());
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfTableIsEmpty(){
+    public void failsIfTableIsEmpty() {
         dropTablesInTestDb();
         testedDao.getStationsLike(localePattern);
     }
@@ -131,7 +130,7 @@ public class StationDaoTest extends TestDbUtil {
         List<Station> expectedStations = createExpectedEntitiesListForPattern(localePattern);
         assertNotNull(actualStations);
         assertEquals(expectedStations.size(), actualStations.size());
-        for (int i = 0; i < expectedStations.size(); i++){
+        for (int i = 0; i < expectedStations.size(); i++) {
             assertEquals(expectedStations.get(i), actualStations.get(i));
         }
     }

@@ -1,16 +1,16 @@
 package com.liashenko.app.service.implementation;
 
-import com.liashenko.app.web.controller.utils.HttpParser;
 import com.liashenko.app.persistance.dao.*;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Route;
 import com.liashenko.app.persistance.domain.TimeTable;
-import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.TrainSearchingService;
+import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.dto.AutocompleteDto;
 import com.liashenko.app.service.dto.RouteDto;
 import com.liashenko.app.service.dto.TrainDto;
 import com.liashenko.app.service.exceptions.ServiceException;
+import com.liashenko.app.web.controller.utils.HttpParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,8 +43,7 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
         List<AutocompleteDto> autocompleteWordList = new ArrayList<>();
         Connection conn = dbConnServ.getConnection();
         try {
-//            conn.setReadOnly(true);
-            StationDao stationDao  = daoFactory.getStationDao(conn, localeQueries);
+            StationDao stationDao = daoFactory.getStationDao(conn, localeQueries);
             stationDao.getStationsLike(stationLike).ifPresent(stations
                     -> stations.forEach(station
                     -> autocompleteWordList.add(new AutocompleteDto(station.getId(), station.getName()))));
@@ -64,8 +63,8 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
         Connection conn = dbConnServ.getConnection();
         List<TrainDto> trainDtoList = null;
         try {
-//            conn.setReadOnly(true);
             RouteDao routeDao = daoFactory.getRouteDao(conn, localeQueries);
+            setStationNamesById(routeDto, conn);
             Optional<List<Route>> routesOpt = routeDao.getRoutesByDepartureAndArrivalStationsId(routeDto.getFromStationId(),
                     routeDto.getToStationId());
             if (routesOpt.isPresent()) {
@@ -87,6 +86,17 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
             dbConnServ.close(conn);
         }
         return Optional.ofNullable(trainDtoList);
+    }
+
+    //this method would be unneeded and should be removed
+    //if only you could figure out why we get wrong encoding(Cp1251 - on localhost) from client
+    //(the issue exist only when the project runs without IDE)
+    private void setStationNamesById(RouteDto routeDto, Connection conn) {
+        StationDao stationDao = daoFactory.getStationDao(conn, localeQueries);
+        stationDao.getByPK(routeDto.getFromStationId())
+                .ifPresent(station -> routeDto.setFromStationName(station.getName()));
+        stationDao.getByPK(routeDto.getToStationId())
+                .ifPresent(station -> routeDto.setToStationName(station.getName()));
     }
 
     private void setTrainIdAndNumber(Connection conn, Route route, TrainDto trainDto) {
@@ -120,7 +130,7 @@ public class TrainSearchingServiceImpl implements TrainSearchingService {
                 .getTimeTableForStationByDataAndRoute(stationToId, route.getRouteNumberId(), requiredDate);
 
         //calculate arrival and departure time to required date
-        if (arrivalTimeTableOpt.isPresent() && leavingTimeTableOpt.isPresent()){
+        if (arrivalTimeTableOpt.isPresent() && leavingTimeTableOpt.isPresent()) {
             LocalDateTime leavingTime = leavingTimeTableOpt.get().getDeparture();
             LocalDateTime arrivalTime = arrivalTimeTableOpt.get().getArrival();
 

@@ -40,8 +40,16 @@ public class RouteDto implements Serializable {
         return fromStationName;
     }
 
+    public void setFromStationName(String fromStationName) {
+        this.fromStationName = fromStationName;
+    }
+
     public String getToStationName() {
         return toStationName;
+    }
+
+    public void setToStationName(String toStationName) {
+        this.toStationName = toStationName;
     }
 
     public String getDateString() {

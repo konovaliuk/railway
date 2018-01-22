@@ -1,13 +1,13 @@
 package com.liashenko.app.service;
 
 import com.liashenko.app.service.dto.BillDto;
-import org.junit.Test;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.util.ResourceBundle;
 
@@ -15,28 +15,28 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(value = Parameterized.class)
-public class BillServiceTest  extends TestDbUtil {
+public class BillServiceTest extends TestDbUtil {
     @Rule
     public DbInitFixtures dbInitFixtures = new DbInitFixtures();
     private ServiceFactory serviceFactory = ServiceTestFactoryImpl.getInstance();
     private ResourceBundle localeBundle;
     private BillService testedService;
 
-    public BillServiceTest(ResourceBundle localeBundle){
+    public BillServiceTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
     }
 
     @Before
-    public void setUpService(){
+    public void setUpService() {
         this.testedService = serviceFactory.getBillService(localeBundle);
     }
 
-//    Optional<BillDto> showBill(Long routeId, Long trainId, Long fromStationId, Long toStationId, String trainName,
+    //    Optional<BillDto> showBill(Long routeId, Long trainId, Long fromStationId, Long toStationId, String trainName,
 //                               String firstName, String lastName, Integer vagonTypeId, String date);
     @Test
-    public void returnsExpectedBillDto(){
+    public void returnsExpectedBillDto() {
         BillDto expectedEntity = createExpectedEntity();
-        BillDto actualEntity = testedService.showBill(1L,1L, 1L,14L,
+        BillDto actualEntity = testedService.showBill(1L, 1L, 1L, 14L,
                 "776П", "Віталій", "Ляшенко", 3, "20.01.2018")
                 .orElse(null);
         System.out.println("BillServiceTest.returnsExpectedBillDto: " + actualEntity);
@@ -54,7 +54,7 @@ public class BillServiceTest  extends TestDbUtil {
         assertEquals(expectedEntity.getFromCityName(), actualEntity.getFromCityName());
         assertEquals(expectedEntity.getFromStationLeavingDate(), actualEntity.getFromStationLeavingDate());
         assertEquals(expectedEntity.getToStationArrivalDate(), actualEntity.getToStationArrivalDate());
-        assertEquals(expectedEntity.getTrainNumber(), actualEntity.getTrainNumber() );
+        assertEquals(expectedEntity.getTrainNumber(), actualEntity.getTrainNumber());
 
         assertNotNull(actualEntity.getTicketDate());
         assertNotNull(actualEntity.getPlaceNumber());
@@ -63,7 +63,7 @@ public class BillServiceTest  extends TestDbUtil {
     }
 
 
-    private BillDto createExpectedEntity(){
+    private BillDto createExpectedEntity() {
         BillDto billDto = new BillDto();
 
         billDto.setToStationId(14L);
@@ -77,7 +77,7 @@ public class BillServiceTest  extends TestDbUtil {
         billDto.setFirstName("Віталій");
         billDto.setLastName("Ляшенко");
 
-         if (localeBundle.getLocale().getLanguage().equals("en")){
+        if (localeBundle.getLocale().getLanguage().equals("en")) {
             billDto.setFromStationName("Kyiv-Pasazhyrs'kyi");
             billDto.setToStationName("Kharkiv-Pasazhyrs'kyi");
             billDto.setFromCityName("Kyiv");

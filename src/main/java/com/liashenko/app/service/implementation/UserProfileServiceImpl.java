@@ -6,12 +6,12 @@ import com.liashenko.app.persistance.dao.UserDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.Password;
 import com.liashenko.app.persistance.domain.User;
-import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.UserProfileService;
+import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.dto.UserDto;
 import com.liashenko.app.service.exceptions.ServiceException;
-import com.liashenko.app.utils.AppProperties;
 import com.liashenko.app.service.utils.PasswordProcessor;
+import com.liashenko.app.utils.AppProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,7 +40,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (assertIsNull(userDto)) throw new ServiceException("userDto is null");
         Connection conn = dbConnSrvc.getConnection();
         try {
-            conn.setAutoCommit(false);
+            //used transaction to keep safe data for different tables
+            conn.setAutoCommit(Boolean.FALSE);
             PasswordDao passwordDao = daoFactory.getPasswordDao(conn, localeQueries);
             byte[] salt = PasswordProcessor.generateSalt(userDto.getPassword().length);
             byte[] encryptedPass = PasswordProcessor.getEncryptedPass(userDto.getPassword(), salt);

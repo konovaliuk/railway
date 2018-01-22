@@ -4,14 +4,14 @@ import com.liashenko.app.persistance.dao.TimeTableDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.dao.mysql.TimeTableDaoImpl;
 import com.liashenko.app.persistance.domain.TimeTable;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.sql.Connection;
 import java.time.LocalDate;
@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(value = Parameterized.class)
 public class TimeTableDaoTest extends TestDbUtil {
@@ -40,7 +39,7 @@ public class TimeTableDaoTest extends TestDbUtil {
     private Connection connection;
     private TimeTableDao testedDao;
 
-    public TimeTableDaoTest(ResourceBundle localeBundle){
+    public TimeTableDaoTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
     }
 
@@ -59,85 +58,85 @@ public class TimeTableDaoTest extends TestDbUtil {
     }
 
     @Before
-    public void createDao(){
+    public void createDao() {
         connection = getConnection();
         testedDao = new TimeTableDaoImpl(connection, localeBundle);
     }
 
     @After
-    public void dropTestDbAndFlush(){
+    public void dropTestDbAndFlush() {
         close(connection);
     }
 
-//    Optional<TimeTable> getTimeTableForStationByDataAndRoute(Long departureStationId, Long routeId, LocalDate date);
+    //    Optional<TimeTable> getTimeTableForStationByDataAndRoute(Long departureStationId, Long routeId, LocalDate date);
     @Test
-    public void returnsEmptyOptionalIfDepartureStationIdIsNull(){
+    public void returnsEmptyOptionalIfDepartureStationIdIsNull() {
         assertFalse(testedDao.getTimeTableForStationByDataAndRoute(null, EXISTING_ROUTE_ID_KEY, EXISTING_DATE)
                 .isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfDepartureStationIdIs_0(){
+    public void returnsEmptyOptionalIfDepartureStationIdIs_0() {
         assertFalse(testedDao.getTimeTableForStationByDataAndRoute(0L, EXISTING_ROUTE_ID_KEY, EXISTING_DATE)
                 .isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfDepartureStationIdIsLessThan_0(){
+    public void returnsEmptyOptionalIfDepartureStationIdIsLessThan_0() {
         assertFalse(testedDao.getTimeTableForStationByDataAndRoute(-2L, EXISTING_ROUTE_ID_KEY, EXISTING_DATE)
                 .isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfDepartureStationIdDoesNotExist(){
+    public void returnsEmptyOptionalIfDepartureStationIdDoesNotExist() {
         testedDao.getTimeTableForStationByDataAndRoute(NOT_EXISTING_DEPARTURE_STATION_ID_KEY, EXISTING_ROUTE_ID_KEY, EXISTING_DATE);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfTableDoesNotExist(){
+    public void failsIfTableDoesNotExist() {
         dropTablesInTestDb();
         testedDao.getTimeTableForStationByDataAndRoute(EXISTING_DEPARTURE_STATION_KEY, EXISTING_ROUTE_ID_KEY, EXISTING_DATE);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfMoreThanOneResultExist(){
+    public void failsIfMoreThanOneResultExist() {
         testedDao.getTimeTableForStationByDataAndRoute(22L, 12L,
                 LocalDate.parse("09.12.2017", DateTimeFormatter.ofPattern("dd.MM.yyyy")));
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdIsNull(){
+    public void returnsEmptyOptionalIfRouteIdIsNull() {
         assertFalse(testedDao.getTimeTableForStationByDataAndRoute(EXISTING_DEPARTURE_STATION_KEY, null, EXISTING_DATE)
                 .isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdIs_0(){
+    public void returnsEmptyOptionalIfRouteIdIs_0() {
         assertFalse(testedDao.getTimeTableForStationByDataAndRoute(EXISTING_DEPARTURE_STATION_KEY, 0L, EXISTING_DATE)
                 .isPresent());
 
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdIsLessThan_0(){
+    public void returnsEmptyOptionalIfRouteIdIsLessThan_0() {
         assertFalse(testedDao.getTimeTableForStationByDataAndRoute(EXISTING_DEPARTURE_STATION_KEY, -5L, EXISTING_DATE)
                 .isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdDoesNotExist(){
+    public void returnsEmptyOptionalIfRouteIdDoesNotExist() {
         assertFalse(testedDao.getTimeTableForStationByDataAndRoute(EXISTING_DEPARTURE_STATION_KEY,
                 NOT_EXISTING_ROUTE_ID_KEY, EXISTING_DATE).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfDateIsNull(){
+    public void returnsEmptyOptionalIfDateIsNull() {
         assertFalse(testedDao.getTimeTableForStationByDataAndRoute(EXISTING_DEPARTURE_STATION_KEY, NOT_EXISTING_ROUTE_ID_KEY, null)
                 .isPresent());
     }
 
     @Test
-    public void returnsExpectedTimeTable(){
+    public void returnsExpectedTimeTable() {
         TimeTable expectedTimeTable = getExpectedEntity();
         TimeTable actualTimeTable = testedDao.getTimeTableForStationByDataAndRoute(EXISTING_DEPARTURE_STATION_KEY,
                 EXISTING_ROUTE_ID_KEY, EXISTING_DATE).orElse(null);

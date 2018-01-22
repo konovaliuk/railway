@@ -53,9 +53,6 @@ public class TomcatConnPoolSrc implements DbConnectionService {
     public void close(Connection connection) {
         if (connection != null) {
             try {
-//                if (connection.isReadOnly()) {
-//                    connection.setReadOnly(false);
-//                }
                 connection.close();
             } catch (SQLException e) {
                 classLogger.error(e);

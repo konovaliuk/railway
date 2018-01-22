@@ -30,7 +30,8 @@ To install and run the project on localhost:
  * Create database **_"railway"_** on your MySQL server. After creating database, edit file "/src/main/webapp/META-INF/context.xml". 
  Find key "username" and set your database username then set your password for key "password". 
  Execute at first sql-script **_"railwayDbStructure.sql"_** and then script **_"railwayDbDataDump.sql"_** from the directori **_"sql"_** of the project.                                                                                         
- * Compile project to package **_"railway.war"_**. To do it just execute command "mvn clean package" from your prompt in the project root directory.
+ * Compile project to package **_"railway.war"_**. To do it just execute command "mvn clean package -DskipTests" 
+ (build skipping tests, or command "mvn clean package" if you want to run unit-tests as well)  from your prompt in the project root directory.
  Then place created file **_"railway.war"_** to the directory **_"webapps"_** of your Tomcat root folder  
  * Run Tomcat server. To do it run file **_"startup.sh"_** (for Mac/Linux/Unix, or file **_"startup.bat"_** for Windows)  
  from **_"bin"_** directory of your Tomcat installation folder. 
@@ -38,12 +39,13 @@ To install and run the project on localhost:
  _http:\\localhost:8080\railway_
  * To shutdown Tomcat just run file **_"shutdown.sh"_** (for Mac/Linux/Unix, or file **_"shutdown.bat"_** for Windows)  
  from **_"bin"_** directory of your Tomcat root folder.
-
+ 
 ## Running the tests
 Project has unit tests. They allows you to make big changes to code and check if it still works.
 For running the tests you need also created database "railway_test" on your MySQL server (username and password to the 
 database should be the same as in the constants "USER" and "PASS" of source file "railway/src/test/java/test_utils/TestDbConnectServiceImpl.java").
 To run the unit-test execute command "mvn clean package" from your prompt in the project root directory.
+
 ## Authors
 Vitalii Liashenko (e-mail:[liashenkovitaliy@gmail.com](mailto:liashenkovitaliy@gmail.com))
 

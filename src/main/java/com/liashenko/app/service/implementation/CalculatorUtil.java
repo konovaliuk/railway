@@ -35,13 +35,13 @@ public abstract class CalculatorUtil {
         return BigDecimal.valueOf(routeRateFloat)
                 .multiply(BigDecimal.valueOf(distance))
                 .multiply(BigDecimal.valueOf(pricePerKmForVagonDouble))
-                .divide(BigDecimal.valueOf(placesCount), SIGNS_AFTER_ZERO_IN_TICKET_PRICE, BigDecimal.ROUND_HALF_UP)
+                .divide(BigDecimal.valueOf(placesCogitunt), SIGNS_AFTER_ZERO_IN_TICKET_PRICE, BigDecimal.ROUND_HALF_UP)
                 .floatValue();
     }
 
     //returns random positive value from 0 to maxValueCount
     public static int generateValue(int maxValueCount) {
-        int res  = RANDOM.nextInt(maxValueCount);
+        int res = RANDOM.nextInt(maxValueCount);
         return (res < 0) ? -res : res;
     }
 }

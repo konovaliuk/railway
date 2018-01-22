@@ -4,15 +4,20 @@ import com.liashenko.app.persistance.dao.UserDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.dao.mysql.UserDaoImpl;
 import com.liashenko.app.persistance.domain.User;
-
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import test_utils.DbInitFixtures;
 import test_utils.TestDbUtil;
 
 import java.sql.Connection;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static junit.framework.TestCase.*;
 
@@ -24,7 +29,7 @@ public class UserDaoTest extends TestDbUtil {
     private static final String SINGLE_EXISTING_EMAIL = "user@mail.com";
     private static final String NO_EXISTING_EMAIL = "user123@123.com";
     private static final String MORE_THAN_ONE_EXISTING_EMAIL = "email@mm.ua";
-    private static final Long NO_EXISTING_USER_ID  = 1000L;
+    private static final Long NO_EXISTING_USER_ID = 1000L;
     private static final int ROWS_IN_TABLE = 25;
     private static final Integer DEFAULT_USERS_COUNT_ON_PAGE = 5;
 
@@ -34,18 +39,18 @@ public class UserDaoTest extends TestDbUtil {
     private Connection connection;
     private UserDao testedDao;
 
-    public UserDaoTest(ResourceBundle localeBundle){
+    public UserDaoTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
     }
 
     @Before
-    public void createDao(){
+    public void createDao() {
         connection = getConnection();
         testedDao = new UserDaoImpl(connection, localeBundle);
     }
 
     @After
-    public void dropTestDbAndFlush(){
+    public void dropTestDbAndFlush() {
         close(connection);
     }
 
@@ -75,42 +80,42 @@ public class UserDaoTest extends TestDbUtil {
     }
 
 
-//    boolean isExists(Long key);
+    //    boolean isExists(Long key);
     @Test
-    public void failsIfKeyLessThan_0(){
+    public void failsIfKeyLessThan_0() {
         assertFalse(testedDao.isExists(-1L));
     }
 
     @Test
-    public void returnsFalseIfKeyIs_0(){
+    public void returnsFalseIfKeyIs_0() {
         assertFalse(testedDao.isExists(0L));
     }
 
     @Test
-    public void failsIfKeyIs_Null(){
+    public void failsIfKeyIs_Null() {
         assertFalse(testedDao.isExists(null));
     }
 
     @Test
-    public void returnsFalseIfKeyDoesNotExist(){
+    public void returnsFalseIfKeyDoesNotExist() {
         assertFalse(testedDao.isExists(NOT_EXISTING_ENTITY_KEY));
     }
 
     @Test
-    public void returnsTrueIfKeyExists(){
+    public void returnsTrueIfKeyExists() {
         assertTrue(testedDao.isExists(EXISTING_ENTITY_KEY));
     }
 
     @Test
-    public void returnsFalseIfTableIs_Empty(){
+    public void returnsFalseIfTableIs_Empty() {
         dropTablesInTestDb();
         prepareEmptyTablesInTestDb();
         assertFalse(testedDao.isExists(EXISTING_ENTITY_KEY));
     }
 
-//    void create(Entity object);
+    //    void create(Entity object);
     @Test
-    public void isAddedOneNewRowInTable(){
+    public void isAddedOneNewRowInTable() {
         List<User> beforeEntitiesList = testedDao.getAll().orElse(Collections.emptyList());
         testedDao.create(createEntity());
         List<User> afterEntitiesList = testedDao.getAll().orElse(Collections.emptyList());
@@ -118,13 +123,13 @@ public class UserDaoTest extends TestDbUtil {
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfEntityIsNull(){
+    public void failsIfEntityIsNull() {
         testedDao.create(null);
     }
 
-//    Optional<User> persist(User object);
+    //    Optional<User> persist(User object);
     @Test
-    public void isPersistedEntityEqualsToOriginal(){
+    public void isPersistedEntityEqualsToOriginal() {
         User originalEntity = createEntity();
         User persistedEntity = testedDao.persist(originalEntity).orElse(null);
         assertNotNull(persistedEntity);
@@ -138,18 +143,18 @@ public class UserDaoTest extends TestDbUtil {
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfPersistedEntityIsNull(){
+    public void failsIfPersistedEntityIsNull() {
         testedDao.persist(null);
     }
 
-//    Optional<User> getByPK(Long key);
+    //    Optional<User> getByPK(Long key);
     @Test
-    public void returnsEmptyOptionalIfKeyNotExists(){
+    public void returnsEmptyOptionalIfKeyNotExists() {
         assertFalse(testedDao.getByPK(NOT_EXISTING_ENTITY_KEY).isPresent());
     }
 
     @Test
-    public void isReturnedEntityEqualsToActual(){
+    public void isReturnedEntityEqualsToActual() {
         User expectedEntity = getExpectedEntity();
         User actualEntity = testedDao.getByPK(25L).orElse(null);
         assertNotNull(actualEntity);
@@ -164,48 +169,48 @@ public class UserDaoTest extends TestDbUtil {
     }
 
     @Test
-    public void returnsEmptyOptionalIfPKeyLessThan_0(){
+    public void returnsEmptyOptionalIfPKeyLessThan_0() {
         assertFalse(testedDao.getByPK(-3L).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfPKeyIs_0(){
+    public void returnsEmptyOptionalIfPKeyIs_0() {
         assertFalse(testedDao.getByPK(0L).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfPKeyIsNull(){
+    public void returnsEmptyOptionalIfPKeyIsNull() {
         assertFalse(testedDao.getByPK(null).isPresent());
     }
 
-//    void update(Entity object);
+    //    void update(Entity object);
     @Test(expected = DAOException.class)
-    public void failsIfEntityToUpdateIsNull(){
+    public void failsIfEntityToUpdateIsNull() {
         testedDao.update(null);
     }
 
     @Test
-    public void returnsFalseIfRowsCountInDbChanged(){
+    public void returnsFalseIfRowsCountInDbChanged() {
         List<User> beforeEntitiesList = testedDao.getAll().orElse(Collections.emptyList());
         List<User> afterEntitiesList = testedDao.getAll().orElse(Collections.emptyList());
         assertEquals(0, afterEntitiesList.size() - beforeEntitiesList.size());
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfEntityIdIsNull(){
+    public void failsIfEntityIdIsNull() {
         User user = createEntity();
         testedDao.update(user);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfEntityIdIs_0(){
+    public void failsIfEntityIdIs_0() {
         User user = createEntity();
         user.setId(0L);
         testedDao.update(user);
     }
 
     @Test(expected = DAOException.class)
-    public void returnsFalseIfEntityIdIsNotExists(){
+    public void returnsFalseIfEntityIdIsNotExists() {
         User user = createEntity();
         user.setId(NO_EXISTING_USER_ID);
         testedDao.update(user);
@@ -214,9 +219,9 @@ public class UserDaoTest extends TestDbUtil {
 //    void delete(Entity object);
 
 
-//    Optional<List<Entity>> getAll();
+    //    Optional<List<Entity>> getAll();
     @Test
-    public void returnsEmptyListOnGettingAllFromEmptyTable(){
+    public void returnsEmptyListOnGettingAllFromEmptyTable() {
         dropTablesInTestDb();
         prepareEmptyTablesInTestDb();
         Optional<List<User>> usersOpt = testedDao.getAll();
@@ -225,57 +230,57 @@ public class UserDaoTest extends TestDbUtil {
     }
 
     @Test(expected = DAOException.class)
-    public void FailsOnGettingAllFromNotExistingTable(){
+    public void FailsOnGettingAllFromNotExistingTable() {
         dropTablesInTestDb();
         testedDao.getAll();
     }
 
-//    isEmailExists
+    //    isEmailExists
     @Test
-    public void returnsFalseIfEmailIsEmpty(){
+    public void returnsFalseIfEmailIsEmpty() {
         assertFalse(testedDao.isEmailExists(""));
     }
 
     @Test
-    public void returnsFalseIfEmailIsNull(){
+    public void returnsFalseIfEmailIsNull() {
         assertFalse(testedDao.isEmailExists(null));
     }
 
     @Test
-    public void returnsFalseIfEmailIsNotExist(){
+    public void returnsFalseIfEmailIsNotExist() {
         assertFalse(testedDao.isEmailExists(NO_EXISTING_EMAIL));
     }
 
     @Test
-    public void returnsTrueIfEmailExistsInTable(){
+    public void returnsTrueIfEmailExistsInTable() {
         assertTrue(testedDao.isEmailExists(SINGLE_EXISTING_EMAIL));
     }
 
-//    getUserByEmail(String email);
+    //    getUserByEmail(String email);
     @Test
-    public void returnsEmptyOptionalIfUserWithEmailNotExists(){
+    public void returnsEmptyOptionalIfUserWithEmailNotExists() {
         assertFalse(testedDao.getUserByEmail(NO_EXISTING_EMAIL).isPresent());
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfMoreThanOneUserExistsWithEmail(){
+    public void failsIfMoreThanOneUserExistsWithEmail() {
         testedDao.getUserByEmail(MORE_THAN_ONE_EXISTING_EMAIL);
     }
 
     @Test
-    public void failsIfEmailIsNull(){
+    public void failsIfEmailIsNull() {
         assertFalse(testedDao.getUserByEmail(null).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfUserTableIsEmpty(){
+    public void returnsEmptyOptionalIfUserTableIsEmpty() {
         dropTablesInTestDb();
         prepareEmptyTablesInTestDb();
         assertFalse(testedDao.getUserByEmail(SINGLE_EXISTING_EMAIL).isPresent());
     }
 
     @Test
-    public void returnsOptionalWithUserByEmail(){
+    public void returnsOptionalWithUserByEmail() {
         User actualEntity = testedDao.getUserByEmail(SINGLE_EXISTING_EMAIL).orElse(null);
         User expectedEntity = getExpectedEntity();
         assertNotNull(actualEntity);
@@ -288,146 +293,146 @@ public class UserDaoTest extends TestDbUtil {
         assertEquals(expectedEntity.getLanguage(), actualEntity.getLanguage());
     }
 
-//    boolean isOtherUsersWithEmailExist(Long id, String email);
+    //    boolean isOtherUsersWithEmailExist(Long id, String email);
     @Test
-    public void returnsTrueIfNotOnlyCurrentUserExistWithEmail(){
+    public void returnsTrueIfNotOnlyCurrentUserExistWithEmail() {
         assertTrue(testedDao.isOtherUsersWithEmailExist(6L, MORE_THAN_ONE_EXISTING_EMAIL));
     }
 
     @Test
-    public void returnsFalseIfNoMoreUsersExistWithEmail(){
+    public void returnsFalseIfNoMoreUsersExistWithEmail() {
         assertFalse(testedDao.isOtherUsersWithEmailExist(25L, SINGLE_EXISTING_EMAIL));
     }
 
     @Test
-    public void returnsFalseIfTableIsEmpty(){
+    public void returnsFalseIfTableIsEmpty() {
         dropTablesInTestDb();
         prepareEmptyTablesInTestDb();
         assertFalse(testedDao.isOtherUsersWithEmailExist(6L, SINGLE_EXISTING_EMAIL));
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfUserIdIsLessThan_0(){
+    public void failsIfUserIdIsLessThan_0() {
         testedDao.isOtherUsersWithEmailExist(-6L, SINGLE_EXISTING_EMAIL);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfUserIdIs_0(){
+    public void failsIfUserIdIs_0() {
         assertFalse(testedDao.isOtherUsersWithEmailExist(0L, SINGLE_EXISTING_EMAIL));
     }
 
     @Test
-    public void returnsTrueIfUserIdIsNotExist(){
+    public void returnsTrueIfUserIdIsNotExist() {
         assertTrue(testedDao.isOtherUsersWithEmailExist(NO_EXISTING_USER_ID, SINGLE_EXISTING_EMAIL));
     }
 
     @Test
-    public void returnsFalseIfUserEmailIsEmpty(){
+    public void returnsFalseIfUserEmailIsEmpty() {
         assertFalse(testedDao.isOtherUsersWithEmailExist(6L, ""));
     }
 
     @Test
-    public void returnsFalseIfUsersEmailIsNull(){
+    public void returnsFalseIfUsersEmailIsNull() {
         assertFalse(testedDao.isOtherUsersWithEmailExist(6L, null));
     }
 
     @Test(expected = DAOException.class)
-    public void returnsFalseIfUsersIdIsNull(){
+    public void returnsFalseIfUsersIdIsNull() {
         testedDao.isOtherUsersWithEmailExist(null, SINGLE_EXISTING_EMAIL);
     }
 
-//    Integer getCount();
+    //    Integer getCount();
     @Test
-    public void returns_0_if_tableIsEmpty(){
+    public void returns_0_if_tableIsEmpty() {
         dropTablesInTestDb();
         prepareEmptyTablesInTestDb();
         assertEquals((int) testedDao.getCount(), 0);
     }
 
     @Test
-    public void returns_25_FromTable(){
+    public void returns_25_FromTable() {
         assertEquals((int) testedDao.getCount(), ROWS_IN_TABLE);
     }
 
-//    Optional<List<User>> getPages(int rowsPerPage, int offset);
+    //    Optional<List<User>> getPages(int rowsPerPage, int offset);
     @Test
-    public void failsIf_rowsPerPage_Is_0(){
-        Optional<List<User>> usersOpt = testedDao.getPages(0,5);
+    public void failsIf_rowsPerPage_Is_0() {
+        Optional<List<User>> usersOpt = testedDao.getPages(0, 5);
         int actualUsersCount = 0;
-        if (usersOpt.isPresent()){
+        if (usersOpt.isPresent()) {
             actualUsersCount = usersOpt.get().size();
         }
         assertEquals(ROWS_IN_TABLE, actualUsersCount);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIf_rowsPerPage_IsLessThan_0(){
+    public void failsIf_rowsPerPage_IsLessThan_0() {
         testedDao.getPages(-3, 5);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIf_offset_IsLessThan_0(){
+    public void failsIf_offset_IsLessThan_0() {
         testedDao.getPages(DEFAULT_USERS_COUNT_ON_PAGE, -1);
     }
 
     @Test
-    public void returnsPagesWithUsers(){
-        assertTrue(testedDao.getPages(DEFAULT_USERS_COUNT_ON_PAGE,5).isPresent());
+    public void returnsPagesWithUsers() {
+        assertTrue(testedDao.getPages(DEFAULT_USERS_COUNT_ON_PAGE, 5).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfTableIsEmpty(){
+    public void returnsEmptyOptionalIfTableIsEmpty() {
         dropTablesInTestDb();
         prepareEmptyTablesInTestDb();
-        List<User> userList = testedDao.getPages(DEFAULT_USERS_COUNT_ON_PAGE,5).orElse(null);
+        List<User> userList = testedDao.getPages(DEFAULT_USERS_COUNT_ON_PAGE, 5).orElse(null);
         assertNotNull(userList);
         assertEquals(0, userList.size());
     }
 
     //    void delete(Entity object);
     @Test(expected = DAOException.class)
-    public void failsOnDeleteIfEntityIsNull(){
+    public void failsOnDeleteIfEntityIsNull() {
         User userIsNull = null;
         testedDao.delete(userIsNull);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfTableDoesNotExist(){
+    public void failsIfTableDoesNotExist() {
         User existedUser = getExpectedEntity();
         dropTablesInTestDb();
         testedDao.delete(existedUser);
     }
 
     @Test(expected = DAOException.class)
-    public void failsOnDeleteEntityDoesNotExistInDb(){
+    public void failsOnDeleteEntityDoesNotExistInDb() {
         User notExistedUser = createEntity();
         notExistedUser.setId(NOT_EXISTING_ENTITY_KEY);
         testedDao.delete(notExistedUser);
     }
 
     @Test(expected = DAOException.class)
-    public void failsOnDeleteIfEntityHasId_0(){
+    public void failsOnDeleteIfEntityHasId_0() {
         User notExistedUser = createEntity();
         notExistedUser.setId(0L);
         testedDao.delete(notExistedUser);
     }
 
     @Test(expected = DAOException.class)
-    public void failsOnDeleteIfEntityHasIdWhichLessThan_0(){
+    public void failsOnDeleteIfEntityHasIdWhichLessThan_0() {
         User notExistedUser = createEntity();
         notExistedUser.setId(-3L);
         testedDao.delete(notExistedUser);
     }
 
     @Test(expected = DAOException.class)
-    public void failsOnDeleteIfEntityHasIdWith_null_Value(){
+    public void failsOnDeleteIfEntityHasIdWith_null_Value() {
         User notExistedUser = createEntity();
         notExistedUser.setId(null);
         testedDao.delete(notExistedUser);
     }
 
     @Test
-    public void resultIs_1_OnDeleteIfEntitysIdExists(){
+    public void resultIs_1_OnDeleteIfEntitysIdExists() {
         User notExistedUser = createEntity();
         notExistedUser.setId(2L);
         List<User> rolesListBefore = testedDao.getAll().orElse(null);

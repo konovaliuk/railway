@@ -4,20 +4,19 @@ import com.liashenko.app.persistance.dao.RouteRateDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.dao.mysql.RouteRateDaoImpl;
 import com.liashenko.app.persistance.domain.RouteRate;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.sql.Connection;
 import java.util.ResourceBundle;
 
 import static junit.framework.TestCase.*;
-import static junit.framework.TestCase.assertEquals;
 
 @RunWith(value = Parameterized.class)
 public class RouteRateDaoTest extends TestDbUtil {
@@ -31,7 +30,7 @@ public class RouteRateDaoTest extends TestDbUtil {
     private Connection connection;
     private RouteRateDao testedDao;
 
-    public RouteRateDaoTest(ResourceBundle localeBundle){
+    public RouteRateDaoTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
     }
 
@@ -44,39 +43,39 @@ public class RouteRateDaoTest extends TestDbUtil {
     }
 
     @Before
-    public void createDao(){
+    public void createDao() {
         connection = getConnection();
         testedDao = new RouteRateDaoImpl(connection, localeBundle);
     }
 
     @After
-    public void dropTestDbAndFlush(){
+    public void dropTestDbAndFlush() {
         close(connection);
     }
 
-//    Optional<RouteRate> getByRouteId(Long routeId);
+    //    Optional<RouteRate> getByRouteId(Long routeId);
     @Test
-    public void returnsEmptyOptionalIfRouteIdIs_0(){
+    public void returnsEmptyOptionalIfRouteIdIs_0() {
         assertFalse(testedDao.getByRouteId(0L).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdIsLessThan_0(){
+    public void returnsEmptyOptionalIfRouteIdIsLessThan_0() {
         assertFalse(testedDao.getByRouteId(-4L).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdIsNull(){
+    public void returnsEmptyOptionalIfRouteIdIsNull() {
         assertFalse(testedDao.getByRouteId(null).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdDoesNotExists(){
+    public void returnsEmptyOptionalIfRouteIdDoesNotExists() {
         assertFalse(testedDao.getByRouteId(NOT_EXISTING_ROUTE_ID_KEY).isPresent());
     }
 
     @Test
-    public void returnsExpectedResultIfRouteIdExists(){
+    public void returnsExpectedResultIfRouteIdExists() {
         RouteRate expectedRouteRate = getExpectedEntity();
         RouteRate actualRouteRate = testedDao.getByRouteId(EXISTING_ROUTE_ID_KEY).orElse(null);
         assertNotNull(actualRouteRate);
@@ -86,18 +85,18 @@ public class RouteRateDaoTest extends TestDbUtil {
     }
 
     @Test
-    public void returnsRouteRateIfRouteIdExists(){
+    public void returnsRouteRateIfRouteIdExists() {
         assertTrue(testedDao.getByRouteId(EXISTING_ROUTE_ID_KEY).isPresent());
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfTableDoesNotExist(){
+    public void failsIfTableDoesNotExist() {
         dropTablesInTestDb();
         testedDao.getByRouteId(EXISTING_ROUTE_ID_KEY);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfMoreThanOneRouteIdExists(){
+    public void failsIfMoreThanOneRouteIdExists() {
         testedDao.getByRouteId(MORE_THAN_ONE_EXISTING_ROUTE_ID);
     }
 

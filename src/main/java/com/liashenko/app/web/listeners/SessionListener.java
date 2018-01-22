@@ -1,7 +1,7 @@
 package com.liashenko.app.web.listeners;
 
-import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.utils.AppProperties;
+import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

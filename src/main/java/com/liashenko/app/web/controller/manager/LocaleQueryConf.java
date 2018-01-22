@@ -1,7 +1,7 @@
 package com.liashenko.app.web.controller.manager;
 
-import com.liashenko.app.web.controller.utils.HttpParser;
 import com.liashenko.app.utils.AppProperties;
+import com.liashenko.app.web.controller.utils.HttpParser;
 
 import java.io.File;
 import java.util.HashMap;

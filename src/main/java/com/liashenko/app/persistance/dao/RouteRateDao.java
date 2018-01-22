@@ -23,7 +23,7 @@ public interface RouteRateDao extends GenericJDBCDao {
     //Returns an object corresponds to row with primary key or empty optional
     Optional<RouteRate> getByPK(Long key);
 
-     //Saves object's state to db
+    //Saves object's state to db
     void update(RouteRate object);
 
     //Deletes the row with PK corresponds to object's id

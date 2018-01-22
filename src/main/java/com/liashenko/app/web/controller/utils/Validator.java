@@ -1,7 +1,7 @@
 package com.liashenko.app.web.controller.utils;
 
-import com.liashenko.app.web.controller.utils.exceptions.ValidationException;
 import com.liashenko.app.utils.AppProperties;
+import com.liashenko.app.web.controller.utils.exceptions.ValidationException;
 
 import static com.liashenko.app.utils.Asserts.*;
 

@@ -4,24 +4,23 @@ import com.liashenko.app.persistance.dao.PricePerKmForVagonDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.dao.mysql.PricePerKmForVagonDaoImpl;
 import com.liashenko.app.persistance.domain.PricePerKmForVagon;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.sql.Connection;
 import java.util.ResourceBundle;
 
 import static junit.framework.TestCase.*;
-import static junit.framework.TestCase.assertEquals;
 
 
 @RunWith(value = Parameterized.class)
-public class PricePerKmForVagonDaoTest  extends TestDbUtil {
+public class PricePerKmForVagonDaoTest extends TestDbUtil {
     private static final Integer NOT_EXISTING_VAGON_TYPE_KEY = Integer.MAX_VALUE;
     private static final Integer EXISTING_VAGON_TYPE_KEY = 2;
     private static final Integer MORE_THAN_ONE_EXISTING_VAGON_TYPE_KEYS = 6;
@@ -32,7 +31,7 @@ public class PricePerKmForVagonDaoTest  extends TestDbUtil {
     private Connection connection;
     private PricePerKmForVagonDao testedDao;
 
-    public PricePerKmForVagonDaoTest(ResourceBundle localeBundle){
+    public PricePerKmForVagonDaoTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
     }
 
@@ -45,49 +44,49 @@ public class PricePerKmForVagonDaoTest  extends TestDbUtil {
     }
 
     @Before
-    public void createDao(){
+    public void createDao() {
         connection = getConnection();
         testedDao = new PricePerKmForVagonDaoImpl(connection, localeBundle);
     }
 
     @After
-    public void closeTestedDaoConnection(){
+    public void closeTestedDaoConnection() {
         close(connection);
     }
 
-//    Optional<PricePerKmForVagon> getPricePerKmForVagon(Integer vagonTypeId);
+    //    Optional<PricePerKmForVagon> getPricePerKmForVagon(Integer vagonTypeId);
     @Test
-    public void returnsEmptyOptionalIfIdIsNull(){
-       assertFalse(testedDao.getPricePerKmForVagon(null).isPresent());
+    public void returnsEmptyOptionalIfIdIsNull() {
+        assertFalse(testedDao.getPricePerKmForVagon(null).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfVagonTypeIdIs_0(){
+    public void returnsEmptyOptionalIfVagonTypeIdIs_0() {
         assertFalse(testedDao.getPricePerKmForVagon(0).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfVagonTypeIdIsLessThan_0(){
+    public void returnsEmptyOptionalIfVagonTypeIdIsLessThan_0() {
         assertFalse(testedDao.getPricePerKmForVagon(-4).isPresent());
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfExistsMoreThanOneVagonTypeIds(){
+    public void failsIfExistsMoreThanOneVagonTypeIds() {
         testedDao.getPricePerKmForVagon(MORE_THAN_ONE_EXISTING_VAGON_TYPE_KEYS);
     }
 
     @Test
-    public void returnsEmptyOptionalIfVagonTypeIdDoesNotExist(){
+    public void returnsEmptyOptionalIfVagonTypeIdDoesNotExist() {
         assertFalse(testedDao.getPricePerKmForVagon(NOT_EXISTING_VAGON_TYPE_KEY).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfTableIsEmpty(){
+    public void returnsEmptyOptionalIfTableIsEmpty() {
         assertTrue(testedDao.getPricePerKmForVagon(EXISTING_VAGON_TYPE_KEY).isPresent());
     }
 
     @Test
-    public void returnsExpectedResultIfVagonTypeIdExists(){
+    public void returnsExpectedResultIfVagonTypeIdExists() {
         PricePerKmForVagon expectedPricePerKmForVagon = getExpectedEntity();
         PricePerKmForVagon actualPricePerKmForVagon = testedDao.getPricePerKmForVagon(EXISTING_VAGON_TYPE_KEY)
                 .orElse(null);
@@ -98,7 +97,7 @@ public class PricePerKmForVagonDaoTest  extends TestDbUtil {
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfTableDoesNotExist(){
+    public void failsIfTableDoesNotExist() {
         dropTablesInTestDb();
         testedDao.getPricePerKmForVagon(EXISTING_VAGON_TYPE_KEY);
     }

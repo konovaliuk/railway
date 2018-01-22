@@ -1,7 +1,8 @@
-package com.liashenko.app.web.controller.commands;
+package com.liashenko.app.web.controller.commands.error;
 
-import com.liashenko.app.web.controller.manager.PageManagerConf;
 import com.liashenko.app.service.ServiceFactory;
+import com.liashenko.app.web.controller.commands.ICommand;
+import com.liashenko.app.web.controller.manager.PageManagerConf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +17,7 @@ public class ShowErrorViewCommand implements ICommand {
 
     private ServiceFactory serviceFactory;
 
-    public ShowErrorViewCommand(ServiceFactory serviceFactory){
+    public ShowErrorViewCommand(ServiceFactory serviceFactory) {
 //        this.serviceFactory = serviceFactory;
     }
 

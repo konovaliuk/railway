@@ -1,8 +1,8 @@
 package com.liashenko.app.web.controller.utils;
 
-import com.liashenko.app.web.controller.RequestHelper;
 import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.utils.AppProperties;
+import com.liashenko.app.web.controller.RequestHelper;
 
 import javax.servlet.http.HttpSession;
 

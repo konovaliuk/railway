@@ -39,7 +39,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         if (assertIsNull(principlesDto)) throw new ServiceException("principlesDto is null");
         Connection conn = dbConnSrvc.getConnection();
         try {
-//            conn.setReadOnly(true);
             UserDao userDao = daoFactory.getUserDao(conn, localeQueries);
             User user = userDao.getUserByEmail(principlesDto.getEmail()).orElseThrow(() -> new ServiceException("User is null"));
             //if user is banned he can not be authorized in the system

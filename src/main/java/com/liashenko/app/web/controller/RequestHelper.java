@@ -1,12 +1,32 @@
 package com.liashenko.app.web.controller;
 
-import com.liashenko.app.web.authorization.RightsChecker;
-import com.liashenko.app.web.controller.commands.*;
-import com.liashenko.app.web.controller.utils.HttpParser;
-import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.service.ServiceFactory;
 import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.implementation.ServiceFactoryImpl;
+import com.liashenko.app.web.authorization.RightsChecker;
+import com.liashenko.app.web.controller.commands.ICommand;
+import com.liashenko.app.web.controller.commands.NoCommand;
+import com.liashenko.app.web.controller.commands.admin_warning.ShowAdminWarningCommand;
+import com.liashenko.app.web.controller.commands.bill.ShowBillViewCommand;
+import com.liashenko.app.web.controller.commands.error.ShowErrorViewCommand;
+import com.liashenko.app.web.controller.commands.index.SearchTrainsCommand;
+import com.liashenko.app.web.controller.commands.index.ShowIndexViewCommand;
+import com.liashenko.app.web.controller.commands.index.StationAutocompleteCommand;
+import com.liashenko.app.web.controller.commands.login.ShowLoginViewCommand;
+import com.liashenko.app.web.controller.commands.navbar.SignInCommand;
+import com.liashenko.app.web.controller.commands.navbar.SignOutCommand;
+import com.liashenko.app.web.controller.commands.order_ticket.ShowOrderTicketViewCommand;
+import com.liashenko.app.web.controller.commands.order_ticket.ShowOrdersViewCommand;
+import com.liashenko.app.web.controller.commands.profile.CheckIfOtherUsersWithEmailExist;
+import com.liashenko.app.web.controller.commands.profile.ShowProfileViewCommand;
+import com.liashenko.app.web.controller.commands.profile.UpdateProfileCommand;
+import com.liashenko.app.web.controller.commands.registration.CheckIfEmailExistsCommand;
+import com.liashenko.app.web.controller.commands.registration.RegisterNewUserCommand;
+import com.liashenko.app.web.controller.commands.registration.ShowRegistrationViewCommand;
+import com.liashenko.app.web.controller.commands.users.ShowUsersViewCommand;
+import com.liashenko.app.web.controller.commands.users.UpdateUserByAdminCommand;
+import com.liashenko.app.web.controller.utils.HttpParser;
+import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;

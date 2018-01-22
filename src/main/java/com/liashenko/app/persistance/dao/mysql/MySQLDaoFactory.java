@@ -28,43 +28,43 @@ public class MySQLDaoFactory implements DaoFactory {
         return instance;
     }
 
-    public UserDao getUserDao(Connection connection, ResourceBundle localeQueries){
+    public UserDao getUserDao(Connection connection, ResourceBundle localeQueries) {
         return new UserDaoImpl(connection, localeQueries);
     }
 
-    public PasswordDao getPasswordDao(Connection connection, ResourceBundle localeQueries){
+    public PasswordDao getPasswordDao(Connection connection, ResourceBundle localeQueries) {
         return new PasswordDaoImpl(connection, localeQueries);
     }
 
-    public RoleDao getRoleDao(Connection connection, ResourceBundle localeQueries){
+    public RoleDao getRoleDao(Connection connection, ResourceBundle localeQueries) {
         return new RoleDaoImpl(connection, localeQueries);
     }
 
-    public StationDao getStationDao(Connection connection, ResourceBundle localeQueries){
+    public StationDao getStationDao(Connection connection, ResourceBundle localeQueries) {
         return new StationDaoImpl(connection, localeQueries);
     }
 
-    public TrainDao getTrainDao(Connection connection, ResourceBundle localeQueries){
+    public TrainDao getTrainDao(Connection connection, ResourceBundle localeQueries) {
         return new TrainDaoImpl(connection, localeQueries);
     }
 
-    public TimeTableDao getTimeTableDao(Connection connection, ResourceBundle localeQueries){
+    public TimeTableDao getTimeTableDao(Connection connection, ResourceBundle localeQueries) {
         return new TimeTableDaoImpl(connection, localeQueries);
     }
 
-    public RouteDao getRouteDao(Connection connection, ResourceBundle localeQueries){
+    public RouteDao getRouteDao(Connection connection, ResourceBundle localeQueries) {
         return new RouteDaoImpl(connection, localeQueries);
     }
 
-    public VagonTypeDao getVagonTypeDao(Connection connection, ResourceBundle localeQueries){
+    public VagonTypeDao getVagonTypeDao(Connection connection, ResourceBundle localeQueries) {
         return new VagonTypeDaoImpl(connection, localeQueries);
     }
 
-    public RouteRateDao getRouteRateDao(Connection connection, ResourceBundle localeQueries){
+    public RouteRateDao getRouteRateDao(Connection connection, ResourceBundle localeQueries) {
         return new RouteRateDaoImpl(connection, localeQueries);
     }
 
-    public PricePerKmForVagonDao getPricePerKmForVagonDao(Connection connection, ResourceBundle localeQueries){
+    public PricePerKmForVagonDao getPricePerKmForVagonDao(Connection connection, ResourceBundle localeQueries) {
         return new PricePerKmForVagonDaoImpl(connection, localeQueries);
     }
 }

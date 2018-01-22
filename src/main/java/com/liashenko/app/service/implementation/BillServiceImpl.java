@@ -1,14 +1,16 @@
 package com.liashenko.app.service.implementation;
 
-import com.liashenko.app.web.controller.utils.HttpParser;
 import com.liashenko.app.persistance.dao.*;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
-import com.liashenko.app.persistance.domain.*;
+import com.liashenko.app.persistance.domain.PricePerKmForVagon;
+import com.liashenko.app.persistance.domain.RouteRate;
+import com.liashenko.app.persistance.domain.TimeTable;
 import com.liashenko.app.service.BillService;
 import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.dto.BillDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.utils.AppProperties;
+import com.liashenko.app.web.controller.utils.HttpParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +43,6 @@ public class BillServiceImpl implements BillService {
         BillDto billDto = new BillDto();
         Connection conn = dbConnSrvc.getConnection();
         try {
-//          conn.setReadOnly(true);
             setFirstAndLastName(billDto, firstName, lastName);
             setStationsAndCity(billDto, fromStationId, toStationId, conn);
             setTrainNameAndVagonNumber(billDto, trainId, trainName, conn);
@@ -152,7 +153,7 @@ public class BillServiceImpl implements BillService {
         billDto.setTicketPrice(price);
     }
 
-    private boolean isAllFieldsFilled(BillDto billDto){
+    private boolean isAllFieldsFilled(BillDto billDto) {
         if (assertIsNull(billDto.getFirstName())) return false;
         if (assertIsNull(billDto.getLastName())) return false;
         if (assertIsNull(billDto.getFromStationName())) return false;

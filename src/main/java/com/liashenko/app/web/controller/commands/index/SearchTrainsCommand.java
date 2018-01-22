@@ -1,17 +1,18 @@
-package com.liashenko.app.web.controller.commands;
+package com.liashenko.app.web.controller.commands.index;
 
-import com.liashenko.app.web.authorization.Authorization;
-import com.liashenko.app.web.controller.manager.LocaleQueryConf;
-import com.liashenko.app.web.controller.manager.PageManagerConf;
-import com.liashenko.app.web.controller.utils.HttpParser;
-import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
-import com.liashenko.app.web.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.service.ServiceFactory;
 import com.liashenko.app.service.TrainSearchingService;
 import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.dto.RouteDto;
 import com.liashenko.app.service.dto.TrainDto;
 import com.liashenko.app.service.exceptions.ServiceException;
+import com.liashenko.app.web.authorization.Authorization;
+import com.liashenko.app.web.controller.commands.ICommand;
+import com.liashenko.app.web.controller.manager.LocaleQueryConf;
+import com.liashenko.app.web.controller.manager.PageManagerConf;
+import com.liashenko.app.web.controller.utils.HttpParser;
+import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
+import com.liashenko.app.web.controller.utils.exceptions.ControllerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +42,7 @@ public class SearchTrainsCommand implements ICommand {
 
     private ServiceFactory serviceFactory;
 
-    public SearchTrainsCommand(ServiceFactory serviceFactory){
+    public SearchTrainsCommand(ServiceFactory serviceFactory) {
         this.serviceFactory = serviceFactory;
     }
 

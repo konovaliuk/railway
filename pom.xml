@@ -34,7 +34,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -46,7 +46,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>com.liashenko.app</finalName>
+        <finalName>railway</finalName>
     </build>
 
     <dependencies>
@@ -72,30 +72,6 @@
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>javax.servlet</groupId>-->
-            <!--<artifactId>servlet-api</artifactId>-->
-            <!--<version>3.0-alpha-1</version>-->
-            <!--<scope>provided</scope>-->
-            <!--&lt;!&ndash;"provided" should be commented when we assembly proj with Idea&ndash;&gt;-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>org.jboss.spec</groupId>-->
-            <!--<artifactId>jboss-javaee-6.0</artifactId>-->
-            <!--<version>1.0.0.Final</version>-->
-            <!--<type>pom</type>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--it is used instead of javaee to resolve classes conflicts-->
-
-        <!--<dependency>-->
-            <!--<groupId>javax</groupId>-->
-            <!--<artifactId>javaee-web-api</artifactId>-->
-            <!--<version>${javaee-web-api.version}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>

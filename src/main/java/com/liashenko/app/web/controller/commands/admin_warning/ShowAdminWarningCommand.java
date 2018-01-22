@@ -1,10 +1,11 @@
-package com.liashenko.app.web.controller.commands;
+package com.liashenko.app.web.controller.commands.admin_warning;
 
-import com.liashenko.app.web.authorization.Authorization;
-import com.liashenko.app.web.controller.RequestHelper;
-import com.liashenko.app.web.controller.manager.PageManagerConf;
 import com.liashenko.app.service.ServiceFactory;
 import com.liashenko.app.service.dto.RoleDto;
+import com.liashenko.app.web.authorization.Authorization;
+import com.liashenko.app.web.controller.RequestHelper;
+import com.liashenko.app.web.controller.commands.ICommand;
+import com.liashenko.app.web.controller.manager.PageManagerConf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,12 +21,12 @@ public class ShowAdminWarningCommand implements ICommand {
 
     private ServiceFactory serviceFactory;
 
-    public ShowAdminWarningCommand(ServiceFactory serviceFactory){
+    public ShowAdminWarningCommand(ServiceFactory serviceFactory) {
 //        this.serviceFactory = serviceFactory;
     }
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        return PageManagerConf.getInstance().getProperty(PageManagerConf.ERROR_PAGE_PATH);
+        return PageManagerConf.getInstance().getProperty(PageManagerConf.ADMIN_WARNING_PAGE_PATH);
     }
 }

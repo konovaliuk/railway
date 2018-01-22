@@ -1,28 +1,25 @@
 package com.liashenko.app.service;
 
-import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.dto.UserDto;
 import com.liashenko.app.service.exceptions.ServiceException;
-import org.junit.Test;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 @RunWith(value = Parameterized.class)
-public class AdminServiceTest  extends TestDbUtil {
+public class AdminServiceTest extends TestDbUtil {
 
     private static final int EXPECTED_USERS_COUNT = 25;
     private static final int DEFAULT_USERS_COUNT_ON_PAGE = 5;
@@ -33,49 +30,49 @@ public class AdminServiceTest  extends TestDbUtil {
     private ResourceBundle localeBundle;
     private AdminService testedService;
 
-    public AdminServiceTest(ResourceBundle localeBundle){
+    public AdminServiceTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
     }
 
     @Before
-    public void setUpService(){
+    public void setUpService() {
         this.testedService = serviceFactory.getAdminService(localeBundle);
     }
 
-//    Optional<List<UserDto>> showUsers(int rowsPerPage, int offset);
+    //    Optional<List<UserDto>> showUsers(int rowsPerPage, int offset);
     @Test
-    public void failsIf_rowsPerPage_Is_0(){
-        Optional<List<UserDto>> usersOpt = testedService.showUsers(0,5);
+    public void failsIf_rowsPerPage_Is_0() {
+        Optional<List<UserDto>> usersOpt = testedService.showUsers(0, 5);
         int actualUsersCount = 0;
-        if (usersOpt.isPresent()){
+        if (usersOpt.isPresent()) {
             actualUsersCount = usersOpt.get().size();
         }
         assertEquals(EXPECTED_USERS_COUNT, actualUsersCount);
     }
 
     @Test(expected = ServiceException.class)
-    public void failsIf_rowsPerPage_IsLessThan_0(){
+    public void failsIf_rowsPerPage_IsLessThan_0() {
         testedService.showUsers(-3, 5);
     }
 
     @Test(expected = ServiceException.class)
-    public void failsIf_offset_IsLessThan_0(){
+    public void failsIf_offset_IsLessThan_0() {
         testedService.showUsers(DEFAULT_USERS_COUNT_ON_PAGE, -1);
     }
 
     @Test
-    public void returnsPagesWithUsers(){
-        assertTrue(testedService.showUsers(DEFAULT_USERS_COUNT_ON_PAGE,5).isPresent());
+    public void returnsPagesWithUsers() {
+        assertTrue(testedService.showUsers(DEFAULT_USERS_COUNT_ON_PAGE, 5).isPresent());
     }
 
-//    Optional<List<RoleDto>> showRoles();
+    //    Optional<List<RoleDto>> showRoles();
     @Test
-    public void returnsExpectedListOfRoles(){
+    public void returnsExpectedListOfRoles() {
         List<RoleDto> expectedList = createExpectedRoleList();
         List<RoleDto> actualList = testedService.showRoles().orElse(null);
         assertNotNull(actualList);
         assertEquals(expectedList.size(), actualList.size());
-        for (int i = 0 ; i < expectedList.size(); i++){
+        for (int i = 0; i < expectedList.size(); i++) {
             assertEquals(expectedList.get(i), actualList.get(i));
         }
     }
@@ -83,9 +80,9 @@ public class AdminServiceTest  extends TestDbUtil {
     private List<RoleDto> createExpectedRoleList() {
         List<RoleDto> expectedList = new ArrayList<>();
         RoleDto adminRole = new RoleDto(1L, "Адміністратор");
-        RoleDto userDto = new RoleDto(2L,"Користувач");
+        RoleDto userDto = new RoleDto(2L, "Користувач");
 
-        if (localeBundle.getLocale().getLanguage().equals("en")){
+        if (localeBundle.getLocale().getLanguage().equals("en")) {
             adminRole.setName("Administrator");
             userDto.setName("User");
         } else {
@@ -97,15 +94,15 @@ public class AdminServiceTest  extends TestDbUtil {
         return expectedList;
     }
 
-//    void updateUserInfo(UserDto userDto);
+    //    void updateUserInfo(UserDto userDto);
     @Test(expected = ServiceException.class)
-    public void failsIfUserDtoIsNull(){
+    public void failsIfUserDtoIsNull() {
         testedService.updateUserInfo(null);
     }
 
-//    Integer getUsersCount();
+    //    Integer getUsersCount();
     @Test
-    public void returnsExpectedValue(){
-        assertEquals(EXPECTED_USERS_COUNT, (int)testedService.getUsersCount());
+    public void returnsExpectedValue() {
+        assertEquals(EXPECTED_USERS_COUNT, (int) testedService.getUsersCount());
     }
 }

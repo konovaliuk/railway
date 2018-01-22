@@ -30,7 +30,7 @@ public class TestDbConnectServiceImpl implements DbConnectionService {
 
     @Override
     public void close(Connection connection) {
-        if(connection != null) {
+        if (connection != null) {
             try {
                 connection.close();
             } catch (SQLException e) {

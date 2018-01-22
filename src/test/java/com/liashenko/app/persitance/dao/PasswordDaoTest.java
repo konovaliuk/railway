@@ -4,14 +4,14 @@ import com.liashenko.app.persistance.dao.PasswordDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.dao.mysql.PasswordDaoImpl;
 import com.liashenko.app.persistance.domain.Password;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.sql.Connection;
 import java.util.Collections;
@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 import static junit.framework.TestCase.assertEquals;
 
 @RunWith(value = Parameterized.class)
-public class PasswordDaoTest  extends TestDbUtil {
+public class PasswordDaoTest extends TestDbUtil {
     private static final Long NOT_EXISTING_ENTITY_KEY = Long.MAX_VALUE;
 
     @Rule
@@ -30,7 +30,7 @@ public class PasswordDaoTest  extends TestDbUtil {
     private Connection connection;
     private PasswordDao testedDao;
 
-    public PasswordDaoTest(ResourceBundle localeBundle){
+    public PasswordDaoTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
     }
 
@@ -38,25 +38,25 @@ public class PasswordDaoTest  extends TestDbUtil {
         Password actualPassword = new Password();
         actualPassword.setIterations(1000);
         actualPassword.setAlgorithm("PBKDF2WithHmacSHA1");
-        actualPassword.setPassword(new byte[]{0,0,0,0,0});
-        actualPassword.setSalt(new byte[]{0,0,0,0,0});
+        actualPassword.setPassword(new byte[]{0, 0, 0, 0, 0});
+        actualPassword.setSalt(new byte[]{0, 0, 0, 0, 0});
         return actualPassword;
     }
 
     @Before
-    public void createDao(){
+    public void createDao() {
         connection = getConnection();
         testedDao = new PasswordDaoImpl(connection, localeBundle);
     }
 
     @After
-    public void dropTestDbAndFlush(){
+    public void dropTestDbAndFlush() {
         close(connection);
     }
 
     //    void create(Entity object);
     @Test
-    public void isAddedOneNewRowInTable(){
+    public void isAddedOneNewRowInTable() {
         List<Password> beforeEntitiesList = testedDao.getAll().orElse(Collections.emptyList());
         testedDao.create(createEntity());
         List<Password> afterEntitiesList = testedDao.getAll().orElse(Collections.emptyList());
@@ -64,38 +64,38 @@ public class PasswordDaoTest  extends TestDbUtil {
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfEntityIsNull(){
+    public void failsIfEntityIsNull() {
         testedDao.create(null);
     }
 
     //    void update(Entity object);
     @Test(expected = DAOException.class)
-    public void failsIfEntityToUpdateIsNull(){
+    public void failsIfEntityToUpdateIsNull() {
         testedDao.update(null);
     }
 
     @Test
-    public void returnsFalseIfRowsCountInDbChanged(){
+    public void returnsFalseIfRowsCountInDbChanged() {
         List<Password> beforeEntitiesList = testedDao.getAll().orElse(Collections.emptyList());
         List<Password> afterEntitiesList = testedDao.getAll().orElse(Collections.emptyList());
         assertEquals(0, afterEntitiesList.size() - beforeEntitiesList.size());
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfEntityIdIsNull(){
+    public void failsIfEntityIdIsNull() {
         Password password = createEntity();
         testedDao.update(password);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfEntityIdIs_0(){
+    public void failsIfEntityIdIs_0() {
         Password password = createEntity();
         password.setId(0L);
         testedDao.update(password);
     }
 
     @Test(expected = DAOException.class)
-    public void returnsFalseIfEntityIdIsNotExists(){
+    public void returnsFalseIfEntityIdIsNotExists() {
         Password password = createEntity();
         password.setId(NOT_EXISTING_ENTITY_KEY);
         testedDao.update(password);

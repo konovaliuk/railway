@@ -32,6 +32,8 @@ import java.io.IOException;
         RequestHelper.UPDATE_PROFILE_AJAX_ATTR,
         RequestHelper.CHECK_IF_USER_WITH_EMAIL_EXISTS_AJAX_ATTR
 })
+
+//if you need working with https-protocol uncomment the next string
 //@ServletSecurity(value = @HttpConstraint(transportGuarantee = ServletSecurity.TransportGuarantee.CONFIDENTIAL))
 public class FrontController extends HttpServlet {
     private static final Logger classLogger = LogManager.getLogger(FrontController.class);

@@ -1,9 +1,10 @@
-package com.liashenko.app.web.controller.commands;
+package com.liashenko.app.web.controller.commands.index;
 
-import com.liashenko.app.web.authorization.Authorization;
-import com.liashenko.app.web.controller.manager.PageManagerConf;
 import com.liashenko.app.service.ServiceFactory;
 import com.liashenko.app.service.dto.RoleDto;
+import com.liashenko.app.web.authorization.Authorization;
+import com.liashenko.app.web.controller.commands.ICommand;
+import com.liashenko.app.web.controller.manager.PageManagerConf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +20,7 @@ public class ShowIndexViewCommand implements ICommand {
 
     private ServiceFactory serviceFactory;
 
-    public ShowIndexViewCommand(ServiceFactory serviceFactory){
+    public ShowIndexViewCommand(ServiceFactory serviceFactory) {
 //        this.serviceFactory = serviceFactory;
     }
 

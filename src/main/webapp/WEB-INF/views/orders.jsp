@@ -23,11 +23,11 @@
 
 <div class="container">
     <div class="row">
-            <p><fmt:message key="page.is.under.construction.msg" bundle="${lang}"/></p>
+        <p><fmt:message key="page.is.under.construction.msg" bundle="${lang}"/></p>
     </div>
 </div>
 <br><br>
-    <c:import url="../colon/footer.jsp" charEncoding="utf-8"/>
+<c:import url="../colon/footer.jsp" charEncoding="utf-8"/>
 </body>
 <c:import url="../colon/js_dependencies.jsp" charEncoding="utf-8"/>
 </html>

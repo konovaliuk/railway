@@ -2,9 +2,9 @@ package com.liashenko.app.web.controller.utils;
 
 
 import com.google.gson.Gson;
-import com.liashenko.app.web.controller.utils.exceptions.SendMsgException;
 import com.liashenko.app.service.dto.AutocompleteDto;
 import com.liashenko.app.service.dto.ResponseMsgDto;
+import com.liashenko.app.web.controller.utils.exceptions.SendMsgException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -3,8 +3,8 @@ package com.liashenko.app.service.implementation;
 import com.liashenko.app.persistance.dao.*;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.*;
-import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.OrderService;
+import com.liashenko.app.service.data_source.DbConnectionService;
 import com.liashenko.app.service.dto.FullRouteDto;
 import com.liashenko.app.service.dto.PriceForVagonDto;
 import com.liashenko.app.service.exceptions.ServiceException;
@@ -39,7 +39,6 @@ public class OrderServiceImpl implements OrderService {
     public Optional<FullRouteDto> getFullTrainRoute(Long routeId) {
         Connection conn = dbConnSrvc.getConnection();
         try {
-//            conn.setReadOnly(true);
             RouteDao routeDao = daoFactory.getRouteDao(conn, localeQueries);
             Optional<Route> routeFirstStationOpt = routeDao.getFirstTerminalStationOnRoute(routeId);
             Optional<Route> routeLastStationOpt = routeDao.getLastTerminalStationOnRoute(routeId);
@@ -75,14 +74,14 @@ public class OrderServiceImpl implements OrderService {
         List<PriceForVagonDto> pricesForVagonList = new ArrayList<>();
         Connection conn = dbConnSrvc.getConnection();
         try {
-            RouteDao routeDao =  daoFactory.getRouteDao(conn,localeQueries);
+            RouteDao routeDao = daoFactory.getRouteDao(conn, localeQueries);
             Float distance = CalculatorUtil.calculateDistanceFromStationToStationOnTheRoute(routeDao, routeId,
                     fromStationId, toStationId);
 
             RouteRateDao routeRateDao = daoFactory.getRouteRateDao(conn, localeQueries);
             Optional<RouteRate> routeRateOpt = routeRateDao.getByRouteId(routeId);
             Float routeRateFloat = routeRateOpt.isPresent() ? routeRateOpt.get().getRate()
-                                                            : AppProperties.getDefRouteRate();
+                    : AppProperties.getDefRouteRate();
 
             VagonTypeDao vagonTypeDao = daoFactory.getVagonTypeDao(conn, localeQueries);
             Optional<List<VagonType>> vagonTypeListOpt = vagonTypeDao.getAll();
@@ -103,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
     private void calculateAndFillListOfPricesForVagons(Connection connection, List<PriceForVagonDto> pricesForVagonList,
                                                        VagonType vagonType, Float distance, Float routeRateFloat) {
         PriceForVagonDto priceForVagonDto = new PriceForVagonDto();
-        PricePerKmForVagonDao pricePerKmForVagonDao = daoFactory.getPricePerKmForVagonDao(connection,  localeQueries);
+        PricePerKmForVagonDao pricePerKmForVagonDao = daoFactory.getPricePerKmForVagonDao(connection, localeQueries);
         Optional<PricePerKmForVagon> pricePerKmForVagonOpt = pricePerKmForVagonDao.getPricePerKmForVagon(vagonType.getId());
         Double pricePerKmForVagonDouble = pricePerKmForVagonOpt.isPresent()
                 ? pricePerKmForVagonOpt.get().getPrice()

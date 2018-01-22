@@ -1,14 +1,14 @@
 package com.liashenko.app.web.filters;
 
-import com.liashenko.app.web.controller.RequestHelper;
-import com.liashenko.app.web.controller.manager.LocaleQueryConf;
-import com.liashenko.app.web.controller.utils.HttpParser;
-import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.service.ServiceFactory;
 import com.liashenko.app.service.UserProfileService;
 import com.liashenko.app.service.dto.RoleDto;
 import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.service.implementation.ServiceFactoryImpl;
+import com.liashenko.app.web.controller.RequestHelper;
+import com.liashenko.app.web.controller.manager.LocaleQueryConf;
+import com.liashenko.app.web.controller.utils.HttpParser;
+import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

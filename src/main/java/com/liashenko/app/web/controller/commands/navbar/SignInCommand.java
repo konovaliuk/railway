@@ -1,7 +1,14 @@
-package com.liashenko.app.web.controller.commands;
+package com.liashenko.app.web.controller.commands.navbar;
 
 import com.google.gson.Gson;
+import com.liashenko.app.service.AuthorizationService;
+import com.liashenko.app.service.ServiceFactory;
+import com.liashenko.app.service.dto.PrinciplesDto;
+import com.liashenko.app.service.dto.RoleDto;
+import com.liashenko.app.service.dto.UserSessionProfileDto;
+import com.liashenko.app.service.exceptions.ServiceException;
 import com.liashenko.app.web.authorization.Authorization;
+import com.liashenko.app.web.controller.commands.ICommand;
 import com.liashenko.app.web.controller.manager.LocaleQueryConf;
 import com.liashenko.app.web.controller.manager.PageManagerConf;
 import com.liashenko.app.web.controller.utils.HttpParser;
@@ -10,12 +17,6 @@ import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
 import com.liashenko.app.web.controller.utils.Validator;
 import com.liashenko.app.web.controller.utils.exceptions.ControllerException;
 import com.liashenko.app.web.controller.utils.exceptions.ValidationException;
-import com.liashenko.app.service.AuthorizationService;
-import com.liashenko.app.service.ServiceFactory;
-import com.liashenko.app.service.dto.PrinciplesDto;
-import com.liashenko.app.service.dto.RoleDto;
-import com.liashenko.app.service.dto.UserSessionProfileDto;
-import com.liashenko.app.service.exceptions.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,7 +39,7 @@ public class SignInCommand implements ICommand {
 
     private ServiceFactory serviceFactory;
 
-    public SignInCommand(ServiceFactory serviceFactory){
+    public SignInCommand(ServiceFactory serviceFactory) {
         this.serviceFactory = serviceFactory;
     }
 
@@ -62,11 +63,11 @@ public class SignInCommand implements ICommand {
                 String pageForRedirecting = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_PAGE_BEFORE_LOGIN, session);
                 MsgSender.sendJsonMsg(response, Validator.removeFirstSymbolFromString(pageForRedirecting), true);
             } else {
-                MsgSender.sendJsonMsg(response, "", false);
+                MsgSender.sendJsonMsg(response, "", Boolean.TRUE);
             }
         } catch (ControllerException | ServiceException e) {
             classLogger.error(e);
-            MsgSender.sendJsonMsg(response, "", false);
+            MsgSender.sendJsonMsg(response, "", Boolean.FALSE);
         }
         return PageManagerConf.getInstance().getProperty(PageManagerConf.EMPTY_RESULT);
     }

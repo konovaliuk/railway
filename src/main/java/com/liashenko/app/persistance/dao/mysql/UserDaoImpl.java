@@ -194,8 +194,8 @@ public class UserDaoImpl extends AbstractJDBCDao implements UserDao {
 
     @Override
     public boolean isOtherUsersWithEmailExist(Long userId, String email) {
-        if(assertLongIsNullOrZeroOrLessZero(userId)) throw new DAOException("Wrong userId");
-        if(assertIsNull(email)) return false;
+        if (assertLongIsNullOrZeroOrLessZero(userId)) throw new DAOException("Wrong userId");
+        if (assertIsNull(email)) return false;
         int i = 0;
         String sql = getUserByIdAndEmailQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

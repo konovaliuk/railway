@@ -16,9 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import static com.liashenko.app.utils.Asserts.assertIntIsNullOrZeroOrLessZero;
-import static com.liashenko.app.utils.Asserts.assertIsNull;
-import static com.liashenko.app.utils.Asserts.assertLongIsNullOrZeroOrLessZero;
+import static com.liashenko.app.utils.Asserts.*;
 
 public class VagonTypeDaoImpl extends AbstractJDBCDao implements VagonTypeDao {
     private static final Logger classLogger = LogManager.getLogger(VagonTypeDaoImpl.class);

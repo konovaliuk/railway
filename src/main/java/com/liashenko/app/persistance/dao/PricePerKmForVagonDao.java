@@ -11,7 +11,7 @@ public interface PricePerKmForVagonDao extends GenericJDBCDao {
     boolean isExists(Long key);
 
 
-     //Creates new row in the db corresponds to its object
+    //Creates new row in the db corresponds to its object
     void create(PricePerKmForVagon object);
 
     //Creates new row in the db corresponds to its object and returns it from db or empty optional

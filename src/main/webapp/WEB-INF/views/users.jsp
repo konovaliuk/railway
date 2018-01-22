@@ -123,7 +123,7 @@
             success: function (data, textStatus) {
                 var msg = document.getElementById("msg_container");
                 if (textStatus === 'success') {
-                    msg.innerHTML = data.message;
+                    msg.innerHTML = '<fmt:message key="successful.update.msg" bundle="${lang}"/>';
                     if (data.success) {
                         msg.className = 'b-container';
                         $('#choose_btn_id_' + id).removeClass("btn-danger");
@@ -133,7 +133,7 @@
                     }
                 } else {
                     msg.className = 'a-container';
-                    msg.innerHTML = 'Operation wasn\'t successful';
+                    msg.innerHTML = '<fmt:message key="unsuccessful.update.msg" bundle="${lang}"/>';
                 }
 
                 msg.style.display = 'block';

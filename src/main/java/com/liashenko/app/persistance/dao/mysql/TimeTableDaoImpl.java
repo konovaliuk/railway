@@ -1,6 +1,5 @@
 package com.liashenko.app.persistance.dao.mysql;
 
-import com.liashenko.app.web.controller.utils.HttpParser;
 import com.liashenko.app.persistance.dao.AbstractJDBCDao;
 import com.liashenko.app.persistance.dao.Identified;
 import com.liashenko.app.persistance.dao.TimeTableDao;
@@ -8,6 +7,7 @@ import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.domain.TimeTable;
 import com.liashenko.app.persistance.result_parser.ResultSetParser;
 import com.liashenko.app.persistance.result_parser.ResultSetParserException;
+import com.liashenko.app.web.controller.utils.HttpParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

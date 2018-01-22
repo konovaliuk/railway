@@ -4,22 +4,22 @@ import com.liashenko.app.persistance.dao.VagonTypeDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.dao.mysql.VagonTypeDaoImpl;
 import com.liashenko.app.persistance.domain.VagonType;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static junit.framework.TestCase.*;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 @RunWith(value = Parameterized.class)
 public class VagonTypeDaoTest extends TestDbUtil {
@@ -31,24 +31,24 @@ public class VagonTypeDaoTest extends TestDbUtil {
     private Connection connection;
     private VagonTypeDao testedDao;
 
-    public VagonTypeDaoTest(ResourceBundle localeBundle){
+    public VagonTypeDaoTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
     }
 
     @Before
-    public void createDao(){
+    public void createDao() {
         connection = getConnection();
         testedDao = new VagonTypeDaoImpl(connection, localeBundle);
     }
 
     @After
-    public void dropTestDbAndFlush(){
+    public void dropTestDbAndFlush() {
         close(connection);
     }
 
     //    Optional<List<Entity>> getAll();
     @Test
-    public void returnsEmptyListOnGettingAllFromEmptyTable(){
+    public void returnsEmptyListOnGettingAllFromEmptyTable() {
         dropTablesInTestDb();
         prepareEmptyTablesInTestDb();
         Optional<List<VagonType>> usersOpt = testedDao.getAll();
@@ -57,7 +57,7 @@ public class VagonTypeDaoTest extends TestDbUtil {
     }
 
     @Test(expected = DAOException.class)
-    public void failsOnGettingAllFromNotExistingTable(){
+    public void failsOnGettingAllFromNotExistingTable() {
         dropTablesInTestDb();
         testedDao.getAll();
     }

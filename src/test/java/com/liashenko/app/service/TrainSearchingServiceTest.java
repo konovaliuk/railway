@@ -1,30 +1,24 @@
 package com.liashenko.app.service;
 
 
-import com.liashenko.app.persistance.dao.exceptions.DAOException;
-import com.liashenko.app.persistance.domain.Route;
-import com.liashenko.app.persistance.domain.Station;
 import com.liashenko.app.service.dto.AutocompleteDto;
-import com.liashenko.app.service.dto.RouteDto;
-import com.liashenko.app.service.dto.TrainDto;
 import com.liashenko.app.service.exceptions.ServiceException;
-import org.junit.Test;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import static junit.framework.TestCase.*;
-import static junit.framework.TestCase.assertFalse;
 
 @RunWith(value = Parameterized.class)
-public class TrainSearchingServiceTest  extends TestDbUtil {
+public class TrainSearchingServiceTest extends TestDbUtil {
     private static final String PATTERN_DOES_NOT_MATCH_ANY_STATION = "////";
     private static final String UA_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS = "Київ";
     private static final String EN_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS = "Kyiv";
@@ -40,25 +34,23 @@ public class TrainSearchingServiceTest  extends TestDbUtil {
 
     private static final Long NOT_EXISTING_FROM_STATION_ID_KEY = 15L;
     private static final Long NOT_EXISTING_TO_STATION_ID_KEY = 15L;
-
-    private String localePattern;
-
     @Rule
     public DbInitFixtures dbInitFixtures = new DbInitFixtures();
+    private String localePattern;
     private ServiceFactory serviceFactory = ServiceTestFactoryImpl.getInstance();
     private ResourceBundle localeBundle;
     private TrainSearchingService testedService;
 
-    public TrainSearchingServiceTest(ResourceBundle localeBundle){
+    public TrainSearchingServiceTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
         this.localePattern = getLocalePattern(localeBundle);
     }
 
-    private String getLocalePattern(ResourceBundle localeBundle){
+    private String getLocalePattern(ResourceBundle localeBundle) {
         String pattern;
-        if (localeBundle.getLocale().getLanguage().equals("uk")){
+        if (localeBundle.getLocale().getLanguage().equals("uk")) {
             pattern = UA_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS;
-        } else if(localeBundle.getLocale().getLanguage().equals("en")) {
+        } else if (localeBundle.getLocale().getLanguage().equals("en")) {
             pattern = EN_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS;
         } else {
             pattern = UA_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS;
@@ -67,7 +59,7 @@ public class TrainSearchingServiceTest  extends TestDbUtil {
     }
 
     private List<AutocompleteDto> createExpectedEntitiesListForPattern(String pattern) {
-        List <AutocompleteDto> list = new ArrayList<>();
+        List<AutocompleteDto> list = new ArrayList<>();
         switch (pattern) {
             case UA_PATTERN_FOR_STATION_EXPECTED_LIST_OF_STATIONS:
                 list.add(new AutocompleteDto(1L, "Київ-Пасажирський"));
@@ -86,30 +78,30 @@ public class TrainSearchingServiceTest  extends TestDbUtil {
     }
 
     @Before
-    public void setUpService(){
+    public void setUpService() {
         this.testedService = serviceFactory.getTrainSearchingService(localeBundle);
     }
 
-//    Optional<List<AutocompleteDto>> getStationAutocomplete(String stationLike);
+    //    Optional<List<AutocompleteDto>> getStationAutocomplete(String stationLike);
     @Test
-    public void returnsExpectedList(){
+    public void returnsExpectedList() {
 
     }
 
     @Test(expected = ServiceException.class)
-    public void failsIfPatternIsNull(){
+    public void failsIfPatternIsNull() {
         testedService.getStationAutocomplete(null);
     }
 
     @Test
-    public void returnsFullListIfPatternIsEmpty(){
+    public void returnsFullListIfPatternIsEmpty() {
         List<AutocompleteDto> autocompleteList = testedService.getStationAutocomplete("").orElse(null);
         assertNotNull(autocompleteList);
         assertEquals(autocompleteList.size(), STATIONS_IN_TABLE);
     }
 
     @Test
-    public void returnsEmptyListIfPatternDoesNotMatch(){
+    public void returnsEmptyListIfPatternDoesNotMatch() {
         List<AutocompleteDto> autocompleteList = testedService.getStationAutocomplete(PATTERN_DOES_NOT_MATCH_ANY_STATION)
                 .orElse(null);
         assertNotNull(autocompleteList);
@@ -122,14 +114,14 @@ public class TrainSearchingServiceTest  extends TestDbUtil {
         List<AutocompleteDto> expectedAutocompleteList = createExpectedEntitiesListForPattern(localePattern);
         assertNotNull(actualAutocompleteList);
         assertEquals(expectedAutocompleteList.size(), expectedAutocompleteList.size());
-        for (int i = 0; i < expectedAutocompleteList.size(); i++){
+        for (int i = 0; i < expectedAutocompleteList.size(); i++) {
             assertEquals(expectedAutocompleteList.get(i), actualAutocompleteList.get(i));
         }
     }
 
-//    Optional<List<TrainDto>> getTrainsForTheRouteOnDate(RouteDto routeDto);
+    //    Optional<List<TrainDto>> getTrainsForTheRouteOnDate(RouteDto routeDto);
     @Test(expected = ServiceException.class)
-    public void failsIfRouteDtoIsNull(){
+    public void failsIfRouteDtoIsNull() {
         testedService.getTrainsForTheRouteOnDate(null);
     }
 }

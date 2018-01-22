@@ -24,7 +24,7 @@ public abstract class TestDbUtil {
 
     private static final String PATH_TO_FILL_TEST_DB_WITH_DATA_SCENARIO = "sql_queries" + File.separator
             + "test" + File.separator
-            + "my_sql"  + File.separator
+            + "my_sql" + File.separator
             + "fill_with_data.sql";
 
     private static final String PATH_TO_DROP_TABLES_SCENARIO = "sql_queries" + File.separator
@@ -54,15 +54,15 @@ public abstract class TestDbUtil {
         });
     }
 
-    protected static Connection getConnection(){
+    protected static Connection getConnection() {
         return TEST_DB_CONNECT_SERVICE.getConnection();
     }
 
-    protected static void close(Connection connection){
+    protected static void close(Connection connection) {
         TEST_DB_CONNECT_SERVICE.close(connection);
     }
 
-    private static void createTablesInTestDb(Connection connection) throws SQLException{
+    private static void createTablesInTestDb(Connection connection) throws SQLException {
         ScriptRunner sr = new ScriptRunner(connection, true, true);
         try {
             sr.runScript(new InputStreamReader(new FileInputStream(decodeResourceFilePath(PATH_TO_CREATE_TEST_DB_SCENARIO)),
@@ -74,7 +74,7 @@ public abstract class TestDbUtil {
         }
     }
 
-    private static void fillTestDbWithData(Connection connection) throws SQLException{
+    private static void fillTestDbWithData(Connection connection) throws SQLException {
         ScriptRunner sr = new ScriptRunner(connection, false, true);
         try {
             //Get file from resources folder
@@ -87,7 +87,7 @@ public abstract class TestDbUtil {
         }
     }
 
-    protected static void prepareEmptyTablesInTestDb(){
+    protected static void prepareEmptyTablesInTestDb() {
         try {
             createTablesInTestDb(getConnection());
         } catch (SQLException ex) {
@@ -95,7 +95,7 @@ public abstract class TestDbUtil {
         }
     }
 
-    protected static void fillTablesInTestDb(){
+    protected static void fillTablesInTestDb() {
         try {
             fillTestDbWithData(getConnection());
         } catch (SQLException ex) {
@@ -103,7 +103,7 @@ public abstract class TestDbUtil {
         }
     }
 
-    protected static void dropTablesInTestDb(){
+    protected static void dropTablesInTestDb() {
         Connection connection = getConnection();
         ScriptRunner sr = new ScriptRunner(connection, false, true);
         try {

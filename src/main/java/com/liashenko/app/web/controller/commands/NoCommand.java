@@ -1,7 +1,7 @@
 package com.liashenko.app.web.controller.commands;
 
-import com.liashenko.app.web.controller.manager.PageManagerConf;
 import com.liashenko.app.service.ServiceFactory;
+import com.liashenko.app.web.controller.manager.PageManagerConf;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +13,7 @@ public class NoCommand implements ICommand {
 
     private ServiceFactory serviceFactory;
 
-    public NoCommand(ServiceFactory serviceFactory){
+    public NoCommand(ServiceFactory serviceFactory) {
 //        this.serviceFactory = serviceFactory;
     }
 

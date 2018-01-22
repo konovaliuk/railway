@@ -4,14 +4,14 @@ import com.liashenko.app.persistance.dao.TrainDao;
 import com.liashenko.app.persistance.dao.exceptions.DAOException;
 import com.liashenko.app.persistance.dao.mysql.TrainDaoImpl;
 import com.liashenko.app.persistance.domain.Train;
-import test_utils.DbInitFixtures;
-import test_utils.TestDbUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import test_utils.DbInitFixtures;
+import test_utils.TestDbUtil;
 
 import java.sql.Connection;
 import java.util.List;
@@ -19,10 +19,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static junit.framework.TestCase.*;
-import static junit.framework.TestCase.assertEquals;
 
 @RunWith(value = Parameterized.class)
-public class TrainDaoTest  extends TestDbUtil {
+public class TrainDaoTest extends TestDbUtil {
     private static final Long NOT_EXISTING_ROUTE_ID_KEY = Long.MAX_VALUE;
     private static final Long EXISTING_ROUTE_ID_KEY = 2L;
     private static final Long MORE_THAN_ONE_EXISTING_ROUTE_ID = 13L;
@@ -33,7 +32,7 @@ public class TrainDaoTest  extends TestDbUtil {
     private Connection connection;
     private TrainDao testedDao;
 
-    public TrainDaoTest(ResourceBundle localeBundle){
+    public TrainDaoTest(ResourceBundle localeBundle) {
         this.localeBundle = localeBundle;
     }
 
@@ -47,19 +46,19 @@ public class TrainDaoTest  extends TestDbUtil {
     }
 
     @Before
-    public void createDao(){
+    public void createDao() {
         connection = getConnection();
         testedDao = new TrainDaoImpl(connection, localeBundle);
     }
 
     @After
-    public void dropTestDbAndFlush(){
+    public void dropTestDbAndFlush() {
         close(connection);
     }
 
-//    Optional<List<Entity>> getAll();
+    //    Optional<List<Entity>> getAll();
     @Test
-    public void returnsEmptyListOnGettingAllFromEmptyTable(){
+    public void returnsEmptyListOnGettingAllFromEmptyTable() {
         dropTablesInTestDb();
         prepareEmptyTablesInTestDb();
         Optional<List<Train>> usersOpt = testedDao.getAll();
@@ -68,34 +67,34 @@ public class TrainDaoTest  extends TestDbUtil {
     }
 
     @Test(expected = DAOException.class)
-    public void FailsOnGettingAllFromNotExistingTable(){
+    public void FailsOnGettingAllFromNotExistingTable() {
         dropTablesInTestDb();
         testedDao.getAll();
     }
 
     //    Optional<Train> getByRoute(Long routeId);
     @Test
-    public void returnsEmptyOptionalIfRouteIdIs_0(){
+    public void returnsEmptyOptionalIfRouteIdIs_0() {
         assertFalse(testedDao.getByRoute(0L).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdIsLessThan_0(){
+    public void returnsEmptyOptionalIfRouteIdIsLessThan_0() {
         assertFalse(testedDao.getByRoute(-4L).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdIsNull(){
+    public void returnsEmptyOptionalIfRouteIdIsNull() {
         assertFalse(testedDao.getByRoute(null).isPresent());
     }
 
     @Test
-    public void returnsEmptyOptionalIfRouteIdDoesNotExists(){
+    public void returnsEmptyOptionalIfRouteIdDoesNotExists() {
         assertFalse(testedDao.getByRoute(NOT_EXISTING_ROUTE_ID_KEY).isPresent());
     }
 
     @Test
-    public void returnsExpectedResultIfRouteIdExists(){
+    public void returnsExpectedResultIfRouteIdExists() {
         Train expectedTrain = getExpectedEntity();
         Train actualTrain = testedDao.getByRoute(EXISTING_ROUTE_ID_KEY).orElse(null);
         assertNotNull(actualTrain);
@@ -106,18 +105,18 @@ public class TrainDaoTest  extends TestDbUtil {
     }
 
     @Test
-    public void returnsTrainIfRouteIdExists(){
+    public void returnsTrainIfRouteIdExists() {
         assertTrue(testedDao.getByRoute(EXISTING_ROUTE_ID_KEY).isPresent());
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfTableDoesNotExist(){
+    public void failsIfTableDoesNotExist() {
         dropTablesInTestDb();
         testedDao.getByRoute(EXISTING_ROUTE_ID_KEY);
     }
 
     @Test(expected = DAOException.class)
-    public void failsIfMoreThanOneRouteIdExists(){
+    public void failsIfMoreThanOneRouteIdExists() {
         testedDao.getByRoute(MORE_THAN_ONE_EXISTING_ROUTE_ID);
     }
 

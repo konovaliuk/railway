@@ -2,6 +2,7 @@ package com.liashenko.app.web.controller.commands;
 
 import com.liashenko.app.service.ServiceFactory;
 import com.liashenko.app.service.ServiceTestFactoryImpl;
+import com.liashenko.app.web.controller.commands.error.ShowErrorViewCommand;
 import com.liashenko.app.web.controller.manager.PageManagerConf;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,7 +1,7 @@
 package com.liashenko.app.web.controller.utils;
 
-import com.liashenko.app.web.controller.utils.exceptions.HttpParserException;
 import com.liashenko.app.utils.AppProperties;
+import com.liashenko.app.web.controller.utils.exceptions.HttpParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -14,11 +14,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 public abstract class HttpParser {
-
-    public static Locale parseLocaleFromRequest(HttpServletRequest request) {
-        String localStr = HttpParser.getStringSessionAttr(SessionAttrInitializer.USER_LOCALE, request.getSession());
-        return parseLocaleFromString(localStr);
-    }
 
     public static Locale parseLocaleFromString(String str) {
         if (str != null && !str.isEmpty()) {
@@ -43,32 +38,12 @@ public abstract class HttpParser {
         }
     }
 
-    public static Optional<LocalDate> getDateTimeRequestParam(String param, HttpServletRequest request) {
-        String timeStr = getStringRequestParam(param, request);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        try {
-            return Optional.ofNullable(LocalDate.parse(timeStr, formatter));
-        } catch (DateTimeParseException ignore) {
-            return Optional.empty();
-        }
-    }
-
     public static LocalDate convertStringToDate(String stringDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         try {
             return LocalDate.parse(stringDate, formatter);
         } catch (DateTimeParseException ex) {
             throw new HttpParserException(ex.getMessage());
-        }
-    }
-
-    public static String convertDateTimeToString(LocalDateTime dateTime) {
-        if (dateTime == null) return "";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH.mm");
-        try {
-            return dateTime.format(formatter);
-        } catch (DateTimeParseException ignore) {
-            return "";
         }
     }
 
@@ -153,14 +128,14 @@ public abstract class HttpParser {
         return sb.toString();
     }
 
-    public static Integer getIntFromRequestOrFromSessionOrDefault(HttpServletRequest request, String reqAttr,
-                                                                  String sessionAttr, Integer defaultVal) {
+    private static Integer getIntFromRequestOrFromSessionOrDefault(HttpServletRequest request, String reqAttr,
+                                                                   String sessionAttr, Integer defaultVal) {
         return getIntRequestParam(reqAttr, request).orElseGet(()
                 -> getIntSessionAttr(sessionAttr, request.getSession()).orElse(defaultVal));
     }
 
-    public static Long getLongFromRequestOrFromSessionOrDefault(HttpServletRequest request, String reqAttr,
-                                                                String sessionAttr, Long defaultVal) {
+    private static Long getLongFromRequestOrFromSessionOrDefault(HttpServletRequest request, String reqAttr,
+                                                                 String sessionAttr, Long defaultVal) {
         return getLongRequestParam(reqAttr, request).orElseGet(()
                 -> getLongSessionAttr(sessionAttr, request.getSession()).orElse(defaultVal));
     }
@@ -186,14 +161,4 @@ public abstract class HttpParser {
         request.getSession().setAttribute(sessionAttr, value);
         return value;
     }
-
-
-//    public static boolean getBoolSessionAttribute(String sessionAttribute, HttpSession session) {
-//        if (session.getAttribute(sessionAttribute) != null) {
-//            return (boolean)session.getAttribute(sessionAttribute);
-//        }
-//        return false;
-//    }
-
-
 }

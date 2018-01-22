@@ -2,10 +2,8 @@ package com.liashenko.app.web.controller.commands;
 
 import com.liashenko.app.service.ServiceFactory;
 import com.liashenko.app.service.ServiceTestFactoryImpl;
-import com.liashenko.app.service.dto.RoleDto;
-import com.liashenko.app.web.controller.RequestHelper;
+import com.liashenko.app.web.controller.commands.admin_warning.ShowAdminWarningCommand;
 import com.liashenko.app.web.controller.manager.PageManagerConf;
-import com.liashenko.app.web.controller.utils.SessionAttrInitializer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -14,7 +12,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;

@@ -7,13 +7,13 @@
 The passenger chooses train and gets bill to pay. Administrator controls list of registered passengers. 
 
 ## Table of Contents
-* [Project name](#Project name)
-* [Description](#Description)
-* [Getting Started](#Getting Started)
-  * [Prerequisites](#Prerequisites)
-  * [Installation](#Installation)
-* [Running the tests](#Running the tests)  
-* [Authors](#Authors)
+* [Project name](#project-name)
+* [Description](#description)
+* [Getting Started](#getting-started)
+  * [Prerequisites](#prerequisites)
+  * [Installation and running](#installation-and-running)
+* [Running the tests](#running-the-tests)  
+* [Authors](#authors)
 
 ## Getting Started
 
@@ -27,7 +27,7 @@ To run the project you need installed (according to the documentation):
 ### Installation and running
 To install and run the project on localhost:
  * Clone or download the project [railway](https://github.com/konovaliuk/railway) from the GitHub 
- * Create database **_"railway"_** on your MySQL server. After creating database, edit file "/src/main/webapp/META-INF/context.xml". 
+ * Create database **_"railway"_** on your MySQL server. After creating the database, edit file "/src/main/webapp/META-INF/context.xml". 
  Find key "username" and set your database username then set your password for key "password". 
  Execute at first sql-script **_"railwayDbStructure.sql"_** and then script **_"railwayDbDataDump.sql"_** from the directori **_"sql"_** of the project.                                                                                         
  * Compile project to package **_"railway.war"_**. To do it just execute command "mvn clean package -DskipTests" 
@@ -47,7 +47,7 @@ database should be the same as in the constants "USER" and "PASS" of source file
 To run the unit-test execute command "mvn clean package" from your prompt in the project root directory.
 
 ## Authors
-Vitalii Liashenko (e-mail:[liashenkovitaliy@gmail.com](mailto:liashenkovitaliy@gmail.com))
+Vitalii Liashenko (e-mail: [liashenkovitaliy@gmail.com](mailto:liashenkovitaliy@gmail.com))
 
 
 

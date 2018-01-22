@@ -159,10 +159,10 @@
                             notEmpty: {
                                 message: '<fmt:message key="empty.pass.field.validation.msg" bundle="${lang}"/>'
                             },
-                            identical: {
-                                field: 'repeatedPass',
-                                message: '<fmt:message key="identical.pass.with.repeated.field.validation.msg" bundle="${lang}"/>'
-                            },
+                            <%--identical: {--%>
+                                <%--field: 'repeatedPass',--%>
+                                <%--message: '<fmt:message key="identical.pass.with.repeated.field.validation.msg" bundle="${lang}"/>'--%>
+                            <%--},--%>
                             different: {
                                 field: 'firstName',
                                 message: '<fmt:message key="different.pass.with.firstname.field.validation.msg" bundle="${lang}"/>'
